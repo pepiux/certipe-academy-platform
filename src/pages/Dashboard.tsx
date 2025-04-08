@@ -2,34 +2,16 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
 import {
   Clock,
   FileQuestion,
   Book,
-  Award
+  Award,
+  ChevronRight
 } from "lucide-react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer
-} from "recharts";
 
 const Dashboard = () => {
-  // Mock data for study progress chart
-  const chartData = [
-    { name: "Lun", hours: 2.5 },
-    { name: "Mar", hours: 3.8 },
-    { name: "Mié", hours: 1.2 },
-    { name: "Jue", hours: 4.3 },
-    { name: "Vie", hours: 3.0 },
-    { name: "Sáb", hours: 5.5 },
-    { name: "Dom", hours: 3.2 },
-  ];
-
   // Mock data for recent quiz
   const recentQuiz = {
     title: "PMP Project Management Knowledge Areas",
@@ -42,7 +24,7 @@ const Dashboard = () => {
   };
 
   // Mock data for your quizzes
-  const yourQuizzes = [
+  const quizzes = [
     {
       id: 1,
       title: "PMP Project Management Knowledge Areas",
@@ -67,6 +49,31 @@ const Dashboard = () => {
       lastScore: 92,
       bestScore: 92,
     },
+  ];
+  
+  // Mock data for courses
+  const courses = [
+    {
+      id: 1,
+      title: "Fundamentos de Gestión de Proyectos",
+      instructor: "María García",
+      progress: 65,
+      image: "https://placehold.co/400x200?text=Gestión+de+Proyectos"
+    },
+    {
+      id: 2,
+      title: "Metodologías Ágiles y Scrum",
+      instructor: "Carlos Rodríguez",
+      progress: 30,
+      image: "https://placehold.co/400x200?text=Scrum"
+    },
+    {
+      id: 3,
+      title: "Certificación PMP: Guía Completa",
+      instructor: "Javier López",
+      progress: 10,
+      image: "https://placehold.co/400x200?text=PMP"
+    }
   ];
 
   return (
@@ -136,43 +143,18 @@ const Dashboard = () => {
         </Card>
       </div>
 
-      {/* Study Progress Chart */}
-      <Card>
-        <CardContent className="p-6">
-          <h3 className="text-lg font-medium mb-4">Rendimiento reciente</h3>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart
-                data={chartData}
-                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Line 
-                  type="monotone" 
-                  dataKey="hours" 
-                  stroke="#3b82f6" 
-                  strokeWidth={2}
-                  activeDot={{ r: 8 }} 
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </CardContent>
-      </Card>
-
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Quiz Results */}
-        <Card className="lg:col-span-3">
+        <Card>
           <CardContent className="p-6">
-            <h3 className="text-lg font-medium mb-4">Last PMP Practice Test</h3>
+            <h3 className="text-lg font-medium mb-4">Último cuestionario completado</h3>
             <div className="mb-4">
+              <div className="text-base font-medium mb-2">{recentQuiz.title}</div>
               <div className="flex justify-between items-center mb-2">
                 <span>Puntuación general</span>
                 <span className="font-medium">{recentQuiz.score}/{recentQuiz.total}</span>
               </div>
+              <Progress value={recentQuiz.score} className="h-2 mb-2" />
               <div className="flex gap-6 mt-4">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-green-500"></div>
@@ -195,36 +177,82 @@ const Dashboard = () => {
                 <span>{recentQuiz.date}</span>
               </div>
             </div>
+            
+            <Button className="w-full mt-4" variant="outline">
+              Ver detalles del cuestionario
+            </Button>
           </CardContent>
         </Card>
 
         {/* Your Quizzes */}
-        <Card className="lg:col-span-2">
+        <Card>
           <CardContent className="p-6">
-            <h3 className="text-lg font-medium mb-4">Tus cuestionarios</h3>
-            <div className="space-y-6">
-              {yourQuizzes.map((quiz) => (
-                <div key={quiz.id} className="space-y-2">
-                  <h4 className="font-medium">{quiz.title}</h4>
-                  <p className="text-sm text-muted-foreground">
-                    {quiz.questions} questions · {quiz.duration} minutes
-                  </p>
-                  <div className="flex justify-between text-sm">
-                    <span>Last Score:</span>
-                    <span className={quiz.lastScore >= 70 ? "text-green-600" : "text-amber-600"}>
-                      {quiz.lastScore}%
-                    </span>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-medium">Tus cuestionarios</h3>
+              <Button variant="ghost" size="sm" className="gap-1 text-primary">
+                Ver todos <ChevronRight size={16} />
+              </Button>
+            </div>
+            <div className="space-y-4">
+              {quizzes.map((quiz) => (
+                <Card key={quiz.id} className="overflow-hidden">
+                  <CardContent className="p-4">
+                    <h4 className="font-medium line-clamp-1">{quiz.title}</h4>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {quiz.questions} preguntas · {quiz.duration} minutos
+                    </p>
+                    <div className="flex justify-between text-sm mt-2">
+                      <span>Última nota:</span>
+                      <span className={quiz.lastScore >= 70 ? "text-green-600" : "text-amber-600"}>
+                        {quiz.lastScore}%
+                      </span>
+                    </div>
+                    <Button className="w-full mt-3 py-1 h-auto" size="sm">
+                      Iniciar cuestionario
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Your Courses */}
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-medium">Tus cursos</h3>
+              <Button variant="ghost" size="sm" className="gap-1 text-primary">
+                Ver todos <ChevronRight size={16} />
+              </Button>
+            </div>
+            <div className="space-y-4">
+              {courses.map((course) => (
+                <Card key={course.id} className="overflow-hidden">
+                  <div className="h-24 overflow-hidden">
+                    <img 
+                      src={course.image} 
+                      alt={course.title} 
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span>Best Score:</span>
-                    <span className="text-green-600">
-                      {quiz.bestScore}%
-                    </span>
-                  </div>
-                  <button className="w-full px-4 py-2 text-center text-sm font-medium text-white bg-primary rounded-md hover:bg-primary/90 transition-colors">
-                    Start Quiz
-                  </button>
-                </div>
+                  <CardContent className="p-4">
+                    <h4 className="font-medium line-clamp-1">{course.title}</h4>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Instructor: {course.instructor}
+                    </p>
+                    <div className="mt-2">
+                      <div className="flex justify-between text-xs mb-1">
+                        <span>Progreso</span>
+                        <span>{course.progress}%</span>
+                      </div>
+                      <Progress value={course.progress} className="h-1" />
+                    </div>
+                    <Button className="w-full mt-3 py-1 h-auto" size="sm">
+                      Continuar curso
+                    </Button>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           </CardContent>

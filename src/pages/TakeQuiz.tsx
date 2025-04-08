@@ -1,19 +1,23 @@
 
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Clock, Flag, ArrowLeft, ArrowRight, Save } from "lucide-react";
+import { Clock, Flag, ArrowLeft, ArrowRight, Save, AlertTriangle } from "lucide-react";
+import { toast } from "sonner";
 
 const TakeQuiz = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [timer, setTimer] = useState({ minutes: 59, seconds: 59 });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [answers, setAnswers] = useState<any[]>([]);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Mock quiz data
   const quizData = {
@@ -90,6 +94,21 @@ const TakeQuiz = () => {
     ]
   };
 
+  // Initialize answers state from quiz questions
+  useEffect(() => {
+    if (!isInitialized && quizData.questions) {
+      const initialAnswers = quizData.questions.map(q => {
+        if (q.type === "single") {
+          return { questionId: q.id, answer: q.answer, type: "single", flagged: q.flagged };
+        } else {
+          return { questionId: q.id, answers: q.answers || [], type: "multiple", flagged: q.flagged };
+        }
+      });
+      setAnswers(initialAnswers);
+      setIsInitialized(true);
+    }
+  }, [quizData, isInitialized]);
+
   // Initialize the timer
   useEffect(() => {
     const timerInterval = setInterval(() => {
@@ -101,7 +120,11 @@ const TakeQuiz = () => {
         } else {
           clearInterval(timerInterval);
           // Auto-submit when time expires
+          toast.warning("¡El tiempo ha expirado! Tu cuestionario será enviado automáticamente.");
           setIsSubmitting(true);
+          setTimeout(() => {
+            handleSubmitQuiz();
+          }, 2000);
           return { minutes: 0, seconds: 0 };
         }
       });
@@ -110,28 +133,28 @@ const TakeQuiz = () => {
     return () => clearInterval(timerInterval);
   }, []);
 
-  const handleSingleAnswerChange = (questionId: number, optionId: string) => {
-    const updatedQuestions = [...quizData.questions];
-    updatedQuestions[currentQuestion].answer = optionId;
-    // In a real app, you would update your state here
+  const handleSingleAnswerChange = (optionId: string) => {
+    const updatedAnswers = [...answers];
+    updatedAnswers[currentQuestion].answer = optionId;
+    setAnswers(updatedAnswers);
   };
 
-  const handleMultipleAnswerChange = (questionId: number, optionId: string, checked: boolean) => {
-    const updatedQuestions = [...quizData.questions];
-    const currentAnswers = updatedQuestions[currentQuestion].answers || [];
+  const handleMultipleAnswerChange = (optionId: string, checked: boolean) => {
+    const updatedAnswers = [...answers];
+    const currentAnswers = updatedAnswers[currentQuestion].answers || [];
     
     if (checked) {
-      updatedQuestions[currentQuestion].answers = [...currentAnswers, optionId];
+      updatedAnswers[currentQuestion].answers = [...currentAnswers, optionId];
     } else {
-      updatedQuestions[currentQuestion].answers = currentAnswers.filter(id => id !== optionId);
+      updatedAnswers[currentQuestion].answers = currentAnswers.filter((id: string) => id !== optionId);
     }
-    // In a real app, you would update your state here
+    setAnswers(updatedAnswers);
   };
 
   const toggleFlagged = () => {
-    const updatedQuestions = [...quizData.questions];
-    updatedQuestions[currentQuestion].flagged = !updatedQuestions[currentQuestion].flagged;
-    // In a real app, you would update your state here
+    const updatedAnswers = [...answers];
+    updatedAnswers[currentQuestion].flagged = !updatedAnswers[currentQuestion].flagged;
+    setAnswers(updatedAnswers);
   };
 
   const goToNextQuestion = () => {
@@ -146,10 +169,33 @@ const TakeQuiz = () => {
     }
   };
 
-  const submitQuiz = () => {
+  const handleSubmitQuiz = () => {
     setIsSubmitting(true);
-    // In a real app, you would submit the answers to your backend here
-    // and redirect to a results page
+    
+    // Simulate API call
+    setTimeout(() => {
+      // Calculate score based on correct answers (in a real app this would be done on the server)
+      const correctCount = Math.floor(Math.random() * (quizData.questions.length + 1)); // For demo purposes
+      const score = Math.round((correctCount / quizData.questions.length) * 100);
+      
+      // Save result to local storage for demo purposes
+      const result = {
+        quizId: quizData.id,
+        score,
+        correctCount,
+        totalQuestions: quizData.questions.length,
+        date: new Date().toISOString(),
+        timeSpent: `${59 - timer.minutes}:${59 - timer.seconds}`
+      };
+      
+      const storedResults = JSON.parse(localStorage.getItem('quizResults') || '[]');
+      localStorage.setItem('quizResults', JSON.stringify([...storedResults, result]));
+      
+      toast.success("¡Cuestionario completado!");
+      
+      // Navigate to quiz detail page
+      navigate(`/dashboard/quizzes/${quizData.id}`);
+    }, 2000);
   };
 
   const currentQuestionData = quizData.questions[currentQuestion];
@@ -159,18 +205,18 @@ const TakeQuiz = () => {
   const isLastQuestion = currentQuestion === quizData.questions.length - 1;
   
   const getFlaggedCount = () => {
-    return quizData.questions.filter(q => q.flagged).length;
+    return answers.filter(a => a.flagged).length;
   };
 
   const getAnsweredCount = () => {
-    return quizData.questions.filter(q => {
-      if (q.type === "single") return q.answer !== null;
-      if (q.type === "multiple") return (q.answers && q.answers.length > 0) || false;
+    return answers.filter(a => {
+      if (a.type === "single") return a.answer !== null;
+      if (a.type === "multiple") return (a.answers && a.answers.length > 0);
       return false;
     }).length;
   };
 
-  // If submitting, show a loading state (in a real app this would redirect to results)
+  // If submitting, show a loading state
   if (isSubmitting) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
@@ -234,11 +280,11 @@ const TakeQuiz = () => {
             <Button
               variant="outline"
               size="sm"
-              className={`flex items-center gap-1 ${currentQuestionData.flagged ? "bg-amber-50 text-amber-600 hover:bg-amber-100" : ""}`}
+              className={`flex items-center gap-1 ${answers[currentQuestion]?.flagged ? "bg-amber-50 text-amber-600 hover:bg-amber-100" : ""}`}
               onClick={toggleFlagged}
             >
               <Flag size={14} />
-              {currentQuestionData.flagged ? "Desmarca" : "Marca"} para revisar
+              {answers[currentQuestion]?.flagged ? "Desmarca" : "Marca"} para revisar
             </Button>
           </div>
           
@@ -246,8 +292,8 @@ const TakeQuiz = () => {
           
           {currentQuestionData.type === "single" ? (
             <RadioGroup 
-              value={currentQuestionData.answer || ""} 
-              onValueChange={(value) => handleSingleAnswerChange(currentQuestionData.id, value)}
+              value={answers[currentQuestion]?.answer || ""} 
+              onValueChange={(value) => handleSingleAnswerChange(value)}
               className="space-y-3"
             >
               {currentQuestionData.options.map((option) => (
@@ -265,9 +311,9 @@ const TakeQuiz = () => {
                 <div key={option.id} className="flex items-start space-x-3 border rounded-lg p-3 hover:bg-accent">
                   <Checkbox 
                     id={`q${currentQuestionData.id}-${option.id}`}
-                    checked={(currentQuestionData.answers || []).includes(option.id)}
+                    checked={(answers[currentQuestion]?.answers || []).includes(option.id)}
                     onCheckedChange={(checked) => 
-                      handleMultipleAnswerChange(currentQuestionData.id, option.id, checked as boolean)
+                      handleMultipleAnswerChange(option.id, checked as boolean)
                     }
                   />
                   <Label htmlFor={`q${currentQuestionData.id}-${option.id}`} className="flex-1 pt-0.5 cursor-pointer">
@@ -275,6 +321,13 @@ const TakeQuiz = () => {
                   </Label>
                 </div>
               ))}
+            </div>
+          )}
+          
+          {timer.minutes < 5 && (
+            <div className="mt-6 flex items-center gap-2 text-amber-600 bg-amber-50 p-3 rounded-md">
+              <AlertTriangle size={18} />
+              <span className="text-sm font-medium">¡Menos de 5 minutos restantes! Por favor finaliza pronto.</span>
             </div>
           )}
         </CardContent>
@@ -292,7 +345,7 @@ const TakeQuiz = () => {
         
         <div className="flex gap-2">
           {isLastQuestion ? (
-            <Button onClick={submitQuiz} className="flex gap-2">
+            <Button onClick={handleSubmitQuiz} className="flex gap-2 bg-green-600 hover:bg-green-700">
               <Save size={16} /> Finalizar cuestionario
             </Button>
           ) : (

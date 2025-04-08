@@ -1,13 +1,18 @@
 
 import React from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Clock, FileQuestion, Trophy, AlertTriangle, Award } from "lucide-react";
+import { Clock, FileQuestion, Trophy, AlertTriangle, Award, ArrowLeft } from "lucide-react";
 
 const QuizDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+
+  // Check for existing quiz results in localStorage (for demo purposes)
+  const storedResults = JSON.parse(localStorage.getItem('quizResults') || '[]');
+  const quizAttempts = storedResults.filter((r: any) => r.quizId === parseInt(id || "1"));
 
   // Mock data for the quiz
   const quizData = {
@@ -17,10 +22,10 @@ const QuizDetail = () => {
     category: "Project Management",
     questions: 50,
     timeLimit: 60, // minutes
-    attempts: 0,
+    attempts: quizAttempts.length,
     difficulty: "Principiante",
-    lastScore: null,
-    bestScore: null,
+    lastScore: quizAttempts.length > 0 ? quizAttempts[0].score : null,
+    bestScore: quizAttempts.length > 0 ? Math.max(...quizAttempts.map((a: any) => a.score)) : null,
     passingScore: 70,
     topics: [
       "Iniciación de proyectos",
@@ -29,51 +34,58 @@ const QuizDetail = () => {
       "Monitoreo y control",
       "Cierre de proyectos"
     ],
-    recentAttempts: []
+    image: "https://placehold.co/1200x200?text=PM+Fundamentals",
+    recentAttempts: quizAttempts
   };
 
-  // Mock data for recent attempts (if any)
+  // Check if the quiz has been attempted
   const hasAttempts = quizData.attempts > 0;
-  const recentAttempts = hasAttempts ? [
-    {
-      id: 1,
-      date: "15 May, 2023",
-      score: 68,
-      timeSpent: "52:15",
-      correctAnswers: 34,
-      wrongAnswers: 16
-    },
-    {
-      id: 2,
-      date: "12 May, 2023",
-      score: 64,
-      timeSpent: "55:20",
-      correctAnswers: 32,
-      wrongAnswers: 18
-    },
-    {
-      id: 3,
-      date: "10 May, 2023",
-      score: 72,
-      timeSpent: "58:05",
-      correctAnswers: 36,
-      wrongAnswers: 14
-    }
-  ] : [];
+  
+  const startQuiz = () => {
+    navigate(`/dashboard/quizzes/${id}/take`);
+  };
+
+  const goBack = () => {
+    navigate('/dashboard/quizzes');
+  };
+
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    };
+    return new Date(dateString).toLocaleDateString('es-ES', options);
+  };
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">{quizData.title}</h1>
-          <p className="text-muted-foreground">{quizData.category}</p>
-        </div>
-        
-        <div className="flex items-center gap-2">
-          <Button variant="outline">Ver instrucciones</Button>
-          <Button>
-            {hasAttempts ? "Reintentar cuestionario" : "Comenzar cuestionario"} 
+      {/* Quiz Banner */}
+      <div className="relative w-full h-48 rounded-lg overflow-hidden mb-6">
+        <img 
+          src={quizData.image} 
+          alt={quizData.title}
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6">
+          <Button 
+            variant="outline" 
+            size="icon" 
+            className="absolute top-4 left-4 bg-black/40 hover:bg-black/60 text-white border-white/20"
+            onClick={goBack}
+          >
+            <ArrowLeft size={20} />
           </Button>
+          <h1 className="text-2xl md:text-3xl font-bold text-white">{quizData.title}</h1>
+          <div className="flex items-center gap-2 text-white/80 text-sm mt-2">
+            <span className="bg-primary/80 text-white px-2 py-0.5 rounded text-xs font-medium">
+              {quizData.category}
+            </span>
+            <span>•</span>
+            <span>{quizData.difficulty}</span>
+          </div>
         </div>
       </div>
 
@@ -137,10 +149,10 @@ const QuizDetail = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {recentAttempts.map((attempt) => (
-                    <div key={attempt.id} className="border rounded-lg p-4">
+                  {quizData.recentAttempts.map((attempt: any, index: number) => (
+                    <div key={index} className="border rounded-lg p-4">
                       <div className="flex flex-wrap justify-between items-center mb-3">
-                        <div className="font-medium">{attempt.date}</div>
+                        <div className="font-medium">{formatDate(attempt.date)}</div>
                         <div className={`font-medium ${
                           attempt.score >= quizData.passingScore ? "text-green-600" : "text-red-600"
                         }`}>
@@ -159,11 +171,11 @@ const QuizDetail = () => {
                         </div>
                         <div className="flex items-center gap-2">
                           <span className="text-green-600">✓</span>
-                          <span>Correctas: {attempt.correctAnswers}</span>
+                          <span>Correctas: {attempt.correctCount}</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <span className="text-red-600">✗</span>
-                          <span>Incorrectas: {attempt.wrongAnswers}</span>
+                          <span>Incorrectas: {attempt.totalQuestions - attempt.correctCount}</span>
                         </div>
                       </div>
                       
@@ -226,7 +238,11 @@ const QuizDetail = () => {
                 </div>
               </div>
               
-              <Button className="w-full">
+              <Button 
+                className="w-full"
+                onClick={startQuiz}
+                variant={hasAttempts ? "outline" : "default"}
+              >
                 {hasAttempts ? "Reintentar cuestionario" : "Comenzar cuestionario"}
               </Button>
               

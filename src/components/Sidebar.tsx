@@ -9,6 +9,7 @@ import {
   Settings 
 } from "lucide-react";
 import Logo from "./Logo";
+import LogoIcon from "./LogoIcon";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -32,7 +33,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
         {isOpen ? (
           <Logo />
         ) : (
-          <span className="text-brand-blue font-bold text-xl">PE</span>
+          <LogoIcon />
         )}
       </div>
 
@@ -42,17 +43,17 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
         <div className="mb-6">
           {isOpen && <div className="sidebar-category">Main Menu</div>}
           
-          <NavLink to="/dashboard" className={`sidebar-link ${isActive("/dashboard") && !isOpen ? "bg-sidebar-accent" : ""}`}>
+          <NavLink to="/dashboard" className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}>
             <LayoutDashboard size={20} />
             {isOpen && <span>Panel de control</span>}
           </NavLink>
           
-          <NavLink to="/dashboard/courses" className={`sidebar-link ${isActive("/dashboard/courses") && !isOpen ? "bg-sidebar-accent" : ""}`}>
+          <NavLink to="/dashboard/courses" className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}>
             <BookOpen size={20} />
             {isOpen && <span>Cursos</span>}
           </NavLink>
           
-          <NavLink to="/dashboard/quizzes" className={`sidebar-link ${isActive("/dashboard/quizzes") && !isOpen ? "bg-sidebar-accent" : ""}`}>
+          <NavLink to="/dashboard/quizzes" className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}>
             <FileQuestion size={20} />
             {isOpen && <span>Cuestionarios</span>}
           </NavLink>
@@ -62,22 +63,22 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
         <div className="mb-6">
           {isOpen && <div className="sidebar-category">Admin</div>}
           
-          <NavLink to="/dashboard/admin/users" className={`sidebar-link ${isActive("/dashboard/admin/users") && !isOpen ? "bg-sidebar-accent" : ""}`}>
+          <NavLink to="/dashboard/admin/users" className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}>
             <Users size={20} />
             {isOpen && <span>Gestión de usuarios</span>}
           </NavLink>
           
-          <NavLink to="/dashboard/admin/courses" className={`sidebar-link ${isActive("/dashboard/admin/courses") && !isOpen ? "bg-sidebar-accent" : ""}`}>
+          <NavLink to="/dashboard/admin/courses" className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}>
             <BookOpen size={20} />
             {isOpen && <span>Gestión de cursos</span>}
           </NavLink>
           
-          <NavLink to="/dashboard/admin/quizzes" className={`sidebar-link ${isActive("/dashboard/admin/quizzes") && !isOpen ? "bg-sidebar-accent" : ""}`}>
+          <NavLink to="/dashboard/admin/quizzes" className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}>
             <FileQuestion size={20} />
             {isOpen && <span>Gestión de cuestionarios</span>}
           </NavLink>
           
-          <NavLink to="/dashboard/admin/settings" className={`sidebar-link ${isActive("/dashboard/admin/settings") && !isOpen ? "bg-sidebar-accent" : ""}`}>
+          <NavLink to="/dashboard/admin/settings" className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}>
             <Settings size={20} />
             {isOpen && <span>Configuración del sistema</span>}
           </NavLink>
@@ -86,7 +87,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
 
       {/* Footer */}
       <div className="p-4 text-xs text-sidebar-foreground/60">
-        {isOpen && <div>© 2025 Inflex. Todos los derechos reservados.</div>}
+        {isOpen && <div>Todos los derechos reservados. 2025 Inflex</div>}
       </div>
     </aside>
   );
