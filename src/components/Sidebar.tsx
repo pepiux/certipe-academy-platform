@@ -26,7 +26,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
     <aside 
       className={`${
         isOpen ? "w-64" : "w-16"
-      } bg-sidebar-background transition-all duration-300 flex flex-col h-screen sticky top-0 overflow-y-auto`}
+      } bg-sidebar transition-all duration-300 flex flex-col h-screen sticky top-0 overflow-y-auto`}
     >
       {/* Logo */}
       <div className="p-4 flex items-center justify-center md:justify-start">
@@ -87,7 +87,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
 
       {/* Footer */}
       <div className="p-4 text-xs text-sidebar-muted-foreground">
-        {isOpen && <div>2025 Inflex. Todos los derechos reservados.</div>}
+        {isOpen && <div>Todos los derechos reservados. 2025 Inflex</div>}
       </div>
     </aside>
   );

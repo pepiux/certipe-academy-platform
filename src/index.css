@@ -35,7 +35,7 @@
 
     --radius: 0.5rem;
 
-    --sidebar-background: 222 47% 11%;
+    --sidebar: 222 47% 11%;
     --sidebar-foreground: 210 40% 98%;
     --sidebar-muted-foreground: 210 40% 70%;
     --sidebar-primary: 210 100% 50%;
@@ -83,7 +83,7 @@
     --toast-foreground: 210 40% 98%;
     --toast-border: 217.2 32.6% 25%;
 
-    --sidebar-background: 224 71% 4%;
+    --sidebar: 224 71% 4%;
     --sidebar-foreground: 210 40% 98%;
     --sidebar-muted-foreground: 215 20.2% 65.1%;
     --sidebar-accent: 217.2 32.6% 17.5%;
