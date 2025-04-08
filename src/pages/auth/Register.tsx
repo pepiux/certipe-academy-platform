@@ -196,7 +196,7 @@ const Register = () => {
             variant="outline"
             onClick={() => handleSocialLogin("Microsoft")}
           >
-            <img src="https://www.svgrepo.com/show/303121/microsoft-logo.svg" alt="Microsoft" className="w-5 h-5" />
+            <img src="https://www.svgrepo.com/show/303223/microsoft-logo.svg" alt="Microsoft" className="w-5 h-5" />
           </Button>
         </div>
       </div>
