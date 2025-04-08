@@ -7,7 +7,19 @@ import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Clock, Flag, ArrowLeft, ArrowRight, Save, AlertTriangle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { Clock, Flag, ArrowLeft, ArrowRight, Save, AlertTriangle, CheckCircle } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { toast } from "sonner";
 
 const TakeQuiz = () => {
@@ -18,80 +30,30 @@ const TakeQuiz = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [answers, setAnswers] = useState<any[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [showFinishDialog, setShowFinishDialog] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const questionsPerPage = 25;
 
   // Mock quiz data
   const quizData = {
     id: parseInt(id || "1"),
     title: "Fundamentos de la Gestión de Proyectos",
     timeLimit: 60, // minutes
-    totalQuestions: 50,
-    questions: [
-      {
-        id: 1,
-        text: "¿Cuál de las siguientes NO es una restricción tradicional del triángulo de gestión de proyectos?",
-        type: "single",
-        options: [
-          { id: "a", text: "Alcance" },
-          { id: "b", text: "Tiempo" },
-          { id: "c", text: "Costo" },
-          { id: "d", text: "Recursos Humanos" }
-        ],
-        answer: null,
-        flagged: false
-      },
-      {
-        id: 2,
-        text: "¿Cuál de estos documentos define formalmente la existencia de un proyecto y proporciona al gerente de proyecto la autoridad para usar recursos organizacionales en las actividades del proyecto?",
-        type: "single",
-        options: [
-          { id: "a", text: "Acta de Constitución del Proyecto" },
-          { id: "b", text: "Plan de Gestión del Proyecto" },
-          { id: "c", text: "Declaración del Alcance" },
-          { id: "d", text: "Estructura de Desglose del Trabajo (EDT)" }
-        ],
-        answer: null,
-        flagged: false
-      },
-      {
-        id: 3,
-        text: "Seleccione las herramientas que se utilizan comúnmente en la estimación de la duración de las tareas en la gestión de proyectos:",
-        type: "multiple",
-        options: [
-          { id: "a", text: "Estimación por tres valores (PERT)" },
-          { id: "b", text: "Método de la ruta crítica" },
-          { id: "c", text: "Análisis de reservas" },
-          { id: "d", text: "Juicio de expertos" }
-        ],
-        answers: [],
-        flagged: true
-      },
-      {
-        id: 4,
-        text: "¿Cuál de las siguientes NO es una técnica de resolución de conflictos en la gestión de proyectos?",
-        type: "single",
-        options: [
-          { id: "a", text: "Evitar" },
-          { id: "b", text: "Acomodar" },
-          { id: "c", text: "Forzar" },
-          { id: "d", text: "Delegar" }
-        ],
-        answer: null,
-        flagged: false
-      },
-      {
-        id: 5,
-        text: "En la gestión de proyectos ágiles, ¿qué es un 'sprint'?",
-        type: "single",
-        options: [
-          { id: "a", text: "Una reunión diaria donde el equipo reporta progreso" },
-          { id: "b", text: "Un período fijo de tiempo en el que se completa trabajo específico" },
-          { id: "c", text: "Una técnica para priorizar las características del producto" },
-          { id: "d", text: "La fase final de un proyecto cuando se cumple el plazo" }
-        ],
-        answer: null,
-        flagged: false
-      },
-    ]
+    totalQuestions: 75,
+    questions: Array.from({ length: 75 }, (_, i) => ({
+      id: i + 1,
+      text: `Pregunta ${i + 1}: Esta es una pregunta de ejemplo para el cuestionario sobre fundamentos de gestión de proyectos`,
+      type: i % 5 === 0 ? "multiple" : "single",
+      options: [
+        { id: "a", text: `Opción A para la pregunta ${i + 1}` },
+        { id: "b", text: `Opción B para la pregunta ${i + 1}` },
+        { id: "c", text: `Opción C para la pregunta ${i + 1}` },
+        { id: "d", text: `Opción D para la pregunta ${i + 1}` }
+      ],
+      answer: null,
+      answers: [],
+      flagged: false
+    }))
   };
 
   // Initialize answers state from quiz questions
@@ -160,13 +122,40 @@ const TakeQuiz = () => {
   const goToNextQuestion = () => {
     if (currentQuestion < quizData.questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
+      // Update page if necessary
+      const nextPage = Math.floor(currentQuestion / questionsPerPage) + 1;
+      if (nextPage !== currentPage) {
+        setCurrentPage(nextPage);
+      }
     }
   };
 
   const goToPreviousQuestion = () => {
     if (currentQuestion > 0) {
       setCurrentQuestion(currentQuestion - 1);
+      // Update page if necessary
+      const prevPage = Math.floor((currentQuestion - 1) / questionsPerPage) + 1;
+      if (prevPage !== currentPage) {
+        setCurrentPage(prevPage);
+      }
     }
+  };
+
+  const goToQuestion = (questionIndex: number) => {
+    setCurrentQuestion(questionIndex);
+  };
+
+  const handleFinishClick = () => {
+    setShowFinishDialog(true);
+  };
+
+  const handleCancelFinish = () => {
+    setShowFinishDialog(false);
+  };
+
+  const handleConfirmFinish = () => {
+    setShowFinishDialog(false);
+    handleSubmitQuiz();
   };
 
   const handleSubmitQuiz = () => {
@@ -216,6 +205,13 @@ const TakeQuiz = () => {
     }).length;
   };
 
+  // Calculate pagination
+  const totalPages = Math.ceil(quizData.totalQuestions / questionsPerPage);
+  const currentPageQuestions = quizData.questions.slice(
+    (currentPage - 1) * questionsPerPage, 
+    currentPage * questionsPerPage
+  );
+
   // If submitting, show a loading state
   if (isSubmitting) {
     return (
@@ -238,9 +234,9 @@ const TakeQuiz = () => {
       {/* Quiz header with timer and progress */}
       <div className="sticky top-0 z-10 bg-background py-2 border-b">
         <div className="flex flex-wrap justify-between items-center gap-4">
-          <div>
+          <div className="flex flex-col">
             <h1 className="text-lg font-semibold">{quizData.title}</h1>
-            <div className="flex gap-4 text-sm">
+            <div className="flex gap-4 text-sm items-center">
               <div className="flex gap-1 items-center">
                 <span className="text-muted-foreground">Pregunta:</span>
                 <span className="font-medium">{currentQuestion + 1} de {quizData.totalQuestions}</span>
@@ -250,7 +246,7 @@ const TakeQuiz = () => {
                 <span className="font-medium">{getAnsweredCount()} de {quizData.totalQuestions}</span>
               </div>
               <div className="flex gap-1 items-center">
-                <Flag size={14} className="text-amber-500" />
+                <Flag size={14} className="text-red-500" />
                 <span className="font-medium">{getFlaggedCount()} marcadas</span>
               </div>
             </div>
@@ -277,15 +273,24 @@ const TakeQuiz = () => {
         <CardContent className="p-6">
           <div className="flex justify-between items-start mb-4">
             <div className="font-medium">Pregunta {currentQuestion + 1}</div>
-            <Button
-              variant="outline"
-              size="sm"
-              className={`flex items-center gap-1 ${answers[currentQuestion]?.flagged ? "bg-amber-50 text-amber-600 hover:bg-amber-100" : ""}`}
-              onClick={toggleFlagged}
-            >
-              <Flag size={14} />
-              {answers[currentQuestion]?.flagged ? "Desmarca" : "Marca"} para revisar
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className={`flex items-center gap-1 ${answers[currentQuestion]?.flagged ? "bg-red-50 text-red-600 hover:bg-red-100" : ""}`}
+                    onClick={toggleFlagged}
+                  >
+                    <Flag size={14} />
+                    {answers[currentQuestion]?.flagged ? "Desmarca" : ""}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{answers[currentQuestion]?.flagged ? "Desmarcar" : "Marcar"} para revisar</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
           
           <div className="text-lg mb-6">{currentQuestionData.text}</div>
@@ -333,28 +338,162 @@ const TakeQuiz = () => {
         </CardContent>
       </Card>
 
+      {/* Question navigation grid */}
+      <Card>
+        <CardContent className="p-4">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="font-medium">Navegación de preguntas</h3>
+            <div className="text-sm text-muted-foreground">
+              <span>Página {currentPage} de {totalPages}</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-5 gap-2 mb-4">
+            {currentPageQuestions.map((question, idx) => {
+              const questionIndex = (currentPage - 1) * questionsPerPage + idx;
+              const answer = answers[questionIndex];
+              const isAnswered = answer?.type === "single" 
+                ? answer.answer !== null 
+                : (answer?.answers && answer?.answers.length > 0);
+              const isFlagged = answer?.flagged;
+              const isSelected = currentQuestion === questionIndex;
+
+              return (
+                <Button 
+                  key={question.id}
+                  className={`
+                    h-10 w-10 p-0 font-normal
+                    ${isSelected ? "border-2 border-primary" : ""}
+                    ${isAnswered ? "bg-green-100 hover:bg-green-200 text-green-800" : "bg-gray-100 hover:bg-gray-200"}
+                    ${isFlagged ? "ring-2 ring-red-500" : ""}
+                  `}
+                  onClick={() => goToQuestion(questionIndex)}
+                  variant="outline"
+                >
+                  {question.id}
+                  {isFlagged && <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>}
+                </Button>
+              );
+            })}
+          </div>
+
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious 
+                  href="#" 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (currentPage > 1) setCurrentPage(currentPage - 1);
+                  }} 
+                  className={`${currentPage === 1 ? "pointer-events-none opacity-50" : ""}`}
+                />
+              </PaginationItem>
+              
+              {Array.from({ length: totalPages }, (_, i) => (
+                <PaginationItem key={i} className={`${totalPages > 7 && (i > 2 && i < totalPages - 3) && i !== Math.floor(currentPage - 1) ? "hidden" : ""} ${i === 4 && currentPage > 4 ? "block" : ""}`}>
+                  {totalPages > 7 && i === 3 && currentPage > 5 ? (
+                    <PaginationEllipsis />
+                  ) : totalPages > 7 && i === totalPages - 4 && currentPage < totalPages - 4 ? (
+                    <PaginationEllipsis />
+                  ) : (
+                    <PaginationLink 
+                      href="#" 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setCurrentPage(i + 1);
+                      }}
+                      isActive={currentPage === i + 1}
+                    >
+                      {i + 1}
+                    </PaginationLink>
+                  )}
+                </PaginationItem>
+              ))}
+              
+              <PaginationItem>
+                <PaginationNext 
+                  href="#" 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+                  }}
+                  className={`${currentPage === totalPages ? "pointer-events-none opacity-50" : ""}`}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </CardContent>
+      </Card>
+
       {/* Navigation buttons */}
       <div className="flex justify-between">
         <Button
           variant="outline"
           onClick={goToPreviousQuestion}
           disabled={isFirstQuestion}
+          className="flex items-center"
         >
           <ArrowLeft className="mr-2 h-4 w-4" /> Anterior
         </Button>
         
         <div className="flex gap-2">
-          {isLastQuestion ? (
-            <Button onClick={handleSubmitQuiz} className="flex gap-2 bg-green-600 hover:bg-green-700">
-              <Save size={16} /> Finalizar cuestionario
-            </Button>
-          ) : (
-            <Button onClick={goToNextQuestion}>
+          <Button 
+            onClick={handleFinishClick} 
+            className="flex gap-2 bg-green-600 hover:bg-green-700"
+          >
+            <CheckCircle size={16} /> Finalizar cuestionario
+          </Button>
+          
+          {!isLastQuestion && (
+            <Button onClick={goToNextQuestion} className="flex items-center">
               Siguiente <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           )}
         </div>
       </div>
+
+      {/* Confirmation Dialog */}
+      <Dialog open={showFinishDialog} onOpenChange={setShowFinishDialog}>
+        <DialogContent>
+          <DialogTitle>Finalizar cuestionario</DialogTitle>
+          <DialogDescription>
+            <p className="mb-4">¿Estás seguro de que deseas finalizar este cuestionario?</p>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="flex flex-col gap-1">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Total de preguntas</span>
+                  <span className="font-medium">{quizData.totalQuestions}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Respondidas</span>
+                  <span className="font-medium">{getAnsweredCount()}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Sin responder</span>
+                  <span className="font-medium">{quizData.totalQuestions - getAnsweredCount()}</span>
+                </div>
+              </div>
+              <div className="flex flex-col gap-1">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Preguntas marcadas</span>
+                  <span className="font-medium">{getFlaggedCount()}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Tiempo restante</span>
+                  <span className="font-medium">{String(timer.minutes).padStart(2, '0')}:{String(timer.seconds).padStart(2, '0')}</span>
+                </div>
+              </div>
+            </div>
+          </DialogDescription>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleCancelFinish}>Cancelar</Button>
+            <Button className="bg-green-600 hover:bg-green-700" onClick={handleConfirmFinish}>
+              Confirmar y finalizar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

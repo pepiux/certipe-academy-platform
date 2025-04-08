@@ -92,6 +92,7 @@ const Login = () => {
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
             >
               {showPassword ? (
                 <EyeOffIcon size={18} />
@@ -128,6 +129,7 @@ const Login = () => {
             type="button"
             variant="outline"
             onClick={() => handleSocialLogin("Google")}
+            className="flex items-center justify-center"
           >
             <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
           </Button>
@@ -135,6 +137,7 @@ const Login = () => {
             type="button"
             variant="outline"
             onClick={() => handleSocialLogin("Facebook")}
+            className="flex items-center justify-center"
           >
             <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="Facebook" className="w-5 h-5" />
           </Button>
@@ -142,8 +145,9 @@ const Login = () => {
             type="button"
             variant="outline"
             onClick={() => handleSocialLogin("Microsoft")}
+            className="flex items-center justify-center"
           >
-            <img src="https://www.svgrepo.com/show/452115/microsoft.svg" alt="Microsoft" className="w-5 h-5" />
+            <img src="https://www.svgrepo.com/show/303223/microsoft-logo.svg" alt="Microsoft" className="w-5 h-5" />
           </Button>
         </div>
       </div>

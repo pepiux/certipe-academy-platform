@@ -1,180 +1,176 @@
 
 import React, { useState } from "react";
-import { 
-  Bell, 
-  Search, 
-  Sun, 
-  Moon, 
+import { useNavigate } from "react-router-dom";
+import {
+  Bell,
   Menu,
-  Globe,
-  User,
+  Sun,
+  Moon,
+  Search,
   Settings,
+  User,
   LogOut,
-  Check
+  MessageSquare
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useTheme } from "@/components/theme-provider";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface HeaderProps {
   toggleSidebar: () => void;
 }
 
-interface Notification {
+type Notification = {
   id: number;
   title: string;
   message: string;
   time: string;
   read: boolean;
-}
+};
 
 const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
-  const { theme, setTheme } = useTheme();
-  const [language, setLanguage] = useState("es");
+  const { setTheme, theme } = useTheme();
+  const navigate = useNavigate();
+  
   const [notifications, setNotifications] = useState<Notification[]>([
     {
       id: 1,
       title: "Nuevo curso disponible",
-      message: "Se ha añadido un nuevo curso de Gestión Ágil.",
+      message: "Se ha añadido el curso 'Avanzado en Gestión de Riesgos'",
       time: "Hace 5 minutos",
       read: false
     },
     {
       id: 2,
       title: "Recordatorio de cuestionario",
-      message: "Tienes un cuestionario pendiente que vence mañana.",
+      message: "Tienes un cuestionario programado para mañana",
       time: "Hace 2 horas",
       read: false
     },
     {
       id: 3,
-      title: "Actualización de perfil",
-      message: "Tu perfil ha sido actualizado correctamente.",
-      time: "Ayer",
+      title: "Certificado listo",
+      message: "Tu certificado de 'Fundamentos de Gestión de Proyectos' está listo",
+      time: "Hace 1 día",
       read: true
     }
   ]);
-
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
+  
+  const unreadCount = notifications.filter(n => !n.read).length;
+  
+  const handleLogout = () => {
+    toast.info("Cerrando sesión...");
+    setTimeout(() => {
+      navigate("/");
+    }, 1000);
   };
-
-  const toggleLanguage = () => {
-    setLanguage(language === "es" ? "en" : "es");
-  };
-
+  
   const markAsRead = (id: number) => {
-    setNotifications(
-      notifications.map(notification => 
-        notification.id === id ? { ...notification, read: true } : notification
+    setNotifications(prevNotifications => 
+      prevNotifications.map(n => 
+        n.id === id ? { ...n, read: true } : n
       )
     );
   };
-
+  
   const markAllAsRead = () => {
-    setNotifications(
-      notifications.map(notification => ({ ...notification, read: true }))
+    setNotifications(prevNotifications => 
+      prevNotifications.map(n => ({ ...n, read: true }))
     );
+    toast.success("Todas las notificaciones marcadas como leídas");
   };
 
-  const unreadCount = notifications.filter(n => !n.read).length;
-
   return (
-    <header className="bg-background border-b px-4 py-3 flex items-center justify-between">
-      {/* Left section */}
-      <div className="flex items-center gap-4">
+    <header className="sticky top-0 z-10 border-b bg-background flex items-center justify-between h-16 px-4">
+      <div className="flex items-center gap-2">
         <Button variant="ghost" size="icon" onClick={toggleSidebar}>
-          <Menu size={20} />
+          <Menu className="h-5 w-5" />
+          <span className="sr-only">Toggle menu</span>
         </Button>
         
-        <div className="relative hidden md:block">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+        <div className="relative w-72 max-w-sm hidden md:flex">
+          <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            type="search"
-            placeholder="Buscar en todo el sistema..."
-            className="w-64 pl-8 md:w-80 lg:w-96 bg-secondary/50"
+            placeholder="Buscar..."
+            className="pl-8 bg-muted/30 border-muted focus-visible:ring-0"
           />
         </div>
       </div>
-
-      {/* Right section */}
+      
       <div className="flex items-center gap-2">
-        {/* Language selector */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-muted-foreground"
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+        >
+          {theme === "dark" ? (
+            <Sun className="h-5 w-5" />
+          ) : (
+            <Moon className="h-5 w-5" />
+          )}
+          <span className="sr-only">Toggle theme</span>
+        </Button>
+        
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <Globe size={20} />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setLanguage("es")}>
-              Español {language === "es" && <Check className="ml-2 h-4 w-4" />}
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setLanguage("en")}>
-              English {language === "en" && <Check className="ml-2 h-4 w-4" />}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-        {/* Theme toggle */}
-        <Button variant="ghost" size="icon" onClick={toggleTheme}>
-          {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
-        </Button>
-
-        {/* Notifications */}
-        <Popover>
-          <PopoverTrigger asChild>
             <Button variant="ghost" size="icon" className="relative">
-              <Bell size={20} />
+              <Bell className="h-5 w-5" />
               {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] text-white">
+                <span className="absolute top-0 right-0 h-4 w-4 rounded-full bg-red-500 text-[10px] font-medium text-white flex items-center justify-center">
                   {unreadCount}
                 </span>
               )}
+              <span className="sr-only">Notifications</span>
             </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-80 p-0" align="end">
-            <div className="flex items-center justify-between p-4 border-b">
-              <h3 className="font-medium">Notificaciones</h3>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-80">
+            <DropdownMenuLabel className="flex justify-between items-center">
+              <span>Notificaciones</span>
               {unreadCount > 0 && (
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={markAllAsRead}
-                  className="text-xs"
-                >
+                <Button variant="ghost" size="sm" onClick={markAllAsRead} className="text-xs h-7">
                   Marcar todo como leído
                 </Button>
               )}
-            </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
             <div className="max-h-[300px] overflow-auto">
               {notifications.length > 0 ? (
-                notifications.map(notification => (
-                  <div 
-                    key={notification.id} 
-                    className={`p-4 border-b last:border-b-0 ${notification.read ? '' : 'bg-primary/5'}`}
-                    onClick={() => markAsRead(notification.id)}
-                  >
-                    <div className="flex justify-between items-start">
-                      <h4 className="font-medium text-sm">{notification.title}</h4>
-                      {!notification.read && <Badge variant="outline" className="bg-primary/10 text-primary text-[10px]">Nueva</Badge>}
+                notifications.map((notification) => (
+                  <DropdownMenuItem key={notification.id} className="cursor-pointer flex flex-col items-start p-3">
+                    <div className="flex justify-between w-full">
+                      <span className={`font-medium ${notification.read ? 'text-muted-foreground' : 'text-foreground'}`}>
+                        {notification.title}
+                      </span>
+                      {!notification.read && (
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-6 px-2 text-xs"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            markAsRead(notification.id);
+                          }}
+                        >
+                          Leído
+                        </Button>
+                      )}
                     </div>
-                    <p className="text-sm text-muted-foreground mt-1">{notification.message}</p>
-                    <p className="text-xs text-muted-foreground mt-2">{notification.time}</p>
-                  </div>
+                    <span className={`text-sm ${notification.read ? 'text-muted-foreground' : 'text-foreground'}`}>
+                      {notification.message}
+                    </span>
+                    <span className="text-xs text-muted-foreground mt-1">{notification.time}</span>
+                  </DropdownMenuItem>
                 ))
               ) : (
                 <div className="p-4 text-center text-muted-foreground">
@@ -182,42 +178,42 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                 </div>
               )}
             </div>
-            <div className="p-2 border-t text-center">
-              <Button variant="ghost" size="sm" className="text-xs w-full">
-                Ver todas las notificaciones
-              </Button>
-            </div>
-          </PopoverContent>
-        </Popover>
-
-        {/* User menu */}
+          </DropdownMenuContent>
+        </DropdownMenu>
+        
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
-                <User size={16} />
-              </div>
+            <Button variant="ghost" className="relative h-8 w-8 rounded-full" size="icon">
+              <Avatar className="h-8 w-8">
+                <AvatarImage src="https://github.com/shadcn.png" alt="user" />
+                <AvatarFallback>AD</AvatarFallback>
+              </Avatar>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <div className="px-3 py-2">
-              <div className="font-medium">John Doe</div>
-              <div className="text-xs text-muted-foreground">john.doe@example.com</div>
-            </div>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel className="font-normal">
+              <div className="flex flex-col space-y-1">
+                <p className="text-sm font-medium leading-none">Admin User</p>
+                <p className="text-xs leading-none text-muted-foreground">admin@example.com</p>
+              </div>
+            </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <a href="/dashboard/profile" className="cursor-pointer flex items-center gap-2">
-                <User size={16} /> Mi Perfil
-              </a>
+            <DropdownMenuItem onClick={() => navigate("/dashboard/profile")}>
+              <User className="mr-2 h-4 w-4" />
+              <span>Mi perfil</span>
             </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <a href="/dashboard/admin/settings" className="cursor-pointer flex items-center gap-2">
-                <Settings size={16} /> Configuración
-              </a>
+            <DropdownMenuItem onClick={() => navigate("/dashboard/admin/settings")}>
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Configuración</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <MessageSquare className="mr-2 h-4 w-4" />
+              <span>Soporte</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer flex items-center gap-2 text-destructive">
-              <LogOut size={16} /> Cerrar sesión
+            <DropdownMenuItem onClick={handleLogout}>
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>Cerrar sesión</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
