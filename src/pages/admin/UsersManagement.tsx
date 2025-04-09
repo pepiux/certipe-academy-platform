@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -282,13 +281,13 @@ const UsersManagement = () => {
           break;
         case 'activate':
           await supabase.auth.admin.updateUserById(userId, {
-            banned: false
+            user_metadata: { banned: false }
           });
           toast.success(`Usuario ${userName} activado`);
           break;
         case 'suspend':
           await supabase.auth.admin.updateUserById(userId, {
-            banned: true
+            user_metadata: { banned: true }
           });
           toast.warning(`Usuario ${userName} suspendido`);
           break;
