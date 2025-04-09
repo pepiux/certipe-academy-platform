@@ -72,7 +72,7 @@ const formSchema = z.object({
 });
 
 const Profile = () => {
-  const { user, profile, updateProfile } = useAuth();
+  const { user, profile, updateProfile, changeUserPassword } = useAuth();
   const [saving, setSaving] = useState(false);
   
   const form = useForm<z.infer<typeof formSchema>>({
@@ -96,6 +96,11 @@ const Profile = () => {
         last_name: values.last_name,
       });
       
+      // If password fields are filled, change password
+      if (values.current_password && values.new_password) {
+        await changeUserPassword(values.current_password, values.new_password);
+      }
+      
       // Reset password fields
       form.setValue("current_password", "");
       form.setValue("new_password", "");
@@ -104,7 +109,6 @@ const Profile = () => {
       toast.success("Perfil actualizado correctamente");
     } catch (error) {
       console.error("Error saving profile:", error);
-      toast.error("Error al actualizar el perfil");
     } finally {
       setSaving(false);
     }
@@ -145,7 +149,7 @@ const Profile = () => {
                 </Avatar>
                 <div className="text-center">
                   <p className="font-medium">{profile.first_name} {profile.last_name}</p>
-                  <p className="text-sm text-muted-foreground">{user.email}</p>
+                  <p className="text-sm text-muted-foreground">{profile.email}</p>
                 </div>
               </div>
 
@@ -256,7 +260,7 @@ const Profile = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Último acceso</span>
-                <span>{new Date(user.last_sign_in_at || '').toLocaleString()}</span>
+                <span>{new Date(user.created_at || '').toLocaleString()}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Rol</span>

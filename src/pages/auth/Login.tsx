@@ -95,8 +95,6 @@ const Login = () => {
           </form>
         </Form>
 
-        <SocialLogin mode="login" />
-
         <div className="text-center">
           <p className="text-sm text-gray-500">
             ¿No tienes una cuenta?{' '}

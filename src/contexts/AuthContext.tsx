@@ -1,118 +1,87 @@
 
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { Session, User } from '@supabase/supabase-js';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
-
-type Profile = {
-  id: string;
-  first_name: string;
-  last_name: string;
-  avatar_url: string | null;
-  is_admin: boolean;
-  created_at: string;
-  updated_at: string;
-};
+import { toast } from 'sonner';
+import { 
+  signInWithEmail, 
+  signUpWithEmail,
+  fetchProfileByEmail,
+  updateProfileData,
+  changePassword,
+  Profile
+} from '@/utils/customAuthUtils';
 
 type AuthContextType = {
-  user: User | null;
-  session: Session | null;
+  user: Profile | null;
   profile: Profile | null;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, firstName: string, lastName: string) => Promise<void>;
   signOut: () => Promise<void>;
   loading: boolean;
   updateProfile: (data: Partial<Profile>) => Promise<void>;
+  changeUserPassword: (currentPassword: string, newPassword: string) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Nombre de la clave para almacenar la sesión en localStorage
+const SESSION_STORAGE_KEY = 'certipe_auth_session';
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<Profile | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Fetch profile when session changes
-  const fetchProfile = async (userID: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userID)
-        .single();
-      
-      if (error) {
-        console.error('Error fetching profile:', error);
-        return;
-      }
-      
-      setProfile(data as Profile);
-    } catch (error) {
-      console.error('Error in fetchProfile:', error);
-    }
-  };
-
+  // Cargar sesión guardada al iniciar
   useEffect(() => {
-    // Set up auth state change listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, currentSession) => {
-        setSession(currentSession);
-        setUser(currentSession?.user ?? null);
-        
-        if (currentSession?.user) {
-          // Use setTimeout to prevent potential deadlock with Supabase auth
-          setTimeout(() => {
-            fetchProfile(currentSession.user.id);
-          }, 0);
-        } else {
-          setProfile(null);
-        }
-        
-        // When signing in, redirect to dashboard
-        if (event === 'SIGNED_IN') {
-          navigate('/dashboard');
-        }
-        
-        // When signing out, redirect to login page
-        if (event === 'SIGNED_OUT') {
-          navigate('/');
-        }
-      }
-    );
-
-    // THEN check for existing session
-    const initializeAuth = async () => {
+    const loadSession = async () => {
       try {
-        const { data: sessionData } = await supabase.auth.getSession();
-        setSession(sessionData.session);
-        setUser(sessionData.session?.user ?? null);
+        const savedSession = localStorage.getItem(SESSION_STORAGE_KEY);
         
-        if (sessionData.session?.user) {
-          fetchProfile(sessionData.session.user.id);
+        if (savedSession) {
+          const sessionData = JSON.parse(savedSession);
+          const email = sessionData.email;
+          
+          if (email) {
+            const userProfile = await fetchProfileByEmail(email);
+            if (userProfile) {
+              setUser(userProfile);
+              setProfile(userProfile);
+              navigate('/dashboard');
+            } else {
+              // Sesión inválida o expirada
+              localStorage.removeItem(SESSION_STORAGE_KEY);
+            }
+          }
         }
-        
-        setLoading(false);
       } catch (error) {
-        console.error('Error initializing auth:', error);
+        console.error('Error loading session:', error);
+        localStorage.removeItem(SESSION_STORAGE_KEY);
+      } finally {
         setLoading(false);
       }
     };
 
-    initializeAuth();
-
-    return () => {
-      subscription.unsubscribe();
-    };
+    loadSession();
   }, [navigate]);
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
-      toast.success('Inicio de sesión exitoso');
+      const userProfile = await signInWithEmail(email, password);
+      if (userProfile) {
+        setUser(userProfile);
+        setProfile(userProfile);
+        
+        // Guardar sesión en localStorage
+        localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify({
+          email: userProfile.email,
+          timestamp: new Date().toISOString()
+        }));
+        
+        toast.success('Inicio de sesión exitoso');
+        navigate('/dashboard');
+      }
     } catch (error: any) {
       toast.error(error.message || 'Error al iniciar sesión');
       throw error;
@@ -121,18 +90,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signUp = async (email: string, password: string, firstName: string, lastName: string) => {
     try {
-      const { error } = await supabase.auth.signUp({ 
-        email, 
-        password,
-        options: {
-          data: {
-            first_name: firstName,
-            last_name: lastName
-          }
-        }
-      });
-      if (error) throw error;
-      toast.success('Registro exitoso. Verifica tu correo electrónico.');
+      const userProfile = await signUpWithEmail(email, password, firstName, lastName);
+      if (userProfile) {
+        // En registro no iniciamos sesión automáticamente, solo mostramos mensaje de éxito
+        toast.success('Registro exitoso. Ahora puedes iniciar sesión.');
+      }
     } catch (error: any) {
       toast.error(error.message || 'Error al registrarse');
       throw error;
@@ -141,9 +103,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
+      // Eliminar sesión del localStorage
+      localStorage.removeItem(SESSION_STORAGE_KEY);
+      
+      // Limpiar estado
+      setUser(null);
+      setProfile(null);
+      
       toast.info('Sesión cerrada');
+      navigate('/');
     } catch (error: any) {
       toast.error(error.message || 'Error al cerrar sesión');
       throw error;
@@ -154,31 +122,37 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (!user) return;
     
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .update(data)
-        .eq('id', user.id);
-        
-      if (error) throw error;
+      await updateProfileData(user.id, data);
       
-      // Update local profile state
+      // Actualizar estado local
       setProfile(prev => prev ? { ...prev, ...data } : null);
-      toast.success('Perfil actualizado');
+      setUser(prev => prev ? { ...prev, ...data } : null);
+      
     } catch (error: any) {
       toast.error(error.message || 'Error al actualizar el perfil');
       throw error;
     }
   };
 
+  const changeUserPassword = async (currentPassword: string, newPassword: string) => {
+    if (!user) return;
+    
+    try {
+      await changePassword(user.id, currentPassword, newPassword);
+    } catch (error: any) {
+      throw error;
+    }
+  };
+
   const value = {
     user,
-    session,
     profile,
     signIn,
     signUp,
     signOut,
     loading,
-    updateProfile
+    updateProfile,
+    changeUserPassword
   };
 
   return (

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,35 +13,45 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useAuth } from '@/contexts/AuthContext';
+
+export interface RegisterFormValues {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+}
+
+interface RegisterFormProps {
+  onSubmit: (values: RegisterFormValues) => void;
+  loading: boolean;
+}
 
 const formSchema = z.object({
   firstName: z.string().min(2, { message: 'El nombre debe tener al menos 2 caracteres.' }),
   lastName: z.string().min(2, { message: 'El apellido debe tener al menos 2 caracteres.' }),
   email: z.string().email({ message: 'Ingresa un correo electrónico válido.' }),
   password: z.string().min(6, { message: 'La contraseña debe tener al menos 6 caracteres.' }),
+  confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Las contraseñas no coinciden.",
+  path: ["confirmPassword"],
 });
 
-export type RegisterFormValues = z.infer<typeof formSchema>;
-
-interface RegisterFormProps {
-  onSubmit: (values: RegisterFormValues) => Promise<void>;
-  loading: boolean;
-}
-
 const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, loading }) => {
-  const form = useForm<RegisterFormValues>({
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       firstName: '',
       lastName: '',
       email: '',
       password: '',
+      confirmPassword: '',
     },
   });
 
-  const handleSubmit = async (values: RegisterFormValues) => {
-    await onSubmit(values);
+  const handleSubmit = (values: z.infer<typeof formSchema>) => {
+    const { firstName, lastName, email, password } = values;
+    onSubmit({ firstName, lastName, email, password });
   };
 
   return (
@@ -61,6 +71,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, loading }) => {
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="lastName"
@@ -75,6 +86,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, loading }) => {
             )}
           />
         </div>
+
         <FormField
           control={form.control}
           name="email"
@@ -88,6 +100,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, loading }) => {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="password"
@@ -101,8 +114,23 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, loading }) => {
             </FormItem>
           )}
         />
+
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Confirmar contraseña</FormLabel>
+              <FormControl>
+                <Input type="password" placeholder="••••••••" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? 'Creando cuenta...' : 'Crear cuenta'}
+          {loading ? 'Registrando...' : 'Crear cuenta'}
         </Button>
       </form>
     </Form>
