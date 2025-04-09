@@ -24,10 +24,18 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
   };
   
   const isActive = (path: string) => {
-    // Corrección para el panel de control - solo activo cuando es exactamente /dashboard
+    // Para /dashboard, debe ser exactamente esa ruta
     if (path === "/dashboard") {
-      return isExactActive(path);
+      return isExactActive("/dashboard");
     }
+    
+    // Para /dashboard/quizzes, debe ser exactamente esa ruta o empezar con ella
+    if (path === "/dashboard/quizzes") {
+      return location.pathname === "/dashboard/quizzes" || 
+             location.pathname.startsWith("/dashboard/quizzes/");
+    }
+    
+    // Para otros casos, verificar si la ruta actual comienza con la ruta del enlace
     return location.pathname.startsWith(`${path}/`);
   };
 
