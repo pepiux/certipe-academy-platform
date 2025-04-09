@@ -10,11 +10,16 @@ interface UserRowProps {
   user: User;
   formatDate: (date: string) => string;
   onUserAction: (action: string, userId: string, userName: string) => void;
+  onUserClick: (user: User) => void;
 }
 
-const UserRow = ({ user, formatDate, onUserAction }: UserRowProps) => {
+const UserRow = ({ user, formatDate, onUserAction, onUserClick }: UserRowProps) => {
   return (
-    <TableRow key={user.id}>
+    <TableRow 
+      key={user.id} 
+      className="cursor-pointer"
+      onClick={() => onUserClick(user)}
+    >
       <TableCell>
         <div>
           <div className="font-medium">{user.name || 'Sin nombre'}</div>
@@ -33,7 +38,7 @@ const UserRow = ({ user, formatDate, onUserAction }: UserRowProps) => {
         )}
       </TableCell>
       <TableCell>{formatDate(user.lastActive)}</TableCell>
-      <TableCell className="text-right">
+      <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
         <UserActionsMenu
           userName={user.name || user.email}
           userId={user.id}

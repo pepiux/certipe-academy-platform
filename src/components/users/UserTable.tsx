@@ -15,6 +15,7 @@ interface UserTableProps {
   handleSort: (key: string) => void;
   formatDate: (dateString: string) => string;
   onUserAction: (action: string, userId: string, userName: string) => void;
+  onUserClick: (user: User) => void;
 }
 
 const UserTable = ({ 
@@ -22,7 +23,8 @@ const UserTable = ({
   sortConfig, 
   handleSort, 
   formatDate, 
-  onUserAction 
+  onUserAction,
+  onUserClick
 }: UserTableProps) => {
   return (
     <div className="border rounded-lg">
@@ -41,6 +43,7 @@ const UserTable = ({
                 user={user}
                 formatDate={formatDate}
                 onUserAction={onUserAction}
+                onUserClick={onUserClick}
               />
             ))
           ) : (

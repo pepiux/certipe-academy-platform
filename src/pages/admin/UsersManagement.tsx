@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Filter } from "lucide-react";
 import { toast } from "sonner";
@@ -9,6 +9,8 @@ import UserFilters from "@/components/users/UserFilters";
 import AddUserDialog from "@/components/users/AddUserDialog";
 import Pagination from "@/components/users/Pagination";
 import { useUsers } from "@/hooks/useUsers";
+import UserDetail from "@/components/users/UserDetail";
+import { User } from "@/types/user";
 
 const UsersManagement = () => {
   const {
@@ -28,6 +30,9 @@ const UsersManagement = () => {
     formatDate,
     refetchUsers
   } = useUsers();
+
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [isUserDetailOpen, setIsUserDetailOpen] = useState(false);
 
   const handleUserAction = async (action: string, userId: string, userName: string) => {
     try {
@@ -66,6 +71,11 @@ const UsersManagement = () => {
     } catch (error: any) {
       toast.error(`Error: ${error.message}`);
     }
+  };
+
+  const handleUserClick = (user: User) => {
+    setSelectedUser(user);
+    setIsUserDetailOpen(true);
   };
 
   const handleSearchChange = (value: string) => {
@@ -107,12 +117,20 @@ const UsersManagement = () => {
         handleSort={handleSort}
         formatDate={formatDate}
         onUserAction={handleUserAction}
+        onUserClick={handleUserClick}
       />
 
       <Pagination 
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={setCurrentPage}
+      />
+
+      <UserDetail
+        user={selectedUser}
+        isOpen={isUserDetailOpen}
+        onClose={() => setIsUserDetailOpen(false)}
+        formatDate={formatDate}
       />
     </div>
   );
