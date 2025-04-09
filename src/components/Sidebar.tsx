@@ -24,10 +24,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
   };
   
   const isActive = (path: string) => {
-    if (path === "/dashboard" && location.pathname !== "/dashboard") {
-      return false;
+    // Corrección para el panel de control - solo activo cuando es exactamente /dashboard
+    if (path === "/dashboard") {
+      return isExactActive(path);
     }
-    return isExactActive(path) || location.pathname.startsWith(`${path}/`);
+    return location.pathname.startsWith(`${path}/`);
   };
 
   const renderNavLink = (to: string, icon: JSX.Element, label: string) => {
