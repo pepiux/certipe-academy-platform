@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { 
@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { 
   Search, 
-  Plus, 
   Filter, 
   MoreHorizontal, 
   Edit, 
@@ -54,6 +53,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
+
+// Definimos la interfaz para el tipo de usuario
+interface User {
+  id: string;
+  email: string;
+  name?: string;
+  role: string;
+  status: string;
+  courses?: number;
+  completedCourses?: number | null;
+  lastActive: string;
+}
 
 const UsersManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -74,129 +87,52 @@ const UsersManagement = () => {
   const roles = ["student", "instructor", "admin"];
   const statuses = ["active", "inactive", "suspended"];
 
-  // Mock users data
-  const allUsers = [
-    {
-      id: 1,
-      name: "Juan Pérez",
-      email: "juan.perez@example.com",
-      role: "student",
-      status: "active",
-      courses: 5,
-      completedCourses: 3,
-      lastActive: "2023-05-12T10:45:00"
-    },
-    {
-      id: 2,
-      name: "María García",
-      email: "maria.garcia@example.com",
-      role: "instructor",
-      status: "active",
-      courses: 3,
-      completedCourses: null,
-      lastActive: "2023-05-15T14:20:00"
-    },
-    {
-      id: 3,
-      name: "Carlos Rodríguez",
-      email: "carlos.rodriguez@example.com",
-      role: "admin",
-      status: "active",
-      courses: 12,
-      completedCourses: 12,
-      lastActive: "2023-05-17T09:10:00"
-    },
-    {
-      id: 4,
-      name: "Ana Martínez",
-      email: "ana.martinez@example.com",
-      role: "student",
-      status: "inactive",
-      courses: 2,
-      completedCourses: 0,
-      lastActive: "2023-04-20T16:30:00"
-    },
-    {
-      id: 5,
-      name: "Javier López",
-      email: "javier.lopez@example.com",
-      role: "student",
-      status: "suspended",
-      courses: 7,
-      completedCourses: 4,
-      lastActive: "2023-05-01T11:15:00"
-    },
-    {
-      id: 6,
-      name: "Laura Fernández",
-      email: "laura.fernandez@example.com",
-      role: "instructor",
-      status: "active",
-      courses: 5,
-      completedCourses: null,
-      lastActive: "2023-05-16T13:45:00"
-    },
-    {
-      id: 7,
-      name: "Miguel Sánchez",
-      email: "miguel.sanchez@example.com",
-      role: "student",
-      status: "active",
-      courses: 4,
-      completedCourses: 1,
-      lastActive: "2023-05-14T17:30:00"
-    },
-    {
-      id: 8,
-      name: "Carmen Díaz",
-      email: "carmen.diaz@example.com",
-      role: "student",
-      status: "inactive",
-      courses: 3,
-      completedCourses: 0,
-      lastActive: "2023-04-12T09:20:00"
-    },
-    {
-      id: 9,
-      name: "Pablo González",
-      email: "pablo.gonzalez@example.com",
-      role: "instructor",
-      status: "active",
-      courses: 2,
-      completedCourses: null,
-      lastActive: "2023-05-10T11:05:00"
-    },
-    {
-      id: 10,
-      name: "Elena Torres",
-      email: "elena.torres@example.com",
-      role: "student",
-      status: "suspended",
-      courses: 6,
-      completedCourses: 3,
-      lastActive: "2023-04-28T15:40:00"
-    },
-    {
-      id: 11,
-      name: "Jorge Ramírez",
-      email: "jorge.ramirez@example.com",
-      role: "student",
-      status: "active",
-      courses: 8,
-      completedCourses: 6,
-      lastActive: "2023-05-17T12:15:00"
-    },
-    {
-      id: 12,
-      name: "Marta Ortiz",
-      email: "marta.ortiz@example.com",
-      role: "admin",
-      status: "active",
-      courses: 10,
-      completedCourses: 10,
-      lastActive: "2023-05-18T10:30:00"
+  // Obtener usuarios de Supabase
+  const fetchUsers = async (): Promise<User[]> => {
+    // Obtenemos todos los usuarios con sus perfiles desde Supabase
+    const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
+    
+    if (authError) {
+      console.error("Error fetching users:", authError);
+      throw authError;
     }
-  ];
+
+    // Obtener los perfiles para obtener información adicional
+    const { data: profiles, error: profilesError } = await supabase
+      .from('profiles')
+      .select('*');
+
+    if (profilesError) {
+      console.error("Error fetching profiles:", profilesError);
+      throw profilesError;
+    }
+
+    // Combinar los datos de usuarios con sus perfiles
+    const users = authUsers.users.map((authUser) => {
+      const profile = profiles?.find(p => p.id === authUser.id);
+      const fullName = profile ? `${profile.first_name} ${profile.last_name}` : 'Usuario sin nombre';
+      
+      return {
+        id: authUser.id,
+        email: authUser.email || 'No email',
+        name: fullName,
+        // Determinar el rol basado en el perfil o por defecto "student"
+        role: profile?.is_admin ? 'admin' : 'student',
+        status: authUser.banned ? 'suspended' : (authUser.email_confirmed_at ? 'active' : 'inactive'),
+        courses: 0, // Valor por defecto, podríamos obtenerlo de una consulta adicional
+        completedCourses: 0, // Valor por defecto
+        lastActive: authUser.last_sign_in_at || authUser.created_at || new Date().toISOString()
+      };
+    });
+
+    return users;
+  };
+
+  // Usar React Query para obtener y cachear los usuarios
+  const { data: allUsers = [], isLoading, isError, error } = useQuery({
+    queryKey: ['users'],
+    queryFn: fetchUsers,
+  });
 
   // Sorting logic
   const sortedUsers = React.useMemo(() => {
@@ -219,7 +155,7 @@ const UsersManagement = () => {
   const filteredUsers = React.useMemo(() => {
     return sortedUsers.filter(user => {
       return (
-        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (user.name?.toLowerCase().includes(searchTerm.toLowerCase()) || false) ||
         user.email.toLowerCase().includes(searchTerm.toLowerCase())
       );
     });
@@ -291,7 +227,7 @@ const UsersManagement = () => {
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
-  const handleAddUser = () => {
+  const handleAddUser = async () => {
     // Basic validation
     if (!newUser.name || !newUser.email) {
       toast.error("Por favor completa todos los campos requeridos");
@@ -305,34 +241,66 @@ const UsersManagement = () => {
       return;
     }
 
-    // Add user logic (in a real app, this would be an API call)
-    toast.success(`Usuario ${newUser.name} añadido exitosamente`);
-    setIsAddUserOpen(false);
-    setNewUser({ name: "", email: "", role: "student" });
+    try {
+      // Generar una contraseña aleatoria
+      const randomPassword = Math.random().toString(36).slice(-8);
+      
+      // Crear el usuario en Supabase Auth
+      const { data, error } = await supabase.auth.admin.createUser({
+        email: newUser.email,
+        password: randomPassword,
+        email_confirm: true, // Auto-confirmar el email
+        user_metadata: {
+          full_name: newUser.name,
+          is_admin: newUser.role === 'admin'
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      toast.success(`Usuario ${newUser.name} añadido exitosamente`);
+      setIsAddUserOpen(false);
+      setNewUser({ name: "", email: "", role: "student" });
+    } catch (error: any) {
+      toast.error(`Error al crear usuario: ${error.message}`);
+    }
   };
 
-  const handleUserAction = (action: string, userId: number, userName: string) => {
-    switch (action) {
-      case 'edit':
-        toast.info(`Editando usuario: ${userName}`);
-        break;
-      case 'message':
-        toast.info(`Enviando mensaje a: ${userName}`);
-        break;
-      case 'permissions':
-        toast.info(`Gestionando permisos de: ${userName}`);
-        break;
-      case 'activate':
-        toast.success(`Usuario ${userName} activado`);
-        break;
-      case 'suspend':
-        toast.warning(`Usuario ${userName} suspendido`);
-        break;
-      case 'delete':
-        toast.error(`Usuario ${userName} eliminado`);
-        break;
-      default:
-        break;
+  const handleUserAction = async (action: string, userId: string, userName: string) => {
+    try {
+      switch (action) {
+        case 'edit':
+          toast.info(`Editando usuario: ${userName}`);
+          break;
+        case 'message':
+          toast.info(`Enviando mensaje a: ${userName}`);
+          break;
+        case 'permissions':
+          toast.info(`Gestionando permisos de: ${userName}`);
+          break;
+        case 'activate':
+          await supabase.auth.admin.updateUserById(userId, {
+            banned: false
+          });
+          toast.success(`Usuario ${userName} activado`);
+          break;
+        case 'suspend':
+          await supabase.auth.admin.updateUserById(userId, {
+            banned: true
+          });
+          toast.warning(`Usuario ${userName} suspendido`);
+          break;
+        case 'delete':
+          await supabase.auth.admin.deleteUser(userId);
+          toast.error(`Usuario ${userName} eliminado`);
+          break;
+        default:
+          break;
+      }
+    } catch (error: any) {
+      toast.error(`Error: ${error.message}`);
     }
   };
 
@@ -344,6 +312,14 @@ const UsersManagement = () => {
       <ChevronUp className="h-4 w-4 inline ml-1" /> : 
       <ChevronDown className="h-4 w-4 inline ml-1" />;
   };
+
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-64">Cargando usuarios...</div>;
+  }
+
+  if (isError) {
+    return <div className="text-red-500">Error al cargar usuarios: {error instanceof Error ? error.message : 'Error desconocido'}</div>;
+  }
 
   return (
     <div className="space-y-6">
@@ -464,7 +440,7 @@ const UsersManagement = () => {
               <TableRow key={user.id}>
                 <TableCell>
                   <div>
-                    <div className="font-medium">{user.name}</div>
+                    <div className="font-medium">{user.name || 'Sin nombre'}</div>
                     <div className="text-sm text-muted-foreground">{user.email}</div>
                   </div>
                 </TableCell>
@@ -472,10 +448,10 @@ const UsersManagement = () => {
                 <TableCell>{getStatusIndicator(user.status)}</TableCell>
                 <TableCell>
                   {user.role === 'instructor' ? (
-                    <div>{user.courses} impartidos</div>
+                    <div>{user.courses || 0} impartidos</div>
                   ) : (
                     <div>
-                      {user.completedCourses} / {user.courses} completados
+                      {user.completedCourses || 0} / {user.courses || 0} completados
                     </div>
                   )}
                 </TableCell>
@@ -492,19 +468,19 @@ const UsersManagement = () => {
                       <DropdownMenuLabel>Acciones</DropdownMenuLabel>
                       <DropdownMenuItem 
                         className="flex gap-2 cursor-pointer"
-                        onClick={() => handleUserAction('edit', user.id, user.name)}
+                        onClick={() => handleUserAction('edit', user.id, user.name || user.email)}
                       >
                         <Edit size={16} /> Editar
                       </DropdownMenuItem>
                       <DropdownMenuItem 
                         className="flex gap-2 cursor-pointer"
-                        onClick={() => handleUserAction('message', user.id, user.name)}
+                        onClick={() => handleUserAction('message', user.id, user.name || user.email)}
                       >
                         <Mail size={16} /> Enviar mensaje
                       </DropdownMenuItem>
                       <DropdownMenuItem 
                         className="flex gap-2 cursor-pointer"
-                        onClick={() => handleUserAction('permissions', user.id, user.name)}
+                        onClick={() => handleUserAction('permissions', user.id, user.name || user.email)}
                       >
                         <UserCog size={16} /> Gestionar permisos
                       </DropdownMenuItem>
@@ -512,21 +488,21 @@ const UsersManagement = () => {
                       {user.status === 'active' ? (
                         <DropdownMenuItem 
                           className="flex gap-2 cursor-pointer text-amber-600"
-                          onClick={() => handleUserAction('suspend', user.id, user.name)}
+                          onClick={() => handleUserAction('suspend', user.id, user.name || user.email)}
                         >
                           <ShieldAlert size={16} /> Suspender usuario
                         </DropdownMenuItem>
                       ) : (
                         <DropdownMenuItem 
                           className="flex gap-2 cursor-pointer text-green-600"
-                          onClick={() => handleUserAction('activate', user.id, user.name)}
+                          onClick={() => handleUserAction('activate', user.id, user.name || user.email)}
                         >
                           <ShieldCheck size={16} /> Activar usuario
                         </DropdownMenuItem>
                       )}
                       <DropdownMenuItem 
                         className="flex gap-2 cursor-pointer text-red-600"
-                        onClick={() => handleUserAction('delete', user.id, user.name)}
+                        onClick={() => handleUserAction('delete', user.id, user.name || user.email)}
                       >
                         <Trash size={16} /> Eliminar
                       </DropdownMenuItem>
