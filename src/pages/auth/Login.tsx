@@ -40,7 +40,7 @@ const Login = () => {
       setLoading(true);
       await signIn(values.email, values.password);
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('Error al iniciar sesión:', error);
     } finally {
       setLoading(false);
     }

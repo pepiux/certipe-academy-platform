@@ -19,24 +19,18 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
   const location = useLocation();
   
-  const isExactActive = (path: string) => {
-    return location.pathname === path;
-  };
-  
   const isActive = (path: string) => {
-    // Para /dashboard, debe ser exactamente esa ruta
+    // Para las rutas exactas
     if (path === "/dashboard") {
-      return isExactActive("/dashboard");
+      return location.pathname === "/dashboard";
     }
     
-    // Para /dashboard/quizzes, debe ser exactamente esa ruta o empezar con ella
-    if (path === "/dashboard/quizzes") {
-      return location.pathname === "/dashboard/quizzes" || 
-             location.pathname.startsWith("/dashboard/quizzes/");
+    // Para verificar rutas que empiezan con un patrón específico
+    if (path !== "/dashboard") {
+      return location.pathname.startsWith(path);
     }
     
-    // Para otros casos, verificar si la ruta actual comienza con la ruta del enlace
-    return location.pathname.startsWith(`${path}/`);
+    return false;
   };
 
   const renderNavLink = (to: string, icon: JSX.Element, label: string) => {
@@ -64,7 +58,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
     <aside 
       className={`${
         isOpen ? "w-64" : "w-16"
-      } bg-sidebar transition-all duration-300 flex flex-col h-screen sticky top-0 overflow-y-auto dark:bg-gray-900`}
+      } bg-gray-800 transition-all duration-300 flex flex-col h-screen sticky top-0 overflow-y-auto dark:bg-gray-900`}
     >
       {/* Logo */}
       <div className="p-4 flex items-center justify-center md:justify-start">
@@ -79,7 +73,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
       <nav className="flex-1 px-2 py-4 space-y-1">
         {/* Main Menu */}
         <div className="mb-6">
-          {isOpen && <div className="sidebar-category dark:text-gray-400">Main Menu</div>}
+          {isOpen && <div className="sidebar-category dark:text-gray-400">Menú Principal</div>}
           
           {renderNavLink(
             "/dashboard", 
@@ -102,7 +96,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
 
         {/* Admin */}
         <div className="mb-6">
-          {isOpen && <div className="sidebar-category dark:text-gray-400">Admin</div>}
+          {isOpen && <div className="sidebar-category dark:text-gray-400">Administración</div>}
           
           {renderNavLink(
             "/dashboard/admin/users", 
@@ -131,7 +125,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
       </nav>
 
       {/* Footer */}
-      <div className="p-4 text-xs text-sidebar-muted-foreground dark:text-gray-500">
+      <div className="p-4 text-xs text-gray-400 dark:text-gray-500">
         {isOpen && <div>Todos los derechos reservados. 2025 Inflex</div>}
       </div>
     </aside>
