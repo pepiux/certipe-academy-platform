@@ -56,7 +56,34 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
-    // Check for existing session first
+    // Set up auth state change listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, currentSession) => {
+        setSession(currentSession);
+        setUser(currentSession?.user ?? null);
+        
+        if (currentSession?.user) {
+          // Use setTimeout to prevent potential deadlock with Supabase auth
+          setTimeout(() => {
+            fetchProfile(currentSession.user.id);
+          }, 0);
+        } else {
+          setProfile(null);
+        }
+        
+        // When signing in, redirect to dashboard
+        if (event === 'SIGNED_IN') {
+          navigate('/dashboard');
+        }
+        
+        // When signing out, redirect to login page
+        if (event === 'SIGNED_OUT') {
+          navigate('/');
+        }
+      }
+    );
+
+    // THEN check for existing session
     const initializeAuth = async () => {
       try {
         const { data: sessionData } = await supabase.auth.getSession();
@@ -75,32 +102,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     initializeAuth();
-
-    // Set up auth state change listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          setTimeout(() => {
-            fetchProfile(session.user.id);
-          }, 0);
-        } else {
-          setProfile(null);
-        }
-        
-        // When signing in, redirect to dashboard
-        if (event === 'SIGNED_IN') {
-          navigate('/dashboard');
-        }
-        
-        // When signing out, redirect to login page
-        if (event === 'SIGNED_OUT') {
-          navigate('/');
-        }
-      }
-    );
 
     return () => {
       subscription.unsubscribe();
