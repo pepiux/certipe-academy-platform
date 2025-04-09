@@ -14,11 +14,10 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { Facebook, Linkedin, Github } from 'lucide-react';
+import { Facebook, Linkedin } from 'lucide-react';
 
 const formSchema = z.object({
   firstName: z.string().min(2, { message: 'El nombre debe tener al menos 2 caracteres.' }),
@@ -57,7 +56,7 @@ const Register = () => {
     }
   };
 
-  const handleSocialLogin = async (provider: 'google' | 'facebook' | 'linkedin') => {
+  const handleSocialLogin = async (provider: 'google' | 'facebook' | 'linkedin_oidc') => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
@@ -182,7 +181,7 @@ const Register = () => {
           <Button 
             variant="outline" 
             size="icon"
-            onClick={() => handleSocialLogin('linkedin')}
+            onClick={() => handleSocialLogin('linkedin_oidc')}
             className="rounded-full"
           >
             <Linkedin className="h-5 w-5 text-[#0A66C2]" />
