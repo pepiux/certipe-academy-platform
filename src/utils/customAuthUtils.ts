@@ -1,6 +1,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import * as bcrypt from 'bcryptjs';
 
 export type Profile = {
   id: string;
@@ -15,7 +16,7 @@ export type Profile = {
 
 export const signInWithEmail = async (email: string, password: string): Promise<Profile | null> => {
   try {
-    // Verificar credenciales con la tabla profiles
+    // Obtener el usuario de la base de datos por email
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
@@ -26,14 +27,11 @@ export const signInWithEmail = async (email: string, password: string): Promise<
       throw new Error('Credenciales inválidas');
     }
 
-    // Verificar password usando la extensión pgcrypto de Postgres
-    const { data: passwordCheck, error: passwordError } = await supabase
-      .rpc('check_password', { 
-        user_email: email, 
-        user_password: password 
-      });
-
-    if (passwordError || !passwordCheck) {
+    // Verificar la contraseña manualmente
+    // En producción, esto se haría en el backend por seguridad
+    const passwordMatch = await bcrypt.compare(password, data.password);
+    
+    if (!passwordMatch) {
       throw new Error('Credenciales inválidas');
     }
 
@@ -62,31 +60,28 @@ export const signUpWithEmail = async (
       throw new Error('Este correo electrónico ya está registrado');
     }
 
-    // Crear un nuevo usuario con contraseña encriptada
+    // Generar un hash de la contraseña
+    const hashedPassword = await bcrypt.hash(password, 10);
+    
+    // Crear un nuevo usuario
     const { data, error } = await supabase
-      .rpc('create_user', {
-        user_email: email,
-        user_password: password,
-        user_first_name: firstName,
-        user_last_name: lastName
-      });
+      .from('profiles')
+      .insert({
+        id: crypto.randomUUID(),
+        email: email,
+        password: hashedPassword,
+        first_name: firstName,
+        last_name: lastName,
+        is_admin: false
+      })
+      .select()
+      .single();
 
     if (error) {
       throw error;
     }
 
-    // Obtener el perfil recién creado
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('email', email)
-      .single();
-
-    if (profileError) {
-      throw profileError;
-    }
-
-    return profile as Profile;
+    return data as Profile;
   } catch (error: any) {
     toast.error(error.message || 'Error al registrarse');
     throw error;
@@ -129,9 +124,10 @@ export const updateProfileData = async (id: string, data: Partial<Profile>): Pro
 
 export const changePassword = async (id: string, currentPassword: string, newPassword: string): Promise<void> => {
   try {
+    // Obtener el perfil del usuario
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('email')
+      .select('*')
       .eq('id', id)
       .single();
 
@@ -140,22 +136,20 @@ export const changePassword = async (id: string, currentPassword: string, newPas
     }
 
     // Verificar la contraseña actual
-    const { data: passwordCheck, error: passwordError } = await supabase
-      .rpc('check_password', { 
-        user_email: profile.email, 
-        user_password: currentPassword 
-      });
-
-    if (passwordError || !passwordCheck) {
+    const passwordMatch = await bcrypt.compare(currentPassword, profile.password);
+    
+    if (!passwordMatch) {
       throw new Error('Contraseña actual incorrecta');
     }
 
+    // Generar hash de la nueva contraseña
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    
     // Actualizar la contraseña
     const { error } = await supabase
-      .rpc('update_password', { 
-        user_id: id, 
-        new_password: newPassword 
-      });
+      .from('profiles')
+      .update({ password: hashedPassword })
+      .eq('id', id);
 
     if (error) throw error;
     toast.success('Contraseña actualizada');
