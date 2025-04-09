@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import Logo from "./Logo";
 import LogoIcon from "./LogoIcon";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -18,15 +19,43 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
   const location = useLocation();
   
+  const isExactActive = (path: string) => {
+    return location.pathname === path;
+  };
+  
   const isActive = (path: string) => {
-    return location.pathname === path || location.pathname.startsWith(`${path}/`);
+    if (path === "/dashboard" && location.pathname !== "/dashboard") {
+      return false;
+    }
+    return isExactActive(path) || location.pathname.startsWith(`${path}/`);
+  };
+
+  const renderNavLink = (to: string, icon: JSX.Element, label: string) => {
+    const active = isActive(to);
+    
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <NavLink
+            to={to}
+            className={`sidebar-link ${active ? "active" : ""}`}
+          >
+            {icon}
+            {isOpen && <span>{label}</span>}
+          </NavLink>
+        </TooltipTrigger>
+        <TooltipContent side="right">
+          {label}
+        </TooltipContent>
+      </Tooltip>
+    );
   };
 
   return (
     <aside 
       className={`${
         isOpen ? "w-64" : "w-16"
-      } bg-sidebar transition-all duration-300 flex flex-col h-screen sticky top-0 overflow-y-auto`}
+      } bg-sidebar transition-all duration-300 flex flex-col h-screen sticky top-0 overflow-y-auto dark:bg-gray-900`}
     >
       {/* Logo */}
       <div className="p-4 flex items-center justify-center md:justify-start">
@@ -41,52 +70,59 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
       <nav className="flex-1 px-2 py-4 space-y-1">
         {/* Main Menu */}
         <div className="mb-6">
-          {isOpen && <div className="sidebar-category">Main Menu</div>}
+          {isOpen && <div className="sidebar-category dark:text-gray-400">Main Menu</div>}
           
-          <NavLink to="/dashboard" className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}>
-            <LayoutDashboard size={20} />
-            {isOpen && <span>Panel de control</span>}
-          </NavLink>
+          {renderNavLink(
+            "/dashboard", 
+            <LayoutDashboard size={20} />, 
+            "Panel de control"
+          )}
           
-          <NavLink to="/dashboard/courses" className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}>
-            <BookOpen size={20} />
-            {isOpen && <span>Cursos</span>}
-          </NavLink>
+          {renderNavLink(
+            "/dashboard/courses", 
+            <BookOpen size={20} />, 
+            "Cursos"
+          )}
           
-          <NavLink to="/dashboard/quizzes" className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}>
-            <FileQuestion size={20} />
-            {isOpen && <span>Cuestionarios</span>}
-          </NavLink>
+          {renderNavLink(
+            "/dashboard/quizzes", 
+            <FileQuestion size={20} />, 
+            "Cuestionarios"
+          )}
         </div>
 
         {/* Admin */}
         <div className="mb-6">
-          {isOpen && <div className="sidebar-category">Admin</div>}
+          {isOpen && <div className="sidebar-category dark:text-gray-400">Admin</div>}
           
-          <NavLink to="/dashboard/admin/users" className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}>
-            <Users size={20} />
-            {isOpen && <span>Gestión de usuarios</span>}
-          </NavLink>
+          {renderNavLink(
+            "/dashboard/admin/users", 
+            <Users size={20} />, 
+            "Gestión de usuarios"
+          )}
           
-          <NavLink to="/dashboard/admin/courses" className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}>
-            <BookOpen size={20} />
-            {isOpen && <span>Gestión de cursos</span>}
-          </NavLink>
+          {renderNavLink(
+            "/dashboard/admin/courses", 
+            <BookOpen size={20} />, 
+            "Gestión de cursos"
+          )}
           
-          <NavLink to="/dashboard/admin/quizzes" className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}>
-            <FileQuestion size={20} />
-            {isOpen && <span>Gestión de cuestionarios</span>}
-          </NavLink>
+          {renderNavLink(
+            "/dashboard/admin/quizzes", 
+            <FileQuestion size={20} />, 
+            "Gestión de cuestionarios"
+          )}
           
-          <NavLink to="/dashboard/admin/settings" className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}>
-            <Settings size={20} />
-            {isOpen && <span>Configuración del sistema</span>}
-          </NavLink>
+          {renderNavLink(
+            "/dashboard/admin/settings", 
+            <Settings size={20} />, 
+            "Configuración del sistema"
+          )}
         </div>
       </nav>
 
       {/* Footer */}
-      <div className="p-4 text-xs text-sidebar-muted-foreground">
+      <div className="p-4 text-xs text-sidebar-muted-foreground dark:text-gray-500">
         {isOpen && <div>Todos los derechos reservados. 2025 Inflex</div>}
       </div>
     </aside>

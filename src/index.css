@@ -2,138 +2,79 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+ 
 @layer base {
   :root {
-    --background: 220 33% 98%;
-    --foreground: 224 71% 4%;
-
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
-    --card-foreground: 224 71% 4%;
-
+    --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 224 71% 4%;
-
-    --primary: 210 100% 50%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
     --primary-foreground: 210 40% 98%;
-
-    --secondary: 220 14.3% 95.9%;
-    --secondary-foreground: 220.9 39.3% 11%;
-
-    --muted: 220 14.3% 95.9%;
-    --muted-foreground: 220 8.9% 46.1%;
-
-    --accent: 220 14.3% 95.9%;
-    --accent-foreground: 220.9 39.3% 11%;
-
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 224 71% 4%;
-
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
-
-    --sidebar: 222 47% 11%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-muted-foreground: 210 40% 70%;
-    --sidebar-primary: 210 100% 50%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 217.2 32.6% 17.5%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217.2 32.6% 17.5%;
-    --sidebar-ring: 224 76% 48%;
-    
-    --toast-background: 0 0% 100%;
-    --toast-foreground: 224 71% 4%;
-    --toast-border: 220 13% 91%;
+    --sidebar: 210 40% 98%;
+    --sidebar-foreground: 215.4 16.3% 46.9%;
+    --sidebar-muted-foreground: 215 20.2% 65.1%;
   }
 
   .dark {
-    --background: 224 71% 4%;
+    --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
-
-    --card: 224 71% 4%;
+    --card: 222.2 84% 7.9%;
     --card-foreground: 210 40% 98%;
-
-    --popover: 224 71% 4%;
+    --popover: 222.2 84% 7.9%;
     --popover-foreground: 210 40% 98%;
-
-    --primary: 210 100% 50%;
-    --primary-foreground: 210 40% 98%;
-
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
-
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
-
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    
-    --toast-background: 217.2 32.6% 17.5%;
-    --toast-foreground: 210 40% 98%;
-    --toast-border: 217.2 32.6% 25%;
-
-    --sidebar: 224 71% 4%;
+    --ring: 224.3 76.3% 48%;
+    --sidebar: 222.2 84% 7.9%;
     --sidebar-foreground: 210 40% 98%;
     --sidebar-muted-foreground: 215 20.2% 65.1%;
-    --sidebar-accent: 217.2 32.6% 17.5%;
-    --sidebar-accent-foreground: 210 40% 98%;
   }
 }
-
+ 
 @layer base {
   * {
     @apply border-border;
   }
-
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
 @layer components {
   .sidebar-link {
-    @apply flex items-center gap-3 rounded-md py-2 px-3 text-sm font-medium transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sidebar-foreground;
+    @apply flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground hover:bg-muted;
   }
-  
+
   .sidebar-link.active {
-    @apply bg-sidebar-accent text-sidebar-accent-foreground;
+    @apply bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground;
   }
 
   .sidebar-category {
-    @apply text-xs uppercase text-sidebar-muted-foreground font-semibold tracking-wider px-3 py-2;
-  }
-}
-
-@layer utilities {
-  .quiz-card {
-    @apply hover:shadow-md transition-shadow duration-200;
-  }
-  
-  .quiz-card-banner {
-    @apply h-2 rounded-t-md bg-gradient-to-r;
-  }
-
-  .quiz-start-button {
-    @apply bg-purple-500 hover:bg-purple-600 text-white;
-  }
-  
-  .quiz-continue-button {
-    @apply bg-blue-500 hover:bg-blue-600 text-white;
-  }
-  
-  .quiz-retry-button {
-    @apply bg-gray-500 hover:bg-gray-600 text-white;
+    @apply px-3 py-2 text-xs font-semibold uppercase text-muted-foreground;
   }
 }
