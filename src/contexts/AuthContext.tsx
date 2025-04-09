@@ -94,6 +94,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (userProfile) {
         // En registro no iniciamos sesión automáticamente, solo mostramos mensaje de éxito
         toast.success('Registro exitoso. Ahora puedes iniciar sesión.');
+        navigate('/');
       }
     } catch (error: any) {
       toast.error(error.message || 'Error al registrarse');
@@ -103,6 +104,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signOut = async () => {
     try {
+      // También llamaría a un endpoint de backend para invalidar la sesión en el servidor
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+      await fetch(`${API_URL}/auth/logout`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+
       // Eliminar sesión del localStorage
       localStorage.removeItem(SESSION_STORAGE_KEY);
       

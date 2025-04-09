@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -6,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { ArrowLeft, ChevronRight, Mail, Check } from "lucide-react";
+import { requestPasswordReset, verifyResetCode, setNewPassword } from "@/utils/customAuthUtils";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -15,7 +15,7 @@ const ForgotPassword = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   
-  const handleSubmitEmail = (e: React.FormEvent) => {
+  const handleSubmitEmail = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!email) {
@@ -32,15 +32,18 @@ const ForgotPassword = () => {
 
     setIsLoading(true);
     
-    // Simulate API call to send reset token
-    setTimeout(() => {
-      toast.success("Código de verificación enviado a su correo electrónico");
-      setIsLoading(false);
+    try {
+      // Llamar al backend para solicitar el código de recuperación
+      await requestPasswordReset(email);
       setStep(2);
-    }, 1500);
+    } catch (error) {
+      // El manejo de errores lo hace la función requestPasswordReset
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleSubmitToken = (e: React.FormEvent) => {
+  const handleSubmitToken = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!token) {
@@ -55,15 +58,21 @@ const ForgotPassword = () => {
 
     setIsLoading(true);
     
-    // Simulate API call to verify token
-    setTimeout(() => {
-      toast.success("Código de verificación válido");
+    try {
+      // Verificar el código con el backend
+      const isValid = await verifyResetCode(email, token);
+      
+      if (isValid) {
+        setStep(3);
+      }
+    } catch (error) {
+      // El manejo de errores lo hace la función verifyResetCode
+    } finally {
       setIsLoading(false);
-      setStep(3);
-    }, 1500);
+    }
   };
 
-  const handleSubmitNewPassword = (e: React.FormEvent) => {
+  const handleSubmitNewPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!newPassword || !confirmPassword) {
@@ -83,12 +92,17 @@ const ForgotPassword = () => {
 
     setIsLoading(true);
     
-    // Simulate API call to reset password
-    setTimeout(() => {
-      toast.success("Contraseña restablecida con éxito");
-      setIsLoading(false);
+    try {
+      // Enviar la nueva contraseña al backend
+      await setNewPassword(email, token, newPassword);
+      
+      // Redirigir al login después de éxito
       window.location.href = "/";
-    }, 1500);
+    } catch (error) {
+      // El manejo de errores lo hace la función setNewPassword
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

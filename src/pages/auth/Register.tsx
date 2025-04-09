@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { toast } from 'sonner';
 import RegisterForm, { RegisterFormValues } from '@/components/auth/RegisterForm';
 import SocialLogin from '@/components/auth/SocialLogin';
 
