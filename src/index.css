@@ -71,7 +71,7 @@
   }
 
   .sidebar-link.active {
-    @apply bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground;
+    @apply bg-gray-700 text-white hover:bg-gray-700 hover:text-white;
   }
 
   .sidebar-category {

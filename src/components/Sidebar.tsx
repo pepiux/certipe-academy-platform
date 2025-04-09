@@ -11,6 +11,7 @@ import {
 import Logo from "./Logo";
 import LogoIcon from "./LogoIcon";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -18,6 +19,8 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
   const location = useLocation();
+  const { profile } = useAuth();
+  const isAdmin = profile?.is_admin || false;
   
   const isActive = (path: string) => {
     // Para las rutas exactas
@@ -94,34 +97,36 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
           )}
         </div>
 
-        {/* Admin */}
-        <div className="mb-6">
-          {isOpen && <div className="sidebar-category dark:text-gray-400">Administración</div>}
-          
-          {renderNavLink(
-            "/dashboard/admin/users", 
-            <Users size={20} />, 
-            "Gestión de usuarios"
-          )}
-          
-          {renderNavLink(
-            "/dashboard/admin/courses", 
-            <BookOpen size={20} />, 
-            "Gestión de cursos"
-          )}
-          
-          {renderNavLink(
-            "/dashboard/admin/quizzes", 
-            <FileQuestion size={20} />, 
-            "Gestión de cuestionarios"
-          )}
-          
-          {renderNavLink(
-            "/dashboard/admin/settings", 
-            <Settings size={20} />, 
-            "Configuración del sistema"
-          )}
-        </div>
+        {/* Admin - Solo visible para usuarios admin */}
+        {isAdmin && (
+          <div className="mb-6">
+            {isOpen && <div className="sidebar-category dark:text-gray-400">Administración</div>}
+            
+            {renderNavLink(
+              "/dashboard/admin/users", 
+              <Users size={20} />, 
+              "Gestión de usuarios"
+            )}
+            
+            {renderNavLink(
+              "/dashboard/admin/courses", 
+              <BookOpen size={20} />, 
+              "Gestión de cursos"
+            )}
+            
+            {renderNavLink(
+              "/dashboard/admin/quizzes", 
+              <FileQuestion size={20} />, 
+              "Gestión de cuestionarios"
+            )}
+            
+            {renderNavLink(
+              "/dashboard/admin/settings", 
+              <Settings size={20} />, 
+              "Configuración del sistema"
+            )}
+          </div>
+        )}
       </nav>
 
       {/* Footer */}
