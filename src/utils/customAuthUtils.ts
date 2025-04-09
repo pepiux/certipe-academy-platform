@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -122,7 +121,7 @@ export const requestPasswordReset = async (email: string): Promise<void> => {
   }
 };
 
-// Verificar código de recuperación - Actualizamos la firma para aceptar dos argumentos
+// Verificar código de recuperación
 export const verifyResetCode = async (email: string, code: string): Promise<boolean> => {
   try {
     const data = await apiRequest('/auth/password/reset/verify', 'POST', { email, code });

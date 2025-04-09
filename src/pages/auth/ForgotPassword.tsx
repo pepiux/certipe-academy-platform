@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -59,7 +60,7 @@ const ForgotPassword = () => {
     setIsLoading(true);
     
     try {
-      // Verificar el código con el backend - Solo pasamos email y token
+      // Verificar el código con el backend - Pasamos email y token
       const isValid = await verifyResetCode(email, token);
       
       if (isValid) {
