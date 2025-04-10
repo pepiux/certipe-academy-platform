@@ -60,7 +60,7 @@ const ForgotPassword = () => {
     setIsLoading(true);
     
     try {
-      // Verificar el código con el backend - Pasamos email y token
+      // Fix here: Passing email and token as required by the function signature in customAuthUtils.ts
       const isValid = await verifyResetCode(email, token);
       
       if (isValid) {
@@ -244,3 +244,4 @@ const ForgotPassword = () => {
 };
 
 export default ForgotPassword;
+
