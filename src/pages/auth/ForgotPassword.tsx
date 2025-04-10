@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -24,7 +23,6 @@ const ForgotPassword = () => {
       return;
     }
 
-    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       toast.error("Por favor, ingrese un correo electrónico válido");
@@ -34,11 +32,9 @@ const ForgotPassword = () => {
     setIsLoading(true);
     
     try {
-      // Llamar al backend para solicitar el código de recuperación
       await requestPasswordReset(email);
       setStep(2);
     } catch (error) {
-      // El manejo de errores lo hace la función requestPasswordReset
     } finally {
       setIsLoading(false);
     }
@@ -60,14 +56,12 @@ const ForgotPassword = () => {
     setIsLoading(true);
     
     try {
-      // Fix here: Passing email and token as required by the function signature in customAuthUtils.ts
       const isValid = await verifyResetCode(email, token);
       
       if (isValid) {
         setStep(3);
       }
     } catch (error) {
-      // El manejo de errores lo hace la función verifyResetCode
     } finally {
       setIsLoading(false);
     }
@@ -94,13 +88,10 @@ const ForgotPassword = () => {
     setIsLoading(true);
     
     try {
-      // Enviar la nueva contraseña al backend
       await setNewPassword(email, token, newPassword);
       
-      // Redirigir al login después de éxito
       window.location.href = "/";
     } catch (error) {
-      // El manejo de errores lo hace la función setNewPassword
     } finally {
       setIsLoading(false);
     }
@@ -244,4 +235,3 @@ const ForgotPassword = () => {
 };
 
 export default ForgotPassword;
-
