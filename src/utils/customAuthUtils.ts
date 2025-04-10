@@ -12,7 +12,6 @@ export type Profile = {
   updated_at: string;
 };
 
-// Función para realizar peticiones al backend
 const apiRequest = async (endpoint: string, method: 'GET' | 'POST' | 'PUT' | 'DELETE', data?: any) => {
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
   
@@ -39,7 +38,6 @@ const apiRequest = async (endpoint: string, method: 'GET' | 'POST' | 'PUT' | 'DE
   }
 };
 
-// Autenticación mediante el backend
 export const signInWithEmail = async (email: string, password: string): Promise<Profile | null> => {
   try {
     const data = await apiRequest('/auth/login', 'POST', { email, password });
@@ -50,7 +48,6 @@ export const signInWithEmail = async (email: string, password: string): Promise<
   }
 };
 
-// Registro mediante el backend
 export const signUpWithEmail = async (
   email: string, 
   password: string, 
@@ -72,7 +69,6 @@ export const signUpWithEmail = async (
   }
 };
 
-// Obtener perfil mediante el backend
 export const fetchProfileByEmail = async (email: string): Promise<Profile | null> => {
   try {
     const data = await apiRequest('/auth/profile', 'POST', { email });
@@ -83,7 +79,6 @@ export const fetchProfileByEmail = async (email: string): Promise<Profile | null
   }
 };
 
-// Actualizar perfil mediante el backend
 export const updateProfileData = async (id: string, data: Partial<Profile>): Promise<void> => {
   try {
     await apiRequest('/auth/profile/update', 'PUT', { id, ...data });
@@ -94,7 +89,6 @@ export const updateProfileData = async (id: string, data: Partial<Profile>): Pro
   }
 };
 
-// Cambiar contraseña mediante el backend
 export const changePassword = async (id: string, currentPassword: string, newPassword: string): Promise<void> => {
   try {
     await apiRequest('/auth/password/change', 'POST', {
@@ -110,7 +104,6 @@ export const changePassword = async (id: string, currentPassword: string, newPas
   }
 };
 
-// Recuperar contraseña (solicitar código)
 export const requestPasswordReset = async (email: string): Promise<void> => {
   try {
     await apiRequest('/auth/password/reset/request', 'POST', { email });
@@ -121,7 +114,6 @@ export const requestPasswordReset = async (email: string): Promise<void> => {
   }
 };
 
-// Verificar código de recuperación
 export const verifyResetCode = async (email: string, code: string): Promise<boolean> => {
   try {
     const data = await apiRequest('/auth/password/reset/verify', 'POST', { email, code });
@@ -132,7 +124,6 @@ export const verifyResetCode = async (email: string, code: string): Promise<bool
   }
 };
 
-// Establecer nueva contraseña
 export const setNewPassword = async (email: string, code: string, newPassword: string): Promise<void> => {
   try {
     await apiRequest('/auth/password/reset/complete', 'POST', {
