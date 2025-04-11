@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -5,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { ArrowLeft, ChevronRight, Mail, Check } from "lucide-react";
-import { requestPasswordReset, verifyResetCode, setNewPassword } from "@/utils/customAuthUtils";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -15,7 +15,7 @@ const ForgotPassword = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   
-  const handleSubmitEmail = async (e: React.FormEvent) => {
+  const handleSubmitEmail = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!email) {
@@ -23,6 +23,7 @@ const ForgotPassword = () => {
       return;
     }
 
+    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       toast.error("Por favor, ingrese un correo electrónico válido");
@@ -31,16 +32,15 @@ const ForgotPassword = () => {
 
     setIsLoading(true);
     
-    try {
-      await requestPasswordReset(email);
-      setStep(2);
-    } catch (error) {
-    } finally {
+    // Simulate API call to send reset token
+    setTimeout(() => {
+      toast.success("Código de verificación enviado a su correo electrónico");
       setIsLoading(false);
-    }
+      setStep(2);
+    }, 1500);
   };
 
-  const handleSubmitToken = async (e: React.FormEvent) => {
+  const handleSubmitToken = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!token) {
@@ -55,19 +55,15 @@ const ForgotPassword = () => {
 
     setIsLoading(true);
     
-    try {
-      const isValid = await verifyResetCode(email, token);
-      
-      if (isValid) {
-        setStep(3);
-      }
-    } catch (error) {
-    } finally {
+    // Simulate API call to verify token
+    setTimeout(() => {
+      toast.success("Código de verificación válido");
       setIsLoading(false);
-    }
+      setStep(3);
+    }, 1500);
   };
 
-  const handleSubmitNewPassword = async (e: React.FormEvent) => {
+  const handleSubmitNewPassword = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!newPassword || !confirmPassword) {
@@ -87,14 +83,12 @@ const ForgotPassword = () => {
 
     setIsLoading(true);
     
-    try {
-      await setNewPassword(email, token, newPassword);
-      
-      window.location.href = "/";
-    } catch (error) {
-    } finally {
+    // Simulate API call to reset password
+    setTimeout(() => {
+      toast.success("Contraseña restablecida con éxito");
       setIsLoading(false);
-    }
+      window.location.href = "/";
+    }, 1500);
   };
 
   return (

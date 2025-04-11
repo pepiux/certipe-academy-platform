@@ -11,18 +11,7 @@ import {
   Award,
   ChevronRight
 } from "lucide-react";
-import { 
-  BarChart, 
-  Bar, 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer,
-  Legend
-} from "recharts";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -163,7 +152,7 @@ const Dashboard = () => {
               <div>
                 <p className="text-sm text-muted-foreground">Horas de estudio</p>
                 <h3 className="text-2xl font-bold mt-1">24.5</h3>
-                <p className="text-xs text-muted-foreground mt-1">Esta semana</p>
+                <p className="text-xs text-muted-foreground mt-1">Horas de estudio</p>
               </div>
               <div className="bg-blue-100 p-2 rounded-lg">
                 <Clock className="h-6 w-6 text-blue-600" />
@@ -176,9 +165,9 @@ const Dashboard = () => {
           <CardContent className="p-6">
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-sm text-muted-foreground">Cuestionarios</p>
+                <p className="text-sm text-muted-foreground">Cuestionarios completados</p>
                 <h3 className="text-2xl font-bold mt-1">18</h3>
-                <p className="text-xs text-muted-foreground mt-1">Completados</p>
+                <p className="text-xs text-muted-foreground mt-1">Cuestionarios completados</p>
               </div>
               <div className="bg-purple-100 p-2 rounded-lg">
                 <FileQuestion className="h-6 w-6 text-purple-600" />
@@ -191,9 +180,9 @@ const Dashboard = () => {
           <CardContent className="p-6">
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-sm text-muted-foreground">Puntuación</p>
+                <p className="text-sm text-muted-foreground">Puntuación media</p>
                 <h3 className="text-2xl font-bold mt-1">78%</h3>
-                <p className="text-xs text-muted-foreground mt-1">Media</p>
+                <p className="text-xs text-muted-foreground mt-1">Puntuación media</p>
               </div>
               <div className="bg-green-100 p-2 rounded-lg">
                 <Award className="h-6 w-6 text-green-600" />
@@ -206,9 +195,9 @@ const Dashboard = () => {
           <CardContent className="p-6">
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-sm text-muted-foreground">Materiales</p>
+                <p className="text-sm text-muted-foreground">Materiales de aprendizaje</p>
                 <h3 className="text-2xl font-bold mt-1">12</h3>
-                <p className="text-xs text-muted-foreground mt-1">De aprendizaje</p>
+                <p className="text-xs text-muted-foreground mt-1">Materiales de aprendizaje</p>
               </div>
               <div className="bg-amber-100 p-2 rounded-lg">
                 <Book className="h-6 w-6 text-amber-600" />
@@ -219,41 +208,35 @@ const Dashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        {/* Compacted Study Hours Chart - Using BarChart instead of LineChart */}
+        {/* Study Hours Chart */}
         <Card>
           <CardContent className="p-6">
-            <h3 className="text-lg font-medium mb-2">Horas de estudio diarias</h3>
-            <div className="h-56">
+            <h3 className="text-lg font-medium mb-4">Horas de estudio diarias</h3>
+            <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={studyHoursData} margin={{ top: 10, right: 10, left: 5, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                  <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-                  <YAxis tick={{ fontSize: 12 }} width={25} />
-                  <Tooltip 
-                    contentStyle={{ fontSize: '12px' }} 
-                    formatter={(value) => [`${value} horas`, 'Estudio']}
-                  />
-                  <Bar dataKey="hours" fill="#3B82F6" />
-                </BarChart>
+                <LineChart data={studyHoursData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Line type="monotone" dataKey="hours" stroke="#3B82F6" strokeWidth={2} />
+                </LineChart>
               </ResponsiveContainer>
             </div>
           </CardContent>
         </Card>
         
-        {/* Compacted Score Progress Chart */}
+        {/* Score Progress Chart */}
         <Card>
           <CardContent className="p-6">
-            <h3 className="text-lg font-medium mb-2">Progreso de puntuación</h3>
-            <div className="h-56">
+            <h3 className="text-lg font-medium mb-4">Progreso de puntuación</h3>
+            <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={scoreProgressData} margin={{ top: 10, right: 10, left: 5, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                  <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-                  <YAxis domain={[0, 100]} tick={{ fontSize: 11 }} width={25} />
-                  <Tooltip 
-                    contentStyle={{ fontSize: '12px' }} 
-                    formatter={(value) => [`${value}%`, 'Puntuación']}
-                  />
+                <LineChart data={scoreProgressData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis domain={[0, 100]} />
+                  <Tooltip />
                   <Line type="monotone" dataKey="score" stroke="#8B5CF6" strokeWidth={2} />
                 </LineChart>
               </ResponsiveContainer>
@@ -311,10 +294,10 @@ const Dashboard = () => {
           </Button>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {quizzes.slice(0, 3).map((quiz) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {quizzes.map((quiz) => (
             <Card key={quiz.id} className="overflow-hidden quiz-card">
-              <div className={`quiz-card-banner bg-gradient-to-r ${quiz.color}`}></div>
+              <div className={`quiz-card-banner ${quiz.color}`}></div>
               <div className="h-24 overflow-hidden">
                 <img 
                   src={quiz.image} 
@@ -365,10 +348,10 @@ const Dashboard = () => {
           </Button>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {courses.slice(0, 3).map((course) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {courses.map((course) => (
             <Card key={course.id} className="overflow-hidden quiz-card">
-              <div className={`quiz-card-banner bg-gradient-to-r ${course.color}`}></div>
+              <div className={`quiz-card-banner ${course.color}`}></div>
               <div className="h-32 overflow-hidden">
                 <img 
                   src={course.image} 

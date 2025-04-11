@@ -1,109 +1,166 @@
 
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { useAuth } from '@/contexts/AuthContext';
-import { toast } from 'sonner';
-import SocialLogin from '@/components/auth/SocialLogin';
-
-const formSchema = z.object({
-  email: z.string().email({ message: 'Ingresa un correo electrónico válido.' }),
-  password: z.string().min(6, { message: 'La contraseña debe tener al menos 6 caracteres.' }),
-});
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { toast } from "sonner";
 
 const Login = () => {
-  const { signIn } = useAuth();
-  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-    },
-  });
-
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      setLoading(true);
-      await signIn(values.email, values.password);
-    } catch (error) {
-      console.error('Error al iniciar sesión:', error);
-    } finally {
-      setLoading(false);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !password) {
+      toast.error("Por favor, complete todos los campos");
+      return;
     }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error("Por favor, ingrese un correo electrónico válido");
+      return;
+    }
+
+    setIsLoading(true);
+    
+    // Simulate API call
+    setTimeout(() => {
+      // Normally you would check credentials with a real API
+      if (email === "admin@example.com" && password === "password") {
+        toast.success("Inicio de sesión exitoso");
+        window.location.href = "/dashboard";
+      } else {
+        toast.error("Credenciales incorrectas");
+        setIsLoading(false);
+      }
+    }, 1000);
+  };
+
+  const handleSocialLogin = (provider: string) => {
+    toast.info(`Iniciando sesión con ${provider}...`);
+    // Here you would implement the OAuth flow for the selected provider
   };
 
   return (
-    <div className="mx-auto max-w-md space-y-6 px-4 py-8">
-      <div className="space-y-2 text-center">
-        <h1 className="text-3xl font-bold">Iniciar Sesión</h1>
-        <p className="text-gray-500 dark:text-gray-400">
-          Ingresa tu correo electrónico y contraseña para acceder a tu cuenta
+    <div className="animate-fadeIn">
+      <div className="mb-8 text-center">
+        <h1 className="text-2xl font-bold">Sign In</h1>
+        <p className="text-muted-foreground mt-2">
+          Accede a tu cuenta para continuar
         </p>
       </div>
-      
-      <div className="space-y-4">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Correo electrónico</FormLabel>
-                  <FormControl>
-                    <Input placeholder="tu@ejemplo.com" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Contraseña</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="flex items-center justify-between">
-              <Link to="/forgot-password" className="text-sm text-blue-600 hover:text-blue-800">
-                ¿Olvidaste tu contraseña?
-              </Link>
-            </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
-            </Button>
-          </form>
-        </Form>
 
-        <div className="text-center">
-          <p className="text-sm text-gray-500">
-            ¿No tienes una cuenta?{' '}
-            <Link to="/register" className="text-blue-600 hover:text-blue-800">
-              Regístrate
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input 
+            id="email"
+            type="email"
+            placeholder="correo@ejemplo.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+        
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label htmlFor="password">Contraseña</Label>
+            <Link 
+              to="/forgot-password" 
+              className="text-sm text-primary hover:underline"
+            >
+              ¿Olvidaste tu contraseña?
             </Link>
-          </p>
+          </div>
+          <div className="relative">
+            <Input 
+              id="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+            >
+              {showPassword ? (
+                <EyeOffIcon size={18} />
+              ) : (
+                <EyeIcon size={18} />
+              )}
+            </button>
+          </div>
+        </div>
+
+        <Button 
+          type="submit" 
+          className="w-full" 
+          disabled={isLoading}
+        >
+          {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
+        </Button>
+      </form>
+
+      <div className="mt-6">
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-300"></div>
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="bg-background px-2 text-muted-foreground">
+              O continuar con
+            </span>
+          </div>
+        </div>
+
+        <div className="mt-6 grid grid-cols-3 gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => handleSocialLogin("Google")}
+            className="flex items-center justify-center"
+          >
+            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => handleSocialLogin("Facebook")}
+            className="flex items-center justify-center"
+          >
+            <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="Facebook" className="w-5 h-5" />
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => handleSocialLogin("Microsoft")}
+            className="flex items-center justify-center"
+          >
+            <img src="https://www.svgrepo.com/show/303223/microsoft-logo.svg" alt="Microsoft" className="w-5 h-5" />
+          </Button>
         </div>
       </div>
+
+      <p className="mt-8 text-center text-sm text-muted-foreground">
+        ¿No tienes una cuenta?{" "}
+        <Link
+          to="/register"
+          className="font-medium text-primary hover:underline"
+        >
+          Registrarse
+        </Link>
+      </p>
     </div>
   );
 };
