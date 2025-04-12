@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { EyeIcon, EyeOffIcon, Linkedin } from "lucide-react";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { toast } from "sonner";
 
 const Register = () => {
@@ -196,7 +196,12 @@ const Register = () => {
             variant="outline"
             onClick={() => handleSocialLogin("LinkedIn")}
           >
-            <img src="https://www.svgrepo.com/show/448234/linkedin.svg" alt="LinkedIn" className="w-5 h-5" />
+            <img 
+              src="https://www.svgrepo.com/show/448234/linkedin.svg" 
+              alt="LinkedIn" 
+              className="w-5 h-5" 
+              style={{ width: "20px", height: "20px" }}
+            />
           </Button>
         </div>
       </div>
