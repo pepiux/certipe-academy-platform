@@ -14,19 +14,10 @@ class ApiError extends Error {
   }
 }
 
-// Definimos el tipo para el cliente API con sus métodos genéricos
-type ApiClient = {
-  get<T>(endpoint: string, customOptions?: Record<string, any>): Promise<T>;
-  post<T>(endpoint: string, data?: any, customOptions?: Record<string, any>): Promise<T>;
-  put<T>(endpoint: string, data?: any, customOptions?: Record<string, any>): Promise<T>;
-  delete<T>(endpoint: string, customOptions?: Record<string, any>): Promise<T>;
-  request<T>(method: string, endpoint: string, data?: any, customOptions?: Record<string, any>): Promise<T>;
-}
-
 /**
  * Cliente para realizar peticiones HTTP a la API
  */
-const apiClient: ApiClient = {
+const apiClient = {
   /**
    * Realiza una petición GET
    */
@@ -122,6 +113,9 @@ const apiClient: ApiClient = {
     }
   }
 };
+
+// Definir el tipo después de la implementación para TypeScript
+type ApiClientType = typeof apiClient;
 
 export default apiClient;
 export { ApiError };
