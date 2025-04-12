@@ -14,42 +14,51 @@ class ApiError extends Error {
   }
 }
 
+// Definiendo un tipo para el cliente API con sus métodos genéricos
+interface ApiClient {
+  get<T>(endpoint: string, customOptions?: Record<string, any>): Promise<T>;
+  post<T>(endpoint: string, data?: any, customOptions?: Record<string, any>): Promise<T>;
+  put<T>(endpoint: string, data?: any, customOptions?: Record<string, any>): Promise<T>;
+  delete<T>(endpoint: string, customOptions?: Record<string, any>): Promise<T>;
+  request<T>(method: string, endpoint: string, data?: any, customOptions?: Record<string, any>): Promise<T>;
+}
+
 /**
  * Cliente para realizar peticiones HTTP a la API
  */
-const apiClient = {
+const apiClient: ApiClient = {
   /**
    * Realiza una petición GET
    */
-  get: async function<T>(endpoint: string, customOptions = {}): Promise<T> {
+  async get<T>(endpoint: string, customOptions = {}): Promise<T> {
     return this.request<T>('GET', endpoint, null, customOptions);
   },
   
   /**
    * Realiza una petición POST
    */
-  post: async function<T>(endpoint: string, data: any = null, customOptions = {}): Promise<T> {
+  async post<T>(endpoint: string, data: any = null, customOptions = {}): Promise<T> {
     return this.request<T>('POST', endpoint, data, customOptions);
   },
   
   /**
    * Realiza una petición PUT
    */
-  put: async function<T>(endpoint: string, data: any = null, customOptions = {}): Promise<T> {
+  async put<T>(endpoint: string, data: any = null, customOptions = {}): Promise<T> {
     return this.request<T>('PUT', endpoint, data, customOptions);
   },
   
   /**
    * Realiza una petición DELETE
    */
-  delete: async function<T>(endpoint: string, customOptions = {}): Promise<T> {
+  async delete<T>(endpoint: string, customOptions = {}): Promise<T> {
     return this.request<T>('DELETE', endpoint, null, customOptions);
   },
   
   /**
    * Método genérico para realizar peticiones HTTP
    */
-  request: async function<T>(
+  async request<T>(
     method: string, 
     endpoint: string, 
     data: any = null, 
