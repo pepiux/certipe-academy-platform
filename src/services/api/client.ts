@@ -26,39 +26,39 @@ interface ApiClient {
 /**
  * Cliente para realizar peticiones HTTP a la API
  */
-const apiClient: ApiClient = {
+const apiClient = {
   /**
    * Realiza una petición GET
    */
-  async get<T>(endpoint: string, customOptions = {}): Promise<T> {
-    return this.request<T>('GET', endpoint, null, customOptions);
+  async get(endpoint: string, customOptions = {}): Promise<any> {
+    return this.request('GET', endpoint, null, customOptions);
   },
   
   /**
    * Realiza una petición POST
    */
-  async post<T>(endpoint: string, data = null, customOptions = {}): Promise<T> {
-    return this.request<T>('POST', endpoint, data, customOptions);
+  async post(endpoint: string, data = null, customOptions = {}): Promise<any> {
+    return this.request('POST', endpoint, data, customOptions);
   },
   
   /**
    * Realiza una petición PUT
    */
-  async put<T>(endpoint: string, data = null, customOptions = {}): Promise<T> {
-    return this.request<T>('PUT', endpoint, data, customOptions);
+  async put(endpoint: string, data = null, customOptions = {}): Promise<any> {
+    return this.request('PUT', endpoint, data, customOptions);
   },
   
   /**
    * Realiza una petición DELETE
    */
-  async delete<T>(endpoint: string, customOptions = {}): Promise<T> {
-    return this.request<T>('DELETE', endpoint, null, customOptions);
+  async delete(endpoint: string, customOptions = {}): Promise<any> {
+    return this.request('DELETE', endpoint, null, customOptions);
   },
   
   /**
    * Método genérico para realizar peticiones HTTP
    */
-  async request<T>(method: string, endpoint: string, data = null, customOptions = {}): Promise<T> {
+  async request(method: string, endpoint: string, data = null, customOptions = {}): Promise<any> {
     const url = `${API_BASE_URL}${endpoint}`;
     
     // Configurar las opciones de la petición
@@ -116,7 +116,7 @@ const apiClient: ApiClient = {
       );
     }
   }
-};
+} as ApiClient; // Type assertion to ensure apiClient conforms to ApiClient interface
 
 export default apiClient;
 export { ApiError };
