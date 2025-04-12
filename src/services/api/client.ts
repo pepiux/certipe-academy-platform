@@ -2,7 +2,8 @@
 import { API_BASE_URL, defaultOptions, getAuthHeaders } from './config';
 import { toast } from 'sonner';
 
-class ApiError extends Error {
+// Clase para manejar errores de API
+export class ApiError extends Error {
   status: number;
   data: any;
   
@@ -14,10 +15,20 @@ class ApiError extends Error {
   }
 }
 
+// Definiendo interfaces para los métodos de la API
+interface ApiClientInterface {
+  get<T>(endpoint: string, customOptions?: Record<string, any>): Promise<T>;
+  post<T>(endpoint: string, data?: any, customOptions?: Record<string, any>): Promise<T>;
+  put<T>(endpoint: string, data?: any, customOptions?: Record<string, any>): Promise<T>;
+  delete<T>(endpoint: string, customOptions?: Record<string, any>): Promise<T>;
+  request<T>(method: string, endpoint: string, data?: any, customOptions?: Record<string, any>): Promise<T>;
+}
+
 /**
  * Cliente para realizar peticiones HTTP a la API
+ * Compatible con Laravel y cualquier API RESTful
  */
-const apiClient = {
+const apiClient: ApiClientInterface = {
   /**
    * Realiza una petición GET
    */
@@ -94,7 +105,6 @@ const apiClient = {
         if (error.status === 401) {
           // Manejar error de autenticación
           toast.error('Sesión expirada. Por favor, inicie sesión nuevamente.');
-          // Aquí podrías redirigir al login o actualizar el estado de autenticación
           localStorage.removeItem('auth_token');
           window.location.href = '/';
         } else {
@@ -115,4 +125,3 @@ const apiClient = {
 };
 
 export default apiClient;
-export { ApiError };
