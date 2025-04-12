@@ -12,7 +12,6 @@ interface RegisterData {
   name: string;
   email: string;
   password: string;
-  password_confirmation?: string;
 }
 
 interface AuthResponse {
@@ -25,19 +24,16 @@ interface AuthResponse {
   token: string;
 }
 
-// Servicio de autenticación para Laravel Sanctum
+// Servicio de autenticación
 const authService = {
   /**
    * Inicia sesión de un usuario
    */
   async login(credentials: LoginCredentials): Promise<boolean> {
     try {
-      // Laravel Sanctum necesita una solicitud CSRF primero
-      await apiClient.get('/sanctum/csrf-cookie');
+      const response = await apiClient.post<AuthResponse>('/auth/login', credentials);
       
-      const response = await apiClient.post<AuthResponse>('/login', credentials);
-      
-      // Guardar datos de usuario
+      // Guardar token y datos de usuario
       localStorage.setItem('auth_token', response.token);
       localStorage.setItem('user', JSON.stringify(response.user));
       
@@ -53,15 +49,7 @@ const authService = {
    */
   async register(userData: RegisterData): Promise<boolean> {
     try {
-      // Asegurar confirmación de contraseña
-      if (!userData.password_confirmation) {
-        userData.password_confirmation = userData.password;
-      }
-      
-      // Laravel Sanctum necesita una solicitud CSRF primero
-      await apiClient.get('/sanctum/csrf-cookie');
-      
-      const response = await apiClient.post<AuthResponse>('/register', userData);
+      const response = await apiClient.post<AuthResponse>('/auth/register', userData);
       
       // Guardar token y datos de usuario
       localStorage.setItem('auth_token', response.token);
@@ -79,7 +67,8 @@ const authService = {
    */
   async logout(): Promise<void> {
     try {
-      await apiClient.post('/logout');
+      // Llamar al endpoint de logout (opcional, depende de tu implementación en Laravel)
+      await apiClient.post('/auth/logout');
     } catch (error) {
       console.error('Error al cerrar sesión en el servidor', error);
     } finally {
@@ -95,7 +84,7 @@ const authService = {
    */
   async forgotPassword(email: string): Promise<boolean> {
     try {
-      await apiClient.post('/forgot-password', { email });
+      await apiClient.post('/auth/forgot-password', { email });
       toast.success('Se ha enviado un correo con las instrucciones para recuperar tu contraseña');
       return true;
     } catch (error) {
@@ -106,11 +95,10 @@ const authService = {
   /**
    * Resetea la contraseña con el token recibido
    */
-  async resetPassword(token: string, email: string, password: string, passwordConfirmation: string): Promise<boolean> {
+  async resetPassword(token: string, password: string, passwordConfirmation: string): Promise<boolean> {
     try {
-      await apiClient.post('/reset-password', {
+      await apiClient.post('/auth/reset-password', {
         token,
-        email,
         password,
         password_confirmation: passwordConfirmation
       });

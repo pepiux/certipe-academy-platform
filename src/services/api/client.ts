@@ -2,8 +2,7 @@
 import { API_BASE_URL, defaultOptions, getAuthHeaders } from './config';
 import { toast } from 'sonner';
 
-// Clase para manejar errores de API
-export class ApiError extends Error {
+class ApiError extends Error {
   status: number;
   data: any;
   
@@ -17,34 +16,33 @@ export class ApiError extends Error {
 
 /**
  * Cliente para realizar peticiones HTTP a la API
- * Compatible con Laravel y cualquier API RESTful
  */
 const apiClient = {
   /**
    * Realiza una petición GET
    */
-  async get<T>(endpoint: string, customOptions: Record<string, any> = {}): Promise<T> {
+  async get<T>(endpoint: string, customOptions = {}): Promise<T> {
     return this.request<T>('GET', endpoint, null, customOptions);
   },
   
   /**
    * Realiza una petición POST
    */
-  async post<T>(endpoint: string, data: any = null, customOptions: Record<string, any> = {}): Promise<T> {
+  async post<T>(endpoint: string, data: any = null, customOptions = {}): Promise<T> {
     return this.request<T>('POST', endpoint, data, customOptions);
   },
   
   /**
    * Realiza una petición PUT
    */
-  async put<T>(endpoint: string, data: any = null, customOptions: Record<string, any> = {}): Promise<T> {
+  async put<T>(endpoint: string, data: any = null, customOptions = {}): Promise<T> {
     return this.request<T>('PUT', endpoint, data, customOptions);
   },
   
   /**
    * Realiza una petición DELETE
    */
-  async delete<T>(endpoint: string, customOptions: Record<string, any> = {}): Promise<T> {
+  async delete<T>(endpoint: string, customOptions = {}): Promise<T> {
     return this.request<T>('DELETE', endpoint, null, customOptions);
   },
   
@@ -55,19 +53,19 @@ const apiClient = {
     method: string, 
     endpoint: string, 
     data: any = null, 
-    customOptions: Record<string, any> = {}
+    customOptions = {}
   ): Promise<T> {
     const url = `${API_BASE_URL}${endpoint}`;
     
     // Configurar las opciones de la petición
-    const options: RequestInit = {
+    const options = {
       ...defaultOptions,
       ...customOptions,
       method,
       headers: {
         ...defaultOptions.headers,
         ...getAuthHeaders(),
-        ...(customOptions.headers || {}),
+        ...(customOptions as any).headers,
       },
     };
     
@@ -96,6 +94,7 @@ const apiClient = {
         if (error.status === 401) {
           // Manejar error de autenticación
           toast.error('Sesión expirada. Por favor, inicie sesión nuevamente.');
+          // Aquí podrías redirigir al login o actualizar el estado de autenticación
           localStorage.removeItem('auth_token');
           window.location.href = '/';
         } else {
@@ -115,16 +114,5 @@ const apiClient = {
   }
 };
 
-// Define the interface after the implementation, based on the actual object structure
-interface ApiClientInterface {
-  get<T>(endpoint: string, customOptions?: Record<string, any>): Promise<T>;
-  post<T>(endpoint: string, data?: any, customOptions?: Record<string, any>): Promise<T>;
-  put<T>(endpoint: string, data?: any, customOptions?: Record<string, any>): Promise<T>;
-  delete<T>(endpoint: string, customOptions?: Record<string, any>): Promise<T>;
-  request<T>(method: string, endpoint: string, data?: any, customOptions?: Record<string, any>): Promise<T>;
-}
-
-// Type assertion to ensure apiClient matches the interface
-const typedApiClient = apiClient as ApiClientInterface;
-
-export default typedApiClient;
+export default apiClient;
+export { ApiError };
