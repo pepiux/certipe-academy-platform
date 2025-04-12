@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { EyeIcon, EyeOffIcon, Linkedin } from "lucide-react";
 import { toast } from "sonner";
 
 const Login = () => {
@@ -144,10 +144,10 @@ const Login = () => {
           <Button
             type="button"
             variant="outline"
-            onClick={() => handleSocialLogin("Microsoft")}
+            onClick={() => handleSocialLogin("LinkedIn")}
             className="flex items-center justify-center"
           >
-            <img src="https://www.svgrepo.com/show/303223/microsoft-logo.svg" alt="Microsoft" className="w-5 h-5" />
+            <Linkedin className="w-5 h-5 text-blue-600" />
           </Button>
         </div>
       </div>
