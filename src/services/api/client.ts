@@ -53,19 +53,19 @@ const apiClient = {
     method: string, 
     endpoint: string, 
     data: any = null, 
-    customOptions = {}
+    customOptions: Record<string, any> = {}
   ): Promise<T> {
     const url = `${API_BASE_URL}${endpoint}`;
     
     // Configurar las opciones de la petición
-    const options = {
+    const options: RequestInit = {
       ...defaultOptions,
       ...customOptions,
       method,
       headers: {
         ...defaultOptions.headers,
         ...getAuthHeaders(),
-        ...(customOptions as any).headers,
+        ...(customOptions.headers || {}),
       },
     };
     

@@ -37,7 +37,7 @@ const Login = () => {
     setIsLoading(true);
     
     try {
-      // Llamar al servicio de autenticación
+      // Llamar al servicio de autenticación actualizado para Laravel
       const success = await authService.login({ email, password });
       
       if (success) {

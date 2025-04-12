@@ -1,9 +1,12 @@
 
 // Configuración base para las peticiones API
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+// Al estar en el mismo dominio, no necesitamos especificar la URL completa
+const API_BASE_URL = '/api';
 
 // Opciones por defecto para fetch
-const defaultOptions = {
+const defaultOptions: {
+  headers: Record<string, string>;
+} = {
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
@@ -11,7 +14,7 @@ const defaultOptions = {
 };
 
 // Función para incluir el token de autenticación en las cabeceras si existe
-const getAuthHeaders = () => {
+const getAuthHeaders = (): Record<string, string> => {
   const token = localStorage.getItem('auth_token');
   return token ? { 'Authorization': `Bearer ${token}` } : {};
 };
