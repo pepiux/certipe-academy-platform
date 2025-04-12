@@ -14,8 +14,8 @@ class ApiError extends Error {
   }
 }
 
-// Definiendo un tipo para el cliente API con sus métodos genéricos
-interface ApiClient {
+// Definimos el tipo para el cliente API con sus métodos genéricos
+type ApiClient = {
   get<T>(endpoint: string, customOptions?: Record<string, any>): Promise<T>;
   post<T>(endpoint: string, data?: any, customOptions?: Record<string, any>): Promise<T>;
   put<T>(endpoint: string, data?: any, customOptions?: Record<string, any>): Promise<T>;
