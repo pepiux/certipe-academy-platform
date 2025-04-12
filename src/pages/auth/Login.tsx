@@ -131,7 +131,11 @@ const Login = () => {
             onClick={() => handleSocialLogin("Google")}
             className="flex items-center justify-center"
           >
-            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
+            <img 
+              src="https://www.svgrepo.com/show/475656/google-color.svg" 
+              alt="Google" 
+              style={{ width: "24px", height: "24px" }} 
+            />
           </Button>
           <Button
             type="button"
@@ -139,7 +143,11 @@ const Login = () => {
             onClick={() => handleSocialLogin("Facebook")}
             className="flex items-center justify-center"
           >
-            <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="Facebook" className="w-5 h-5" />
+            <img 
+              src="https://www.svgrepo.com/show/475647/facebook-color.svg" 
+              alt="Facebook" 
+              style={{ width: "24px", height: "24px" }} 
+            />
           </Button>
           <Button
             type="button"
@@ -150,8 +158,7 @@ const Login = () => {
             <img 
               src="https://www.svgrepo.com/show/448234/linkedin.svg" 
               alt="LinkedIn" 
-              className="w-5 h-5" 
-              style={{ width: "20px", height: "20px" }}
+              style={{ width: "24px", height: "24px" }} 
             />
           </Button>
         </div>
