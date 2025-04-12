@@ -4,13 +4,8 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { EyeIcon, EyeOffIcon, Linkedin } from "lucide-react";
 import { toast } from "sonner";
-
-// Importar íconos locales
-import googleIcon from "@/assets/icons/google-icon.svg";
-import facebookIcon from "@/assets/icons/facebook-icon.svg";
-import linkedinIcon from "@/assets/icons/linkedin-icon.svg";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -136,11 +131,7 @@ const Login = () => {
             onClick={() => handleSocialLogin("Google")}
             className="flex items-center justify-center"
           >
-            <img 
-              src={googleIcon} 
-              alt="Google" 
-              style={{ width: "24px", height: "24px" }} 
-            />
+            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
           </Button>
           <Button
             type="button"
@@ -148,11 +139,7 @@ const Login = () => {
             onClick={() => handleSocialLogin("Facebook")}
             className="flex items-center justify-center"
           >
-            <img 
-              src={facebookIcon} 
-              alt="Facebook" 
-              style={{ width: "24px", height: "24px" }} 
-            />
+            <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="Facebook" className="w-5 h-5" />
           </Button>
           <Button
             type="button"
@@ -160,11 +147,7 @@ const Login = () => {
             onClick={() => handleSocialLogin("LinkedIn")}
             className="flex items-center justify-center"
           >
-            <img 
-              src={linkedinIcon} 
-              alt="LinkedIn" 
-              style={{ width: "24px", height: "24px" }} 
-            />
+            <Linkedin className="w-5 h-5 text-blue-600" />
           </Button>
         </div>
       </div>
