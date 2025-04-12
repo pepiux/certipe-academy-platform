@@ -18,10 +18,14 @@ const Logo: React.FC<LogoProps> = ({ size = "medium" }) => {
 
   return (
     <Link to="/" className="inline-flex items-center">
-      <div className={`font-bold ${sizeClasses[size]} flex items-center`}>
-        {!isMobile && <span className="text-white">Certi</span>}
-        <span className="text-brand-blue">PE</span>
-      </div>
+      {isMobile ? (
+        <div className="sr-only">CertiPE</div>
+      ) : (
+        <div className={`font-bold ${sizeClasses[size]} flex items-center`}>
+          <span className="text-white">Certi</span>
+          <span className="text-brand-blue">PE</span>
+        </div>
+      )}
     </Link>
   );
 };

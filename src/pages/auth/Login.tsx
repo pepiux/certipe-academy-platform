@@ -1,17 +1,24 @@
 
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { EyeIcon, EyeOffIcon, Linkedin } from "lucide-react";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { toast } from "sonner";
+import authService from "@/services/authService";
+
+// Importar íconos locales
+import googleIcon from "@/assets/icons/google-icon.svg";
+import facebookIcon from "@/assets/icons/facebook-icon.svg";
+import linkedinIcon from "@/assets/icons/linkedin-icon.svg";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,22 +36,25 @@ const Login = () => {
 
     setIsLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      // Normally you would check credentials with a real API
-      if (email === "admin@example.com" && password === "password") {
-        toast.success("Inicio de sesión exitoso");
-        window.location.href = "/dashboard";
+    try {
+      // Llamar al servicio de autenticación
+      const success = await authService.login({ email, password });
+      
+      if (success) {
+        navigate("/dashboard");
       } else {
         toast.error("Credenciales incorrectas");
-        setIsLoading(false);
       }
-    }, 1000);
+    } catch (error) {
+      toast.error("Error al iniciar sesión. Por favor, inténtelo de nuevo.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSocialLogin = (provider: string) => {
     toast.info(`Iniciando sesión con ${provider}...`);
-    // Here you would implement the OAuth flow for the selected provider
+    // Aquí implementarías la integración con OAuth para el proveedor seleccionado
   };
 
   return (
@@ -131,7 +141,11 @@ const Login = () => {
             onClick={() => handleSocialLogin("Google")}
             className="flex items-center justify-center"
           >
-            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
+            <img 
+              src={googleIcon} 
+              alt="Google" 
+              style={{ width: "24px", height: "24px" }} 
+            />
           </Button>
           <Button
             type="button"
@@ -139,7 +153,11 @@ const Login = () => {
             onClick={() => handleSocialLogin("Facebook")}
             className="flex items-center justify-center"
           >
-            <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="Facebook" className="w-5 h-5" />
+            <img 
+              src={facebookIcon} 
+              alt="Facebook" 
+              style={{ width: "24px", height: "24px" }} 
+            />
           </Button>
           <Button
             type="button"
@@ -147,7 +165,11 @@ const Login = () => {
             onClick={() => handleSocialLogin("LinkedIn")}
             className="flex items-center justify-center"
           >
-            <Linkedin className="w-5 h-5 text-blue-600" />
+            <img 
+              src={linkedinIcon} 
+              alt="LinkedIn" 
+              style={{ width: "24px", height: "24px" }} 
+            />
           </Button>
         </div>
       </div>
