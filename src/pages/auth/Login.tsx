@@ -7,6 +7,11 @@ import { Label } from "@/components/ui/label";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { toast } from "sonner";
 
+// Importar íconos locales
+import googleIcon from "@/assets/icons/google-icon.svg";
+import facebookIcon from "@/assets/icons/facebook-icon.svg";
+import linkedinIcon from "@/assets/icons/linkedin-icon.svg";
+
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
@@ -132,7 +137,7 @@ const Login = () => {
             className="flex items-center justify-center"
           >
             <img 
-              src="https://www.svgrepo.com/show/475656/google-color.svg" 
+              src={googleIcon} 
               alt="Google" 
               style={{ width: "24px", height: "24px" }} 
             />
@@ -144,7 +149,7 @@ const Login = () => {
             className="flex items-center justify-center"
           >
             <img 
-              src="https://www.svgrepo.com/show/475647/facebook-color.svg" 
+              src={facebookIcon} 
               alt="Facebook" 
               style={{ width: "24px", height: "24px" }} 
             />
@@ -156,7 +161,7 @@ const Login = () => {
             className="flex items-center justify-center"
           >
             <img 
-              src="https://www.svgrepo.com/show/448234/linkedin.svg" 
+              src={linkedinIcon} 
               alt="LinkedIn" 
               style={{ width: "24px", height: "24px" }} 
             />
