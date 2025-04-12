@@ -196,7 +196,7 @@ const Register = () => {
             variant="outline"
             onClick={() => handleSocialLogin("LinkedIn")}
           >
-            <Linkedin className="w-5 h-5 text-blue-600" />
+            <img src="https://www.svgrepo.com/show/448234/linkedin.svg" alt="LinkedIn" className="w-5 h-5" />
           </Button>
         </div>
       </div>

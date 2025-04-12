@@ -147,7 +147,7 @@ const Login = () => {
             onClick={() => handleSocialLogin("LinkedIn")}
             className="flex items-center justify-center"
           >
-            <Linkedin className="w-5 h-5 text-blue-600" />
+            <img src="https://www.svgrepo.com/show/448234/linkedin.svg" alt="LinkedIn" className="w-5 h-5" />
           </Button>
         </div>
       </div>
