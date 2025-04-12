@@ -16,11 +16,11 @@ class ApiError extends Error {
 
 // Define the interface for the apiClient object
 interface ApiClient {
-  get<T>(endpoint: string, customOptions?: {}): Promise<T>;
-  post<T>(endpoint: string, data?: any, customOptions?: {}): Promise<T>;
-  put<T>(endpoint: string, data?: any, customOptions?: {}): Promise<T>;
-  delete<T>(endpoint: string, customOptions?: {}): Promise<T>;
-  request<T>(method: string, endpoint: string, data?: any, customOptions?: {}): Promise<T>;
+  get<T>(endpoint: string, customOptions?: Record<string, any>): Promise<T>;
+  post<T>(endpoint: string, data?: any, customOptions?: Record<string, any>): Promise<T>;
+  put<T>(endpoint: string, data?: any, customOptions?: Record<string, any>): Promise<T>;
+  delete<T>(endpoint: string, customOptions?: Record<string, any>): Promise<T>;
+  request<T>(method: string, endpoint: string, data?: any, customOptions?: Record<string, any>): Promise<T>;
 }
 
 /**
@@ -30,39 +30,39 @@ const apiClient: ApiClient = {
   /**
    * Realiza una petición GET
    */
-  async get(endpoint, customOptions = {}) {
-    return this.request('GET', endpoint, null, customOptions);
+  async get<T>(endpoint: string, customOptions = {}): Promise<T> {
+    return this.request<T>('GET', endpoint, null, customOptions);
   },
   
   /**
    * Realiza una petición POST
    */
-  async post(endpoint, data = null, customOptions = {}) {
-    return this.request('POST', endpoint, data, customOptions);
+  async post<T>(endpoint: string, data = null, customOptions = {}): Promise<T> {
+    return this.request<T>('POST', endpoint, data, customOptions);
   },
   
   /**
    * Realiza una petición PUT
    */
-  async put(endpoint, data = null, customOptions = {}) {
-    return this.request('PUT', endpoint, data, customOptions);
+  async put<T>(endpoint: string, data = null, customOptions = {}): Promise<T> {
+    return this.request<T>('PUT', endpoint, data, customOptions);
   },
   
   /**
    * Realiza una petición DELETE
    */
-  async delete(endpoint, customOptions = {}) {
-    return this.request('DELETE', endpoint, null, customOptions);
+  async delete<T>(endpoint: string, customOptions = {}): Promise<T> {
+    return this.request<T>('DELETE', endpoint, null, customOptions);
   },
   
   /**
    * Método genérico para realizar peticiones HTTP
    */
-  async request(method, endpoint, data = null, customOptions = {}) {
+  async request<T>(method: string, endpoint: string, data = null, customOptions = {}): Promise<T> {
     const url = `${API_BASE_URL}${endpoint}`;
     
     // Configurar las opciones de la petición
-    const options = {
+    const options: RequestInit = {
       ...defaultOptions,
       ...customOptions,
       method,
