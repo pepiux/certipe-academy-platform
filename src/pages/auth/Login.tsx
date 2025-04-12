@@ -105,9 +105,9 @@ const Login = () => {
               aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
             >
               {showPassword ? (
-                <EyeOffIcon size={18} />
+                <EyeOffIcon size={18} className="text-gray-500" />
               ) : (
-                <EyeIcon size={18} />
+                <EyeIcon size={18} className="text-gray-500" />
               )}
             </button>
           </div>
