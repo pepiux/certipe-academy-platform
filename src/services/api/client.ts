@@ -114,8 +114,5 @@ const apiClient = {
   }
 };
 
-// Definir el tipo después de la implementación para TypeScript
-type ApiClientType = typeof apiClient;
-
 export default apiClient;
 export { ApiError };
