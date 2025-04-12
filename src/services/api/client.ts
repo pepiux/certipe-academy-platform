@@ -21,35 +21,35 @@ const apiClient = {
   /**
    * Realiza una petición GET
    */
-  async get<T>(endpoint: string, customOptions = {}): Promise<T> {
+  get: async function<T>(endpoint: string, customOptions = {}): Promise<T> {
     return this.request<T>('GET', endpoint, null, customOptions);
   },
   
   /**
    * Realiza una petición POST
    */
-  async post<T>(endpoint: string, data: any = null, customOptions = {}): Promise<T> {
+  post: async function<T>(endpoint: string, data: any = null, customOptions = {}): Promise<T> {
     return this.request<T>('POST', endpoint, data, customOptions);
   },
   
   /**
    * Realiza una petición PUT
    */
-  async put<T>(endpoint: string, data: any = null, customOptions = {}): Promise<T> {
+  put: async function<T>(endpoint: string, data: any = null, customOptions = {}): Promise<T> {
     return this.request<T>('PUT', endpoint, data, customOptions);
   },
   
   /**
    * Realiza una petición DELETE
    */
-  async delete<T>(endpoint: string, customOptions = {}): Promise<T> {
+  delete: async function<T>(endpoint: string, customOptions = {}): Promise<T> {
     return this.request<T>('DELETE', endpoint, null, customOptions);
   },
   
   /**
    * Método genérico para realizar peticiones HTTP
    */
-  async request<T>(
+  request: async function<T>(
     method: string, 
     endpoint: string, 
     data: any = null, 
