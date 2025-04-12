@@ -15,45 +15,36 @@ export class ApiError extends Error {
   }
 }
 
-// Definiendo interfaces para los métodos de la API
-interface ApiClientInterface {
-  get<T>(endpoint: string, customOptions?: Record<string, any>): Promise<T>;
-  post<T>(endpoint: string, data?: any, customOptions?: Record<string, any>): Promise<T>;
-  put<T>(endpoint: string, data?: any, customOptions?: Record<string, any>): Promise<T>;
-  delete<T>(endpoint: string, customOptions?: Record<string, any>): Promise<T>;
-  request<T>(method: string, endpoint: string, data?: any, customOptions?: Record<string, any>): Promise<T>;
-}
-
 /**
  * Cliente para realizar peticiones HTTP a la API
  * Compatible con Laravel y cualquier API RESTful
  */
-const apiClient: ApiClientInterface = {
+const apiClient = {
   /**
    * Realiza una petición GET
    */
-  async get<T>(endpoint: string, customOptions = {}): Promise<T> {
+  async get<T>(endpoint: string, customOptions: Record<string, any> = {}): Promise<T> {
     return this.request<T>('GET', endpoint, null, customOptions);
   },
   
   /**
    * Realiza una petición POST
    */
-  async post<T>(endpoint: string, data: any = null, customOptions = {}): Promise<T> {
+  async post<T>(endpoint: string, data: any = null, customOptions: Record<string, any> = {}): Promise<T> {
     return this.request<T>('POST', endpoint, data, customOptions);
   },
   
   /**
    * Realiza una petición PUT
    */
-  async put<T>(endpoint: string, data: any = null, customOptions = {}): Promise<T> {
+  async put<T>(endpoint: string, data: any = null, customOptions: Record<string, any> = {}): Promise<T> {
     return this.request<T>('PUT', endpoint, data, customOptions);
   },
   
   /**
    * Realiza una petición DELETE
    */
-  async delete<T>(endpoint: string, customOptions = {}): Promise<T> {
+  async delete<T>(endpoint: string, customOptions: Record<string, any> = {}): Promise<T> {
     return this.request<T>('DELETE', endpoint, null, customOptions);
   },
   
@@ -124,4 +115,16 @@ const apiClient: ApiClientInterface = {
   }
 };
 
-export default apiClient;
+// Define the interface after the implementation, based on the actual object structure
+interface ApiClientInterface {
+  get<T>(endpoint: string, customOptions?: Record<string, any>): Promise<T>;
+  post<T>(endpoint: string, data?: any, customOptions?: Record<string, any>): Promise<T>;
+  put<T>(endpoint: string, data?: any, customOptions?: Record<string, any>): Promise<T>;
+  delete<T>(endpoint: string, customOptions?: Record<string, any>): Promise<T>;
+  request<T>(method: string, endpoint: string, data?: any, customOptions?: Record<string, any>): Promise<T>;
+}
+
+// Type assertion to ensure apiClient matches the interface
+const typedApiClient = apiClient as ApiClientInterface;
+
+export default typedApiClient;
