@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -34,7 +33,6 @@ const TakeQuiz = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const questionsPerPage = 25;
 
-  // Mock quiz data with the new question type
   const quizData = {
     id: parseInt(id || "1"),
     title: "Fundamentos de la Gestión de Proyectos",
@@ -55,7 +53,6 @@ const TakeQuiz = () => {
         answers: [],
         flagged: false
       })),
-      // Añadiendo preguntas de completar frases
       {
         id: 71,
         text: "Un ___ se enfoca en la tarea, mientras que un líder se preocupa por las personas.",
@@ -67,8 +64,9 @@ const TakeQuiz = () => {
           { id: "d", text: "jefe" }
         ],
         answer: null,
-        blankWord: "jefe",
-        flagged: false
+        answers: [],
+        flagged: false,
+        blankWord: "jefe"
       },
       {
         id: 72,
@@ -81,8 +79,9 @@ const TakeQuiz = () => {
           { id: "d", text: "gestión de riesgos" }
         ],
         answer: null,
-        blankWord: "gestión de riesgos",
-        flagged: false
+        answers: [],
+        flagged: false,
+        blankWord: "gestión de riesgos"
       },
       {
         id: 73,
@@ -95,8 +94,9 @@ const TakeQuiz = () => {
           { id: "d", text: "PRINCE2" }
         ],
         answer: null,
-        blankWord: "Scrum",
-        flagged: false
+        answers: [],
+        flagged: false,
+        blankWord: "Scrum"
       },
       {
         id: 74,
@@ -109,8 +109,9 @@ const TakeQuiz = () => {
           { id: "d", text: "línea base" }
         ],
         answer: null,
-        blankWord: "acta de constitución",
-        flagged: false
+        answers: [],
+        flagged: false,
+        blankWord: "acta de constitución"
       },
       {
         id: 75,
@@ -123,8 +124,9 @@ const TakeQuiz = () => {
           { id: "d", text: "organigrama" }
         ],
         answer: null,
-        blankWord: "diagrama de red",
-        flagged: false
+        answers: [],
+        flagged: false,
+        blankWord: "diagrama de red"
       },
       {
         id: 76,
@@ -137,8 +139,9 @@ const TakeQuiz = () => {
           { id: "d", text: "estimación ascendente" }
         ],
         answer: null,
-        blankWord: "estimación análoga",
-        flagged: false
+        answers: [],
+        flagged: false,
+        blankWord: "estimación análoga"
       },
       {
         id: 77,
@@ -151,8 +154,9 @@ const TakeQuiz = () => {
           { id: "d", text: "análisis de tendencias" }
         ],
         answer: null,
-        blankWord: "los cinco por qué",
-        flagged: false
+        answers: [],
+        flagged: false,
+        blankWord: "los cinco por qué"
       },
       {
         id: 78,
@@ -165,13 +169,13 @@ const TakeQuiz = () => {
           { id: "d", text: "línea base del cronograma" }
         ],
         answer: null,
-        blankWord: "holgura total",
-        flagged: false
+        answers: [],
+        flagged: false,
+        blankWord: "holgura total"
       }
     ]
   };
 
-  // Initialize answers state from quiz questions
   useEffect(() => {
     if (!isInitialized && quizData.questions) {
       const initialAnswers = quizData.questions.map(q => {
@@ -189,7 +193,6 @@ const TakeQuiz = () => {
     }
   }, [quizData, isInitialized]);
 
-  // Initialize the timer
   useEffect(() => {
     const timerInterval = setInterval(() => {
       setTimer(prevTimer => {
@@ -199,7 +202,6 @@ const TakeQuiz = () => {
           return { minutes: prevTimer.minutes - 1, seconds: 59 };
         } else {
           clearInterval(timerInterval);
-          // Auto-submit when time expires
           toast.warning("¡El tiempo ha expirado! Tu cuestionario será enviado automáticamente.");
           setIsSubmitting(true);
           setTimeout(() => {
@@ -240,7 +242,6 @@ const TakeQuiz = () => {
   const goToNextQuestion = () => {
     if (currentQuestion < quizData.questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
-      // Update page if necessary
       const nextPage = Math.floor(currentQuestion / questionsPerPage) + 1;
       if (nextPage !== currentPage) {
         setCurrentPage(nextPage);
@@ -251,7 +252,6 @@ const TakeQuiz = () => {
   const goToPreviousQuestion = () => {
     if (currentQuestion > 0) {
       setCurrentQuestion(currentQuestion - 1);
-      // Update page if necessary
       const prevPage = Math.floor((currentQuestion - 1) / questionsPerPage) + 1;
       if (prevPage !== currentPage) {
         setCurrentPage(prevPage);
@@ -279,13 +279,10 @@ const TakeQuiz = () => {
   const handleSubmitQuiz = () => {
     setIsSubmitting(true);
     
-    // Simulate API call
     setTimeout(() => {
-      // Calculate score based on correct answers (in a real app this would be done on the server)
-      const correctCount = Math.floor(Math.random() * (quizData.questions.length + 1)); // For demo purposes
+      const correctCount = Math.floor(Math.random() * (quizData.questions.length + 1));
       const score = Math.round((correctCount / quizData.questions.length) * 100);
       
-      // Save result to local storage for demo purposes
       const result = {
         quizId: quizData.id,
         score,
@@ -300,7 +297,6 @@ const TakeQuiz = () => {
       
       toast.success("¡Cuestionario completado!");
       
-      // Navigate to quiz detail page
       navigate(`/dashboard/quizzes/${quizData.id}`);
     }, 2000);
   };
@@ -323,14 +319,12 @@ const TakeQuiz = () => {
     }).length;
   };
 
-  // Calculate pagination
   const totalPages = Math.ceil(quizData.totalQuestions / questionsPerPage);
   const currentPageQuestions = quizData.questions.slice(
     (currentPage - 1) * questionsPerPage, 
     currentPage * questionsPerPage
   );
 
-  // Renderizar la pregunta de tipo completar frase
   const renderFillBlankQuestion = () => {
     const text = currentQuestionData.text;
     const blankIndex = text.indexOf('___');
@@ -371,7 +365,6 @@ const TakeQuiz = () => {
     );
   };
 
-  // If submitting, show a loading state
   if (isSubmitting) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
@@ -390,7 +383,6 @@ const TakeQuiz = () => {
 
   return (
     <div className="space-y-6">
-      {/* Quiz header with timer and progress */}
       <div className="sticky top-0 z-10 bg-background py-2 border-b">
         <div className="flex flex-wrap justify-between items-center gap-4">
           <div className="flex flex-col">
@@ -427,7 +419,6 @@ const TakeQuiz = () => {
         <Progress value={progress} className="h-1 mt-2" />
       </div>
 
-      {/* Question content */}
       <Card>
         <CardContent className="p-6">
           <div className="flex justify-between items-start mb-4">
@@ -503,7 +494,6 @@ const TakeQuiz = () => {
         </CardContent>
       </Card>
 
-      {/* Question navigation grid */}
       <Card>
         <CardContent className="p-4">
           <div className="flex justify-between items-center mb-3">
@@ -593,7 +583,6 @@ const TakeQuiz = () => {
         </CardContent>
       </Card>
 
-      {/* Navigation buttons */}
       <div className="flex justify-between">
         <Button
           variant="outline"
@@ -620,7 +609,6 @@ const TakeQuiz = () => {
         </div>
       </div>
 
-      {/* Confirmation Dialog */}
       <Dialog open={showFinishDialog} onOpenChange={setShowFinishDialog}>
         <DialogContent>
           <DialogTitle>Finalizar cuestionario</DialogTitle>
