@@ -105,7 +105,7 @@ const QuizCard = ({ quiz, onStart }: QuizCardProps) => {
         
         <div className="mt-4">
           <Button 
-            className="w-full" 
+            className="w-full bg-purple-600 hover:bg-purple-600 text-white" 
             variant={quiz.attempts > 0 ? "outline" : "default"}
             onClick={() => onStart(quiz.id)}
           >

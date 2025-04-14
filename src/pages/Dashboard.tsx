@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -48,7 +47,7 @@ const Dashboard = () => {
     timeSpent: "45 minutes"
   };
 
-  // Mock data for your quizzes
+  // Mock data for quizzes
   const quizzes = [
     {
       id: 1,
@@ -285,7 +284,52 @@ const Dashboard = () => {
         </CardContent>
       </Card>
 
-      {/* Your Quizzes Section */}
+      {/* Your Courses Section - Moved up before Quizzes */}
+      <div className="mb-6">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-medium">Tus cursos</h2>
+          <Button variant="ghost" size="sm" className="gap-1 text-primary" onClick={() => navigate('/dashboard/courses')}>
+            Ver todos <ChevronRight size={16} />
+          </Button>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {courses.map((course) => (
+            <Card key={course.id} className="overflow-hidden quiz-card">
+              <div className={`quiz-card-banner bg-gradient-to-r from-purple-700 to-purple-500`}></div>
+              <div className="h-32 overflow-hidden">
+                <img 
+                  src={course.image} 
+                  alt={course.title} 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <CardContent className="p-4">
+                <h4 className="font-medium line-clamp-1">{course.title}</h4>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Instructor: {course.instructor}
+                </p>
+                <div className="mt-2">
+                  <div className="flex justify-between text-xs mb-1">
+                    <span>Progreso</span>
+                    <span>{course.progress}%</span>
+                  </div>
+                  <Progress value={course.progress} className="h-1" />
+                </div>
+                <Button 
+                  className="w-full mt-3 py-1 h-auto bg-purple-600 hover:bg-purple-600 text-white" 
+                  size="sm"
+                  onClick={() => handleContinueCourse(course.id)}
+                >
+                  {course.progress > 0 ? "Continuar curso" : "Iniciar curso"}
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+
+      {/* Your Quizzes Section - Moved down after Courses */}
       <div className="mb-6">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-medium">Tus cuestionarios</h2>
@@ -297,7 +341,7 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {quizzes.map((quiz) => (
             <Card key={quiz.id} className="overflow-hidden quiz-card">
-              <div className={`quiz-card-banner ${quiz.color}`}></div>
+              <div className={`quiz-card-banner bg-gradient-to-r from-purple-700 to-purple-500`}></div>
               <div className="h-24 overflow-hidden">
                 <img 
                   src={quiz.image} 
@@ -327,56 +371,11 @@ const Dashboard = () => {
                   </span>
                 </div>
                 <Button 
-                  className="w-full mt-3 py-1 h-auto quiz-start-button" 
+                  className="w-full mt-3 py-1 h-auto bg-purple-600 hover:bg-purple-600 text-white" 
                   size="sm"
                   onClick={() => handleStartQuiz(quiz.id)}
                 >
                   Iniciar cuestionario
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-
-      {/* Your Courses Section */}
-      <div>
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-medium">Tus cursos</h2>
-          <Button variant="ghost" size="sm" className="gap-1 text-primary" onClick={() => navigate('/dashboard/courses')}>
-            Ver todos <ChevronRight size={16} />
-          </Button>
-        </div>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {courses.map((course) => (
-            <Card key={course.id} className="overflow-hidden quiz-card">
-              <div className={`quiz-card-banner ${course.color}`}></div>
-              <div className="h-32 overflow-hidden">
-                <img 
-                  src={course.image} 
-                  alt={course.title} 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <CardContent className="p-4">
-                <h4 className="font-medium line-clamp-1">{course.title}</h4>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Instructor: {course.instructor}
-                </p>
-                <div className="mt-2">
-                  <div className="flex justify-between text-xs mb-1">
-                    <span>Progreso</span>
-                    <span>{course.progress}%</span>
-                  </div>
-                  <Progress value={course.progress} className="h-1" />
-                </div>
-                <Button 
-                  className="w-full mt-3 py-1 h-auto quiz-continue-button" 
-                  size="sm"
-                  onClick={() => handleContinueCourse(course.id)}
-                >
-                  {course.progress > 0 ? "Continuar curso" : "Iniciar curso"}
                 </Button>
               </CardContent>
             </Card>

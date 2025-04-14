@@ -133,18 +133,10 @@
   }
   
   .quiz-card-banner {
-    @apply h-2 rounded-t-md bg-gradient-to-r;
+    @apply h-2 rounded-t-md bg-gradient-to-r from-purple-700 to-purple-500;
   }
 
-  .quiz-start-button {
-    @apply bg-purple-500 hover:bg-purple-600 text-white;
-  }
-  
-  .quiz-continue-button {
-    @apply bg-blue-500 hover:bg-blue-600 text-white;
-  }
-  
-  .quiz-retry-button {
-    @apply bg-gray-500 hover:bg-gray-600 text-white;
+  .quiz-start-button, .quiz-continue-button, .quiz-retry-button {
+    @apply bg-purple-600 hover:bg-purple-600 text-white;
   }
 }
