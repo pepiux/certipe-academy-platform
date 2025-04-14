@@ -223,7 +223,7 @@ const Quizzes = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {currentQuizzes.map((quiz) => (
           <QuizCard
             key={quiz.id}
@@ -234,7 +234,7 @@ const Quizzes = () => {
       </div>
 
       {totalPages > 1 && (
-        <div className="flex justify-center mt-8">
+        <div className="flex justify-start mt-8">
           <nav className="flex items-center gap-1">
             <Button 
               variant="outline" 

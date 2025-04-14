@@ -16,11 +16,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import CourseCard from "@/components/courses/CourseCard";
+import { useNavigate } from "react-router-dom";
 
 const Courses = () => {
   const [currentTab, setCurrentTab] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const coursesPerPage = 8;
+  const navigate = useNavigate();
   
   const allCourses = [
     {
@@ -171,11 +173,11 @@ const Courses = () => {
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   const startCourse = (courseId: number) => {
-    console.log(`Starting course with ID: ${courseId}`);
+    navigate(`/dashboard/courses/${courseId}`);
   };
 
   const continueCourse = (courseId: number) => {
-    console.log(`Continuing course with ID: ${courseId}`);
+    navigate(`/dashboard/courses/${courseId}`);
   };
 
   return (
@@ -236,7 +238,7 @@ const Courses = () => {
       </div>
 
       {totalPages > 1 && (
-        <div className="flex justify-center mt-8">
+        <div className="flex justify-start mt-8">
           <nav className="flex items-center gap-1">
             <Button 
               variant="outline" 

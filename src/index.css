@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -47,6 +48,8 @@
     --toast-background: 0 0% 100%;
     --toast-foreground: 224 71% 4%;
     --toast-border: 220 13% 91%;
+
+    --brand-blue: 195 100% 50%;
   }
 
   .dark {
@@ -87,6 +90,8 @@
     --sidebar-muted-foreground: 215 20.2% 65.1%;
     --sidebar-accent: 217.2 32.6% 17.5%;
     --sidebar-accent-foreground: 210 40% 98%;
+
+    --brand-blue: 195 100% 50%;
   }
 }
 
@@ -142,5 +147,9 @@
 
   .quiz-start-button, .quiz-continue-button, .quiz-retry-button {
     @apply bg-[#00B4FF] hover:bg-[#00B4FF] text-white;
+  }
+
+  .avatar-initials {
+    @apply flex items-center justify-center bg-[#00B4FF] text-white font-medium rounded-full;
   }
 }

@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -293,10 +294,10 @@ const Dashboard = () => {
           </Button>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {courses.map((course) => (
             <Card key={course.id} className="overflow-hidden quiz-card">
-              <div className={`quiz-card-banner bg-gradient-to-r from-purple-700 to-purple-500`}></div>
+              <div className={`quiz-card-banner bg-gradient-to-r ${course.color}`}></div>
               <div className="h-32 overflow-hidden">
                 <img 
                   src={course.image} 
@@ -317,7 +318,7 @@ const Dashboard = () => {
                   <Progress value={course.progress} className="h-1" />
                 </div>
                 <Button 
-                  className="w-full mt-3 py-1 h-auto bg-purple-600 hover:bg-purple-600 text-white" 
+                  className={`w-full mt-3 py-1 h-auto bg-[#00B4FF] hover:bg-[#00B4FF] text-white`} 
                   size="sm"
                   onClick={() => handleContinueCourse(course.id)}
                 >
@@ -338,11 +339,11 @@ const Dashboard = () => {
           </Button>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {quizzes.map((quiz) => (
             <Card key={quiz.id} className="overflow-hidden quiz-card">
-              <div className={`quiz-card-banner bg-gradient-to-r from-purple-700 to-purple-500`}></div>
-              <div className="h-24 overflow-hidden">
+              <div className={`quiz-card-banner bg-gradient-to-r ${quiz.color}`}></div>
+              <div className="h-32 overflow-hidden">
                 <img 
                   src={quiz.image} 
                   alt={quiz.title} 
@@ -371,7 +372,7 @@ const Dashboard = () => {
                   </span>
                 </div>
                 <Button 
-                  className="w-full mt-3 py-1 h-auto bg-purple-600 hover:bg-purple-600 text-white" 
+                  className={`w-full mt-3 py-1 h-auto bg-[#00B4FF] hover:bg-[#00B4FF] text-white`}
                   size="sm"
                   onClick={() => handleStartQuiz(quiz.id)}
                 >

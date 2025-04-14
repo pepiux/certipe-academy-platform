@@ -40,7 +40,7 @@ const QuizCard = ({ quiz, onStart }: QuizCardProps) => {
   return (
     <Card className="overflow-hidden flex flex-col h-full">
       <div className="quiz-card-banner"></div>
-      <div className="h-24 overflow-hidden border-b">
+      <div className="h-32 overflow-hidden border-b">
         <img 
           src={quiz.image} 
           alt={quiz.title}

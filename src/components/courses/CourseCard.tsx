@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -39,7 +40,7 @@ const CourseCard = ({ course, onStart, onContinue }: CourseCardProps) => {
   return (
     <Card className="overflow-hidden flex flex-col h-full">
       <div className="quiz-card-banner"></div>
-      <div className="h-24 overflow-hidden border-b">
+      <div className="h-32 overflow-hidden border-b">
         <img 
           src={course.image} 
           alt={course.title}

@@ -1,15 +1,14 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress"; // Importación del componente Progress
+import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
-import QuizHeader from "@/components/quiz/QuizHeader";
 import QuizQuestion from "@/components/quiz/QuizQuestion";
 import QuizNavigation from "@/components/quiz/QuizNavigation";
-import QuizControls from "@/components/quiz/QuizControls";
+import { ArrowLeft, ArrowRight, CheckCircle, Clock, Flag } from "lucide-react";
 
 const TakeQuiz = () => {
   const { id } = useParams();
@@ -325,14 +324,68 @@ const TakeQuiz = () => {
 
   return (
     <div className="space-y-6">
-      <QuizHeader 
-        title={quizData.title}
-        currentQuestion={currentQuestion}
-        totalQuestions={quizData.totalQuestions}
-        answeredCount={getAnsweredCount()}
-        flaggedCount={getFlaggedCount()}
-        timer={timer}
-      />
+      {/* Quiz Header - Simplified without banner */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle>{quizData.title}</CardTitle>
+        </CardHeader>
+        <CardContent className="py-2">
+          <div className="flex flex-wrap gap-4 mb-4">
+            <div className="flex items-center gap-2 text-sm">
+              <span className="font-medium">Pregunta:</span>
+              <span>{currentQuestion + 1} de {quizData.totalQuestions}</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm">
+              <span className="font-medium">Respondidas:</span>
+              <span>{getAnsweredCount()} de {quizData.totalQuestions}</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm">
+              <Flag size={14} className="text-red-500" />
+              <span>{getFlaggedCount()} marcadas</span>
+            </div>
+            <div className={`flex items-center gap-1 font-bold ml-auto ${
+              timer.minutes < 5 ? "text-red-500" : ""
+            }`}>
+              <Clock size={16} />
+              <span>
+                {String(timer.minutes).padStart(2, '0')}:{String(timer.seconds).padStart(2, '0')}
+              </span>
+            </div>
+          </div>
+          <Progress value={progress} className="h-1" />
+        </CardContent>
+      </Card>
+
+      {/* Quiz Control Buttons - Now at the top */}
+      <div className="flex justify-between">
+        <Button
+          variant="outline"
+          onClick={goToPreviousQuestion}
+          disabled={isFirstQuestion}
+          className="flex items-center"
+          type="button"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" /> Anterior
+        </Button>
+        
+        <Button 
+          onClick={handleFinishClick} 
+          className="flex gap-2 bg-green-600 hover:bg-green-700"
+          type="button"
+        >
+          <CheckCircle size={16} /> Finalizar cuestionario
+        </Button>
+        
+        {!isLastQuestion && (
+          <Button 
+            onClick={goToNextQuestion} 
+            className="flex items-center"
+            type="button"
+          >
+            Siguiente <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        )}
+      </div>
 
       <Card>
         <CardContent className="p-6">
@@ -348,6 +401,9 @@ const TakeQuiz = () => {
       </Card>
 
       <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Navegación de preguntas</CardTitle>
+        </CardHeader>
         <CardContent className="p-4">
           <QuizNavigation
             questions={quizData.questions}
@@ -360,14 +416,6 @@ const TakeQuiz = () => {
           />
         </CardContent>
       </Card>
-
-      <QuizControls
-        isFirstQuestion={isFirstQuestion}
-        isLastQuestion={isLastQuestion}
-        onPrevious={goToPreviousQuestion}
-        onNext={goToNextQuestion}
-        onFinish={handleFinishClick}
-      />
 
       <Dialog open={showFinishDialog} onOpenChange={setShowFinishDialog}>
         <DialogContent>
