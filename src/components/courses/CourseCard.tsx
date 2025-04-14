@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -39,7 +38,8 @@ const CourseCard = ({ course, onStart, onContinue }: CourseCardProps) => {
 
   return (
     <Card className="overflow-hidden flex flex-col h-full">
-      <div className="h-48 overflow-hidden border-b">
+      <div className="quiz-card-banner"></div>
+      <div className="h-24 overflow-hidden border-b">
         <img 
           src={course.image} 
           alt={course.title}
@@ -47,7 +47,7 @@ const CourseCard = ({ course, onStart, onContinue }: CourseCardProps) => {
         />
       </div>
       
-      <CardContent className="p-5 flex flex-col flex-1">
+      <CardContent className="p-4 flex flex-col flex-1">
         <div className="flex flex-col mb-3">
           <Badge variant="outline" className={`self-start mb-2 ${getLevelColor(course.level)}`}>
             {course.level}
@@ -72,7 +72,7 @@ const CourseCard = ({ course, onStart, onContinue }: CourseCardProps) => {
               </div>
               <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
                 <div 
-                  className="h-full bg-primary" 
+                  className="h-full bg-[#00B4FF]" 
                   style={{ width: `${course.progress}%` }}
                 ></div>
               </div>
@@ -80,15 +80,13 @@ const CourseCard = ({ course, onStart, onContinue }: CourseCardProps) => {
           )}
         </div>
         
-        <div className="mt-4">
-          <Button 
-            className="w-full bg-purple-600 hover:bg-purple-600 text-white" 
-            variant={course.progress > 0 ? "outline" : "default"}
-            onClick={() => course.progress > 0 ? onContinue(course.id) : onStart(course.id)}
-          >
-            {course.progress > 0 ? "Continuar curso" : "Iniciar curso"}
-          </Button>
-        </div>
+        <Button 
+          className="w-full mt-3 py-1 h-auto bg-[#00B4FF] hover:bg-[#00B4FF] text-white" 
+          size="sm"
+          onClick={() => course.progress > 0 ? onContinue(course.id) : onStart(course.id)}
+        >
+          {course.progress > 0 ? "Continuar curso" : "Iniciar curso"}
+        </Button>
       </CardContent>
     </Card>
   );

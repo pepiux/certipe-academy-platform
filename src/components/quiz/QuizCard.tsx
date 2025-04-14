@@ -39,7 +39,8 @@ const QuizCard = ({ quiz, onStart }: QuizCardProps) => {
 
   return (
     <Card className="overflow-hidden flex flex-col h-full">
-      <div className="h-48 overflow-hidden border-b">
+      <div className="quiz-card-banner"></div>
+      <div className="h-24 overflow-hidden border-b">
         <img 
           src={quiz.image} 
           alt={quiz.title}
@@ -47,7 +48,7 @@ const QuizCard = ({ quiz, onStart }: QuizCardProps) => {
         />
       </div>
       
-      <CardContent className="p-5 flex flex-col flex-1">
+      <CardContent className="p-4 flex flex-col flex-1">
         <div className="flex flex-col mb-3">
           <Badge variant="outline" className={`self-start mb-2 ${getDifficultyColor(quiz.difficulty)}`}>
             {quiz.difficulty}
@@ -58,60 +59,34 @@ const QuizCard = ({ quiz, onStart }: QuizCardProps) => {
         <h3 className="font-semibold mb-4 line-clamp-2">{quiz.title}</h3>
         
         <div className="flex-1">
-          <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
-            <div className="flex flex-col items-start gap-1">
-              <div className="flex items-center text-muted-foreground">
-                <FileQuestion size={14} className="mr-1" />
-                <span>Preguntas</span>
-              </div>
-              <span className="font-medium">{quiz.questions}</span>
+          <div className="flex gap-3 mt-2">
+            <div className="flex items-center gap-1 text-xs">
+              <FileQuestion size={14} className="text-muted-foreground" />
+              <span>{quiz.questions} preguntas</span>
             </div>
-            
-            <div className="flex flex-col items-start gap-1">
-              <div className="flex items-center text-muted-foreground">
-                <Clock size={14} className="mr-1" />
-                <span>Duración</span>
-              </div>
-              <span className="font-medium">{quiz.timeLimit} minutos</span>
+            <div className="flex items-center gap-1 text-xs">
+              <Clock size={14} className="text-muted-foreground" />
+              <span>{quiz.timeLimit} minutos</span>
             </div>
           </div>
           
-          {quiz.attempts > 0 ? (
-            <div className="mb-4">
-              <div className="text-xs text-muted-foreground mb-2">
-                {quiz.attempts} {quiz.attempts === 1 ? "intento" : "intentos"} realizado{quiz.attempts === 1 ? "" : "s"}
-              </div>
-              {quiz.lastScore !== null && (
-                <div className="flex justify-between text-sm mb-1">
-                  <span>Última puntuación</span>
-                  <span className={quiz.lastScore >= 80 ? "text-green-600" : "text-amber-600"}>
-                    {quiz.lastScore}%
-                  </span>
-                </div>
-              )}
-              {quiz.bestScore !== null && (
-                <div className="flex justify-between text-sm">
-                  <span>Mejor puntuación</span>
-                  <span className="text-green-600">{quiz.bestScore}%</span>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="mb-4 text-sm text-muted-foreground">
-              No has intentado este cuestionario aún
+          {quiz.lastScore !== null && (
+            <div className="flex justify-between text-sm mt-2">
+              <span>Última nota:</span>
+              <span className={quiz.lastScore >= 70 ? "text-green-600" : "text-amber-600"}>
+                {quiz.lastScore}%
+              </span>
             </div>
           )}
         </div>
         
-        <div className="mt-4">
-          <Button 
-            className="w-full bg-purple-600 hover:bg-purple-600 text-white" 
-            variant={quiz.attempts > 0 ? "outline" : "default"}
-            onClick={() => onStart(quiz.id)}
-          >
-            {quiz.attempts > 0 ? "Reintentar cuestionario" : "Comenzar cuestionario"}
-          </Button>
-        </div>
+        <Button 
+          className="w-full mt-3 py-1 h-auto bg-[#00B4FF] hover:bg-[#00B4FF] text-white" 
+          size="sm"
+          onClick={() => onStart(quiz.id)}
+        >
+          Iniciar cuestionario
+        </Button>
       </CardContent>
     </Card>
   );
