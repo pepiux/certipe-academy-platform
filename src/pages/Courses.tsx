@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Filter } from "lucide-react";
+import { Search, Filter, ChevronLeft, ChevronRight } from "lucide-react";
 import {
   Tabs,
   TabsContent,
@@ -22,7 +22,6 @@ const Courses = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const coursesPerPage = 8;
   
-  // Mock data for courses
   const allCourses = [
     {
       id: 1,
@@ -158,14 +157,12 @@ const Courses = () => {
     }
   ];
   
-  // Filter courses based on the selected tab
   const filteredCourses = allCourses.filter(course => {
     if (currentTab === "my") return course.enrolled;
     if (currentTab === "popular") return course.students > 200;
-    return true; // "all" tab
+    return true;
   });
   
-  // Pagination logic
   const indexOfLastCourse = currentPage * coursesPerPage;
   const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
   const currentCourses = filteredCourses.slice(indexOfFirstCourse, indexOfLastCourse);
@@ -175,12 +172,10 @@ const Courses = () => {
 
   const startCourse = (courseId: number) => {
     console.log(`Starting course with ID: ${courseId}`);
-    // In a real app, you would navigate to the course page
   };
 
   const continueCourse = (courseId: number) => {
     console.log(`Continuing course with ID: ${courseId}`);
-    // In a real app, you would navigate to the last viewed lesson
   };
 
   return (
@@ -188,7 +183,6 @@ const Courses = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 className="text-2xl font-bold">Cursos</h1>
         
-        {/* Search and filters */}
         <div className="flex gap-2">
           <div className="relative flex-1">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -205,7 +199,6 @@ const Courses = () => {
         </div>
       </div>
 
-      {/* Tabs and Sort */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
         <Tabs value={currentTab} onValueChange={(value) => { setCurrentTab(value); setCurrentPage(1); }} className="w-full sm:w-auto">
           <TabsList>
@@ -231,7 +224,6 @@ const Courses = () => {
         </div>
       </div>
 
-      {/* Courses grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {currentCourses.map((course) => (
           <CourseCard
@@ -243,7 +235,6 @@ const Courses = () => {
         ))}
       </div>
 
-      {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex justify-center mt-8">
           <nav className="flex items-center gap-1">
