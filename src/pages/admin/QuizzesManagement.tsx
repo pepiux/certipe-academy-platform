@@ -32,7 +32,8 @@ import {
   ShieldCheck,
   ShieldX,
   Clock,
-  FileQuestion
+  FileQuestion,
+  SquareDashed
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -93,6 +94,30 @@ const QuizzesManagement = () => {
       attempts: 86,
       averageScore: 68,
       createdAt: "2023-02-28T11:25:00"
+    },
+    {
+      id: 6,
+      title: "Liderazgo y Gestión de Equipos",
+      category: "Leadership",
+      questions: 40,
+      timeLimit: 50,
+      status: "active",
+      attempts: 178,
+      averageScore: 76,
+      createdAt: "2023-05-10T13:40:00",
+      hasCompletePhrases: true
+    },
+    {
+      id: 7,
+      title: "Comunicación Efectiva en Proyectos",
+      category: "Communication",
+      questions: 35,
+      timeLimit: 45,
+      status: "active",
+      attempts: 145,
+      averageScore: 81,
+      createdAt: "2023-05-18T09:30:00",
+      hasCompletePhrases: true
     }
   ];
 
@@ -116,6 +141,16 @@ const QuizzesManagement = () => {
       default:
         return null;
     }
+  };
+
+  const getQuizTypeBadge = (hasCompletePhrases: boolean | undefined) => {
+    if (hasCompletePhrases) {
+      return <div className="flex items-center gap-1">
+        <SquareDashed size={14} className="text-blue-600" />
+        <span className="text-xs bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded">Completar frase</span>
+      </div>;
+    }
+    return null;
   };
 
   return (
@@ -157,6 +192,7 @@ const QuizzesManagement = () => {
               <TableHead>Preguntas</TableHead>
               <TableHead>Tiempo</TableHead>
               <TableHead>Estado</TableHead>
+              <TableHead>Tipo</TableHead>
               <TableHead>Intentos</TableHead>
               <TableHead>Puntuación</TableHead>
               <TableHead>Fecha creación</TableHead>
@@ -183,6 +219,7 @@ const QuizzesManagement = () => {
                   </div>
                 </TableCell>
                 <TableCell>{getStatusBadge(quiz.status)}</TableCell>
+                <TableCell>{getQuizTypeBadge(quiz.hasCompletePhrases)}</TableCell>
                 <TableCell>{quiz.attempts}</TableCell>
                 <TableCell>
                   {quiz.averageScore !== null ? (

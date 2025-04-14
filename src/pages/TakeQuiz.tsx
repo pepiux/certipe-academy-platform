@@ -18,7 +18,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Clock, Flag, ArrowLeft, ArrowRight, Save, AlertTriangle, CheckCircle } from "lucide-react";
+import { Clock, Flag, ArrowLeft, ArrowRight, Save, AlertTriangle, CheckCircle, SquareDashed, Pencil } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { toast } from "sonner";
 
@@ -34,26 +34,141 @@ const TakeQuiz = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const questionsPerPage = 25;
 
-  // Mock quiz data
+  // Mock quiz data with the new question type
   const quizData = {
     id: parseInt(id || "1"),
     title: "Fundamentos de la Gestión de Proyectos",
     timeLimit: 60, // minutes
-    totalQuestions: 75,
-    questions: Array.from({ length: 75 }, (_, i) => ({
-      id: i + 1,
-      text: `Pregunta ${i + 1}: Esta es una pregunta de ejemplo para el cuestionario sobre fundamentos de gestión de proyectos`,
-      type: i % 5 === 0 ? "multiple" : "single",
-      options: [
-        { id: "a", text: `Opción A para la pregunta ${i + 1}` },
-        { id: "b", text: `Opción B para la pregunta ${i + 1}` },
-        { id: "c", text: `Opción C para la pregunta ${i + 1}` },
-        { id: "d", text: `Opción D para la pregunta ${i + 1}` }
-      ],
-      answer: null,
-      answers: [],
-      flagged: false
-    }))
+    totalQuestions: 78,
+    questions: [
+      ...Array.from({ length: 70 }, (_, i) => ({
+        id: i + 1,
+        text: `Pregunta ${i + 1}: Esta es una pregunta de ejemplo para el cuestionario sobre fundamentos de gestión de proyectos`,
+        type: i % 5 === 0 ? "multiple" : "single",
+        options: [
+          { id: "a", text: `Opción A para la pregunta ${i + 1}` },
+          { id: "b", text: `Opción B para la pregunta ${i + 1}` },
+          { id: "c", text: `Opción C para la pregunta ${i + 1}` },
+          { id: "d", text: `Opción D para la pregunta ${i + 1}` }
+        ],
+        answer: null,
+        answers: [],
+        flagged: false
+      })),
+      // Añadiendo preguntas de completar frases
+      {
+        id: 71,
+        text: "Un ___ se enfoca en la tarea, mientras que un líder se preocupa por las personas.",
+        type: "fill-blank",
+        options: [
+          { id: "a", text: "resultado" },
+          { id: "b", text: "equipo" },
+          { id: "c", text: "proyecto" },
+          { id: "d", text: "jefe" }
+        ],
+        answer: null,
+        blankWord: "jefe",
+        flagged: false
+      },
+      {
+        id: 72,
+        text: "El ___ es el proceso de identificación, análisis, planificación de respuestas y control de los posibles eventos inciertos en un proyecto.",
+        type: "fill-blank",
+        options: [
+          { id: "a", text: "control de cambios" },
+          { id: "b", text: "plan de comunicación" },
+          { id: "c", text: "análisis de recursos" },
+          { id: "d", text: "gestión de riesgos" }
+        ],
+        answer: null,
+        blankWord: "gestión de riesgos",
+        flagged: false
+      },
+      {
+        id: 73,
+        text: "En la metodología ___, los proyectos se dividen en iteraciones cortas llamadas sprints.",
+        type: "fill-blank",
+        options: [
+          { id: "a", text: "Cascada" },
+          { id: "b", text: "Scrum" },
+          { id: "c", text: "Kanban" },
+          { id: "d", text: "PRINCE2" }
+        ],
+        answer: null,
+        blankWord: "Scrum",
+        flagged: false
+      },
+      {
+        id: 74,
+        text: "La ___ del proyecto debe incluir una declaración de alcance, los entregables, los supuestos y las restricciones del proyecto.",
+        type: "fill-blank",
+        options: [
+          { id: "a", text: "acta de constitución" },
+          { id: "b", text: "estructura de desglose" },
+          { id: "c", text: "matriz RACI" },
+          { id: "d", text: "línea base" }
+        ],
+        answer: null,
+        blankWord: "acta de constitución",
+        flagged: false
+      },
+      {
+        id: 75,
+        text: "El ___ es una herramienta visual que muestra la secuencia de actividades y sus dependencias en un proyecto.",
+        type: "fill-blank",
+        options: [
+          { id: "a", text: "diagrama de Gantt" },
+          { id: "b", text: "diagrama de flujo" },
+          { id: "c", text: "diagrama de red" },
+          { id: "d", text: "organigrama" }
+        ],
+        answer: null,
+        blankWord: "diagrama de red",
+        flagged: false
+      },
+      {
+        id: 76,
+        text: "La ___ es la técnica de estimar la duración o el costo de una actividad o proyecto utilizando datos históricos de actividades o proyectos similares.",
+        type: "fill-blank",
+        options: [
+          { id: "a", text: "estimación paramétrica" },
+          { id: "b", text: "estimación análoga" },
+          { id: "c", text: "estimación por tres valores" },
+          { id: "d", text: "estimación ascendente" }
+        ],
+        answer: null,
+        blankWord: "estimación análoga",
+        flagged: false
+      },
+      {
+        id: 77,
+        text: "La técnica de ___ ayuda a identificar las causas raíz de los problemas en un proyecto.",
+        type: "fill-blank",
+        options: [
+          { id: "a", text: "análisis FODA" },
+          { id: "b", text: "los cinco por qué" },
+          { id: "c", text: "diagrama de Pareto" },
+          { id: "d", text: "análisis de tendencias" }
+        ],
+        answer: null,
+        blankWord: "los cinco por qué",
+        flagged: false
+      },
+      {
+        id: 78,
+        text: "La ___ es la cantidad de tiempo que una actividad puede retrasarse sin afectar la fecha de finalización del proyecto.",
+        type: "fill-blank",
+        options: [
+          { id: "a", text: "holgura total" },
+          { id: "b", text: "holgura libre" },
+          { id: "c", text: "ruta crítica" },
+          { id: "d", text: "línea base del cronograma" }
+        ],
+        answer: null,
+        blankWord: "holgura total",
+        flagged: false
+      }
+    ]
   };
 
   // Initialize answers state from quiz questions
@@ -62,9 +177,12 @@ const TakeQuiz = () => {
       const initialAnswers = quizData.questions.map(q => {
         if (q.type === "single") {
           return { questionId: q.id, answer: q.answer, type: "single", flagged: q.flagged };
-        } else {
+        } else if (q.type === "multiple") {
           return { questionId: q.id, answers: q.answers || [], type: "multiple", flagged: q.flagged };
+        } else if (q.type === "fill-blank") {
+          return { questionId: q.id, answer: q.answer, type: "fill-blank", flagged: q.flagged };
         }
+        return { questionId: q.id, answer: null, type: q.type, flagged: q.flagged };
       });
       setAnswers(initialAnswers);
       setIsInitialized(true);
@@ -199,7 +317,7 @@ const TakeQuiz = () => {
 
   const getAnsweredCount = () => {
     return answers.filter(a => {
-      if (a.type === "single") return a.answer !== null;
+      if (a.type === "single" || a.type === "fill-blank") return a.answer !== null;
       if (a.type === "multiple") return (a.answers && a.answers.length > 0);
       return false;
     }).length;
@@ -211,6 +329,47 @@ const TakeQuiz = () => {
     (currentPage - 1) * questionsPerPage, 
     currentPage * questionsPerPage
   );
+
+  // Renderizar la pregunta de tipo completar frase
+  const renderFillBlankQuestion = () => {
+    const text = currentQuestionData.text;
+    const blankIndex = text.indexOf('___');
+    const beforeBlank = text.substring(0, blankIndex);
+    const afterBlank = text.substring(blankIndex + 3);
+
+    return (
+      <div className="mb-6">
+        <div className="text-lg mb-4">
+          {beforeBlank}
+          <span className="inline-block bg-blue-100 px-4 py-1 mx-1 rounded-md min-w-24 text-center">
+            {answers[currentQuestion]?.answer ? 
+              currentQuestionData.options.find(opt => opt.id === answers[currentQuestion].answer)?.text : 
+              <SquareDashed className="inline mx-auto text-blue-400" />
+            }
+          </span>
+          {afterBlank}
+        </div>
+        <p className="text-sm text-muted-foreground mb-4">
+          Selecciona la palabra que completa correctamente la frase.
+        </p>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+          {currentQuestionData.options.map((option) => (
+            <Button
+              key={option.id}
+              variant={answers[currentQuestion]?.answer === option.id ? "default" : "outline"}
+              className={`justify-center py-6 ${
+                answers[currentQuestion]?.answer === option.id ? "bg-blue-600 hover:bg-blue-700" : ""
+              }`}
+              onClick={() => handleSingleAnswerChange(option.id)}
+            >
+              {option.text}
+            </Button>
+          ))}
+        </div>
+      </div>
+    );
+  };
 
   // If submitting, show a loading state
   if (isSubmitting) {
@@ -293,39 +452,45 @@ const TakeQuiz = () => {
             </TooltipProvider>
           </div>
           
-          <div className="text-lg mb-6">{currentQuestionData.text}</div>
-          
-          {currentQuestionData.type === "single" ? (
-            <RadioGroup 
-              value={answers[currentQuestion]?.answer || ""} 
-              onValueChange={(value) => handleSingleAnswerChange(value)}
-              className="space-y-3"
-            >
-              {currentQuestionData.options.map((option) => (
-                <div key={option.id} className="flex items-center space-x-3 border rounded-lg p-3 hover:bg-accent">
-                  <RadioGroupItem value={option.id} id={`q${currentQuestionData.id}-${option.id}`} />
-                  <Label htmlFor={`q${currentQuestionData.id}-${option.id}`} className="flex-1 cursor-pointer">
-                    {option.text}
-                  </Label>
-                </div>
-              ))}
-            </RadioGroup>
+          {currentQuestionData.type === "fill-blank" ? (
+            renderFillBlankQuestion()
+          ) : currentQuestionData.type === "single" ? (
+            <div>
+              <div className="text-lg mb-6">{currentQuestionData.text}</div>
+              <RadioGroup 
+                value={answers[currentQuestion]?.answer || ""} 
+                onValueChange={(value) => handleSingleAnswerChange(value)}
+                className="space-y-3"
+              >
+                {currentQuestionData.options.map((option) => (
+                  <div key={option.id} className="flex items-center space-x-3 border rounded-lg p-3 hover:bg-accent">
+                    <RadioGroupItem value={option.id} id={`q${currentQuestionData.id}-${option.id}`} />
+                    <Label htmlFor={`q${currentQuestionData.id}-${option.id}`} className="flex-1 cursor-pointer">
+                      {option.text}
+                    </Label>
+                  </div>
+                ))}
+              </RadioGroup>
+            </div>
           ) : (
-            <div className="space-y-3">
-              {currentQuestionData.options.map((option) => (
-                <div key={option.id} className="flex items-start space-x-3 border rounded-lg p-3 hover:bg-accent">
-                  <Checkbox 
-                    id={`q${currentQuestionData.id}-${option.id}`}
-                    checked={(answers[currentQuestion]?.answers || []).includes(option.id)}
-                    onCheckedChange={(checked) => 
-                      handleMultipleAnswerChange(option.id, checked as boolean)
-                    }
-                  />
-                  <Label htmlFor={`q${currentQuestionData.id}-${option.id}`} className="flex-1 pt-0.5 cursor-pointer">
-                    {option.text}
-                  </Label>
-                </div>
-              ))}
+            <div>
+              <div className="text-lg mb-6">{currentQuestionData.text}</div>
+              <div className="space-y-3">
+                {currentQuestionData.options.map((option) => (
+                  <div key={option.id} className="flex items-start space-x-3 border rounded-lg p-3 hover:bg-accent">
+                    <Checkbox 
+                      id={`q${currentQuestionData.id}-${option.id}`}
+                      checked={(answers[currentQuestion]?.answers || []).includes(option.id)}
+                      onCheckedChange={(checked) => 
+                        handleMultipleAnswerChange(option.id, checked as boolean)
+                      }
+                    />
+                    <Label htmlFor={`q${currentQuestionData.id}-${option.id}`} className="flex-1 pt-0.5 cursor-pointer">
+                      {option.text}
+                    </Label>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
           
@@ -352,17 +517,18 @@ const TakeQuiz = () => {
             {currentPageQuestions.map((question, idx) => {
               const questionIndex = (currentPage - 1) * questionsPerPage + idx;
               const answer = answers[questionIndex];
-              const isAnswered = answer?.type === "single" 
+              const isAnswered = answer?.type === "single" || answer?.type === "fill-blank"
                 ? answer.answer !== null 
                 : (answer?.answers && answer?.answers.length > 0);
               const isFlagged = answer?.flagged;
               const isSelected = currentQuestion === questionIndex;
+              const isFillBlank = question.type === "fill-blank";
 
               return (
                 <Button 
                   key={question.id}
                   className={`
-                    h-10 w-10 p-0 font-normal
+                    h-10 w-10 p-0 font-normal relative
                     ${isSelected ? "border-2 border-primary" : ""}
                     ${isAnswered ? "bg-green-100 hover:bg-green-200 text-green-800" : "bg-gray-100 hover:bg-gray-200"}
                     ${isFlagged ? "ring-2 ring-red-500" : ""}
@@ -372,6 +538,7 @@ const TakeQuiz = () => {
                 >
                   {question.id}
                   {isFlagged && <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>}
+                  {isFillBlank && <div className="absolute -top-1 -left-1 w-2 h-2 bg-blue-500 rounded-full"></div>}
                 </Button>
               );
             })}

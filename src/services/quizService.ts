@@ -6,11 +6,14 @@ interface Question {
   id: number;
   quiz_id: number;
   text: string;
+  type: "single" | "multiple" | "fill-blank";
   options: {
     id: number;
     text: string;
     is_correct: boolean;
   }[];
+  blank_word?: string; // Palabra correcta para completar la frase
+  blank_options?: string[]; // Opciones para completar el espacio en blanco
 }
 
 interface Quiz {
@@ -37,7 +40,7 @@ interface QuizAttempt {
   completed_at?: string;
   answers: {
     question_id: number;
-    selected_option_id: number;
+    selected_option_id: number | string;
   }[];
 }
 
@@ -83,7 +86,7 @@ const quizService = {
   /**
    * Envía las respuestas y completa un intento de quiz
    */
-  async submitQuizAttempt(quizId: number, attemptId: number, answers: {question_id: number, selected_option_id: number}[]): Promise<QuizAttempt> {
+  async submitQuizAttempt(quizId: number, attemptId: number, answers: {question_id: number, selected_option_id: number | string}[]): Promise<QuizAttempt> {
     return await apiClient.post<QuizAttempt>(`/quizzes/${quizId}/attempts/${attemptId}/submit`, { answers });
   },
   
