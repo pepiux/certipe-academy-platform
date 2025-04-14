@@ -43,17 +43,27 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
         <div className="mb-6">
           {isOpen && <div className="sidebar-category">Main Menu</div>}
           
-          <NavLink to="/dashboard" className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}>
+          <NavLink 
+            to="/dashboard" 
+            className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
+            end
+          >
             <LayoutDashboard size={20} />
             {isOpen && <span>Panel de control</span>}
           </NavLink>
           
-          <NavLink to="/dashboard/courses" className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}>
+          <NavLink 
+            to="/dashboard/courses" 
+            className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
+          >
             <BookOpen size={20} />
             {isOpen && <span>Cursos</span>}
           </NavLink>
           
-          <NavLink to="/dashboard/quizzes" className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}>
+          <NavLink 
+            to="/dashboard/quizzes" 
+            className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
+          >
             <FileQuestion size={20} />
             {isOpen && <span>Cuestionarios</span>}
           </NavLink>
@@ -63,22 +73,34 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
         <div className="mb-6">
           {isOpen && <div className="sidebar-category">Admin</div>}
           
-          <NavLink to="/dashboard/admin/users" className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}>
+          <NavLink 
+            to="/dashboard/admin/users" 
+            className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
+          >
             <Users size={20} />
             {isOpen && <span>Gestión de usuarios</span>}
           </NavLink>
           
-          <NavLink to="/dashboard/admin/courses" className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}>
+          <NavLink 
+            to="/dashboard/admin/courses" 
+            className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
+          >
             <BookOpen size={20} />
             {isOpen && <span>Gestión de cursos</span>}
           </NavLink>
           
-          <NavLink to="/dashboard/admin/quizzes" className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}>
+          <NavLink 
+            to="/dashboard/admin/quizzes" 
+            className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
+          >
             <FileQuestion size={20} />
             {isOpen && <span>Gestión de cuestionarios</span>}
           </NavLink>
           
-          <NavLink to="/dashboard/admin/settings" className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}>
+          <NavLink 
+            to="/dashboard/admin/settings" 
+            className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
+          >
             <Settings size={20} />
             {isOpen && <span>Configuración del sistema</span>}
           </NavLink>
