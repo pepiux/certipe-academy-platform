@@ -1,8 +1,10 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress"; // Importación del componente Progress
 import { toast } from "sonner";
 import QuizHeader from "@/components/quiz/QuizHeader";
 import QuizQuestion from "@/components/quiz/QuizQuestion";
