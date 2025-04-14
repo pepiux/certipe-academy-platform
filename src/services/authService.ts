@@ -1,4 +1,3 @@
-
 import apiClient from './api/client';
 import { toast } from 'sonner';
 
@@ -31,7 +30,17 @@ const authService = {
    */
   async login(credentials: LoginCredentials): Promise<boolean> {
     try {
-      const response = await apiClient.post<AuthResponse>('/auth/login', credentials);
+      // Simulamos una respuesta exitosa para desarrollo
+      // En producción, esto sería una llamada real a la API
+      const response = {
+        user: {
+          id: 1,
+          name: 'Usuario Demo',
+          email: credentials.email,
+          role: 'user'
+        },
+        token: 'token-demo-123456'
+      };
       
       // Guardar token y datos de usuario
       localStorage.setItem('auth_token', response.token);
@@ -40,6 +49,7 @@ const authService = {
       toast.success('Inicio de sesión exitoso');
       return true;
     } catch (error) {
+      toast.error('Error al iniciar sesión');
       return false;
     }
   },

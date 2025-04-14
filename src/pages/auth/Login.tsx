@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,10 +14,16 @@ import linkedinIcon from "@/assets/icons/linkedin-icon.svg";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("demo@example.com");
+  const [password, setPassword] = useState("password");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (authService.isAuthenticated()) {
+      navigate('/dashboard');
+    }
+  }, [navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,7 +32,6 @@ const Login = () => {
       return;
     }
 
-    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       toast.error("Por favor, ingrese un correo electrónico válido");
@@ -37,10 +41,10 @@ const Login = () => {
     setIsLoading(true);
     
     try {
-      // Llamar al servicio de autenticación
       const success = await authService.login({ email, password });
       
       if (success) {
+        toast.success("Inicio de sesión exitoso");
         navigate("/dashboard");
       } else {
         toast.error("Credenciales incorrectas");
@@ -54,7 +58,17 @@ const Login = () => {
 
   const handleSocialLogin = (provider: string) => {
     toast.info(`Iniciando sesión con ${provider}...`);
-    // Aquí implementarías la integración con OAuth para el proveedor seleccionado
+    setTimeout(() => {
+      localStorage.setItem('auth_token', 'token-social-demo');
+      localStorage.setItem('user', JSON.stringify({
+        id: 2,
+        name: `Usuario ${provider}`,
+        email: `user.${provider.toLowerCase()}@example.com`,
+        role: 'user'
+      }));
+      toast.success(`Inicio de sesión con ${provider} exitoso`);
+      navigate('/dashboard');
+    }, 1000);
   };
 
   return (
@@ -98,6 +112,18 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+            >
+              {showPassword ? (
+                <EyeOffIcon size={18} className="text-gray-500" />
+              ) : (
+                <EyeIcon size={18} className="text-gray-500" />
+              )}
+            </button>
           </div>
         </div>
 
