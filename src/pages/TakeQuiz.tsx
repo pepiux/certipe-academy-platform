@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -324,13 +323,20 @@ const TakeQuiz = () => {
 
   return (
     <div className="space-y-6">
-      {/* Quiz Header - Simplified without banner */}
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">{quizData.title}</h2>
+        <Button 
+          onClick={handleFinishClick} 
+          className="flex gap-2 bg-brand-blue hover:bg-brand-blue/90 text-white"
+          type="button"
+        >
+          <CheckCircle size={16} /> Finalizar cuestionario
+        </Button>
+      </div>
+
       <Card>
-        <CardHeader className="pb-2">
-          <CardTitle>{quizData.title}</CardTitle>
-        </CardHeader>
-        <CardContent className="py-2">
-          <div className="flex flex-wrap gap-4 mb-4">
+        <CardContent className="py-4">
+          <div className="flex flex-wrap gap-4">
             <div className="flex items-center gap-2 text-sm">
               <span className="font-medium">Pregunta:</span>
               <span>{currentQuestion + 1} de {quizData.totalQuestions}</span>
@@ -340,7 +346,7 @@ const TakeQuiz = () => {
               <span>{getAnsweredCount()} de {quizData.totalQuestions}</span>
             </div>
             <div className="flex items-center gap-2 text-sm">
-              <Flag size={14} className="text-red-500" />
+              <Flag size={14} className="text-muted-foreground" />
               <span>{getFlaggedCount()} marcadas</span>
             </div>
             <div className={`flex items-center gap-1 font-bold ml-auto ${
@@ -352,40 +358,9 @@ const TakeQuiz = () => {
               </span>
             </div>
           </div>
-          <Progress value={progress} className="h-1" />
+          <Progress value={progress} className="h-1 mt-4" />
         </CardContent>
       </Card>
-
-      {/* Quiz Control Buttons - Now at the top */}
-      <div className="flex justify-between">
-        <Button
-          variant="outline"
-          onClick={goToPreviousQuestion}
-          disabled={isFirstQuestion}
-          className="flex items-center"
-          type="button"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" /> Anterior
-        </Button>
-        
-        <Button 
-          onClick={handleFinishClick} 
-          className="flex gap-2 bg-green-600 hover:bg-green-700"
-          type="button"
-        >
-          <CheckCircle size={16} /> Finalizar cuestionario
-        </Button>
-        
-        {!isLastQuestion && (
-          <Button 
-            onClick={goToNextQuestion} 
-            className="flex items-center"
-            type="button"
-          >
-            Siguiente <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-        )}
-      </div>
 
       <Card>
         <CardContent className="p-6">
@@ -397,13 +372,18 @@ const TakeQuiz = () => {
             onToggleFlagged={toggleFlagged}
             timeWarning={timer.minutes < 5}
           />
+          
+          <QuizControls
+            isFirstQuestion={isFirstQuestion}
+            isLastQuestion={isLastQuestion}
+            onPrevious={goToPreviousQuestion}
+            onNext={goToNextQuestion}
+            onFinish={handleFinishClick}
+          />
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Navegación de preguntas</CardTitle>
-        </CardHeader>
         <CardContent className="p-4">
           <QuizNavigation
             questions={quizData.questions}

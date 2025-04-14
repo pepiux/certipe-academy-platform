@@ -19,24 +19,17 @@ const QuizControls: React.FC<QuizControlsProps> = ({
   onFinish
 }) => {
   return (
-    <div className="flex justify-between mt-4">
-      <Button
-        variant="outline"
-        onClick={onPrevious}
-        disabled={isFirstQuestion}
-        className="flex items-center"
-        type="button"
-      >
-        <ArrowLeft className="mr-2 h-4 w-4" /> Anterior
-      </Button>
-      
-      <div className="flex gap-2">
-        <Button 
-          onClick={onFinish} 
-          className="flex gap-2 bg-green-600 hover:bg-green-700"
+    <div>
+      {/* Navigation buttons at the bottom of question */}
+      <div className="flex justify-between mt-4 mb-6">
+        <Button
+          variant="outline"
+          onClick={onPrevious}
+          disabled={isFirstQuestion}
+          className="flex items-center"
           type="button"
         >
-          <CheckCircle size={16} /> Finalizar cuestionario
+          <ArrowLeft className="mr-2 h-4 w-4" /> Anterior
         </Button>
         
         {!isLastQuestion && (

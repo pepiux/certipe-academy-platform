@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -142,14 +141,14 @@
   }
   
   .quiz-card-banner {
-    @apply h-2 rounded-t-md bg-[#00B4FF];
+    @apply h-2 rounded-t-md bg-brand-blue;
   }
 
   .quiz-start-button, .quiz-continue-button, .quiz-retry-button {
-    @apply bg-[#00B4FF] hover:bg-[#00B4FF] text-white;
+    @apply bg-brand-blue hover:bg-brand-blue/90 text-white;
   }
 
   .avatar-initials {
-    @apply flex items-center justify-center bg-[#00B4FF] text-white font-medium rounded-full;
+    @apply flex items-center justify-center bg-brand-blue text-white font-medium rounded-full;
   }
 }
