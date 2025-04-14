@@ -1,4 +1,3 @@
-
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { 
@@ -18,15 +17,11 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
   const location = useLocation();
   
-  const isActive = (path: string) => {
-    return location.pathname === path || location.pathname.startsWith(`${path}/`);
-  };
-
   return (
     <aside 
       className={`${
         isOpen ? "w-64" : "w-16"
-      } bg-sidebar-background transition-all duration-300 flex flex-col h-screen sticky top-0 overflow-y-auto`}
+      } bg-sidebar transition-all duration-300 flex flex-col h-screen sticky top-0 overflow-y-auto`}
     >
       {/* Logo */}
       <div className="p-4 flex items-center justify-center md:justify-start">

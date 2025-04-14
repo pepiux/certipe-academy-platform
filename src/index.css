@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -103,7 +104,7 @@
 
 @layer components {
   .sidebar-link {
-    @apply flex items-center gap-3 rounded-md py-2 px-3 text-sm font-medium transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sidebar-foreground;
+    @apply flex items-center gap-3 rounded-md py-2 px-3 text-sm font-medium transition-colors hover:bg-blue-400/20 hover:text-white text-white mb-0.5;
   }
   
   .sidebar-link.active {
