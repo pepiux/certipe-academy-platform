@@ -107,11 +107,11 @@
   }
   
   .sidebar-link:hover {
-    @apply bg-[#00B4FF] text-sidebar-background;
+    @apply bg-[#00B4FF] text-sidebar;
   }
   
   .sidebar-link.active {
-    @apply bg-white text-sidebar-background;
+    @apply bg-white text-sidebar;
   }
 
   .sidebar-category {
