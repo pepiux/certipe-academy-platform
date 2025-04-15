@@ -26,7 +26,6 @@ const Logo: React.FC<LogoProps> = ({ size = "medium" }) => {
         xmlns="http://www.w3.org/2000/svg"
         className="flex-shrink-0"
       >
-        <rect width="24" height="24" fill="black" />
         <path 
           d="M12 2L2 7L12 12L22 7L12 2Z" 
           fill="#00B4FF" 
