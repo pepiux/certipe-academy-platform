@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Clock, BookOpen } from "lucide-react";
 
 interface Course {
   id: number;
@@ -11,7 +12,8 @@ interface Course {
   category: string;
   level: string;
   instructor: string;
-  students: number;
+  lessons: number;
+  duration: string;
   image: string;
   progress: number;
   enrolled: boolean;
@@ -25,16 +27,7 @@ interface CourseCardProps {
 
 const CourseCard = ({ course, onStart, onContinue }: CourseCardProps) => {
   const getLevelColor = (level: string) => {
-    switch (level) {
-      case "Principiante":
-        return "bg-primary/10 text-primary border-primary/20";
-      case "Intermedio":
-        return "bg-primary/10 text-primary border-primary/20";
-      case "Avanzado":
-        return "bg-primary/10 text-primary border-primary/20";
-      default:
-        return "bg-primary/10 text-primary border-primary/20";
-    }
+    return "bg-primary/10 text-primary border-primary/20";
   };
 
   return (
@@ -48,18 +41,25 @@ const CourseCard = ({ course, onStart, onContinue }: CourseCardProps) => {
       </div>
       
       <CardContent className="p-4 flex flex-col flex-1">
+        <Badge variant="outline" className={`self-start mb-2 ${getLevelColor(course.level)}`}>
+          {course.level}
+        </Badge>
         <h3 className="font-semibold mb-2 line-clamp-2">{course.title}</h3>
         <div className="text-sm text-muted-foreground mb-3">{course.category}</div>
         
-        <Badge variant="outline" className={`self-start mb-4 ${getLevelColor(course.level)}`}>
-          {course.level}
-        </Badge>
-        
         <div className="flex-1">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <span>Por {course.instructor}</span>
-            <span>•</span>
-            <span>{course.students} estudiantes</span>
+          <div className="text-sm text-muted-foreground mb-2">
+            Por {course.instructor}
+          </div>
+          <div className="flex flex-col gap-1 text-sm text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <BookOpen size={16} />
+              <span>{course.lessons} lecciones</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Clock size={16} />
+              <span>{course.duration}</span>
+            </div>
           </div>
           
           {course.progress > 0 && (

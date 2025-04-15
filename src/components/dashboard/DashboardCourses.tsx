@@ -1,9 +1,9 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Badge, BookOpen, Clock } from "lucide-react";
 
 interface Course {
   id: number;
@@ -12,6 +12,10 @@ interface Course {
   progress: number;
   image: string;
   color: string;
+  lessons: number;
+  duration: string;
+  category: string;
+  level: string;
 }
 
 interface DashboardCoursesProps {
@@ -33,7 +37,7 @@ const DashboardCourses = ({ courses, onContinueCourse }: DashboardCoursesProps) 
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {courses.map((course) => (
-          <Card key={course.id} className="overflow-hidden quiz-card">
+          <Card key={course.id} className="overflow-hidden h-[420px] quiz-card">
             <div className={`quiz-card-banner bg-gradient-to-r ${course.color}`}></div>
             <div className="h-32 overflow-hidden">
               <img 
@@ -43,17 +47,35 @@ const DashboardCourses = ({ courses, onContinueCourse }: DashboardCoursesProps) 
               />
             </div>
             <CardContent className="p-4">
+              <Badge variant="outline" className="mb-2 bg-primary/10 text-primary border-primary/20">
+                {course.level}
+              </Badge>
               <h4 className="font-medium line-clamp-1">{course.title}</h4>
               <p className="text-sm text-muted-foreground mt-1">
-                Instructor: {course.instructor}
+                {course.category}
               </p>
-              <div className="mt-2">
-                <div className="flex justify-between text-xs mb-1">
-                  <span>Progreso</span>
-                  <span>{course.progress}%</span>
+              <p className="text-sm text-muted-foreground mt-2">
+                Por {course.instructor}
+              </p>
+              <div className="flex flex-col gap-1 mt-2 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <BookOpen size={14} />
+                  <span>{course.lessons} lecciones</span>
                 </div>
-                <Progress value={course.progress} className="h-1" />
+                <div className="flex items-center gap-2">
+                  <Clock size={14} />
+                  <span>{course.duration}</span>
+                </div>
               </div>
+              {course.progress > 0 && (
+                <div className="mt-3">
+                  <div className="flex justify-between text-xs mb-1">
+                    <span>Progreso</span>
+                    <span>{course.progress}%</span>
+                  </div>
+                  <Progress value={course.progress} className="h-1" />
+                </div>
+              )}
               <Button 
                 className="w-full mt-3 py-1 h-auto bg-primary hover:bg-primary/90 text-white"
                 size="sm"

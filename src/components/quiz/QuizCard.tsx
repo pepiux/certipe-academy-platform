@@ -42,14 +42,13 @@ const QuizCard = ({ quiz, onStart }: QuizCardProps) => {
       </div>
       
       <CardContent className="p-4 flex flex-col flex-1">
-        <h3 className="font-semibold mb-2 line-clamp-2">{quiz.title}</h3>
-        <p className="text-sm text-muted-foreground mb-3">
-          Evaluación de conocimientos
-        </p>
-        
-        <Badge variant="outline" className={`self-start mb-4 ${getDifficultyColor(quiz.difficulty)}`}>
+        <Badge variant="outline" className={`self-start mb-2 ${getDifficultyColor(quiz.difficulty)}`}>
           {quiz.difficulty}
         </Badge>
+        <h3 className="font-semibold mb-2 line-clamp-2">{quiz.title}</h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          Evaluación de conocimientos
+        </p>
         
         <div className="flex-1">
           <div className="flex gap-4 text-sm text-muted-foreground">

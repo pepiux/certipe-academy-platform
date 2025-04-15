@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,8 +9,8 @@ import { Clock, BookOpen, Users, Star, Award, ChevronDown, Play, FileText, FileA
 const CourseDetail = () => {
   const { id } = useParams();
   const [isFavorite, setIsFavorite] = useState(false);
-  const [expandedModule, setExpandedModule] = useState<number | null>(1); // Default expanded to first module
-  
+  const [expandedModule, setExpandedModule] = useState<number | null>(1);
+
   const courseData = {
     id: parseInt(id || "1"),
     title: "Fundamentos de Gestión de Proyectos",
@@ -25,11 +24,11 @@ const CourseDetail = () => {
     duration: "12 horas",
     lessons: 24,
     progress: 35,
-    currentLessonId: 5, // Added currentLessonId to track where user left off
-    completedLessons: 4, // Number of completed lessons
-    studyHours: 4.5, // Hours spent studying this course
-    lastQuizScore: 90, // Last quiz score percentage
-    enrollmentStatus: "enrolled", // "enrolled" or "not-enrolled"
+    currentLessonId: 5,
+    completedLessons: 4,
+    studyHours: 4.5,
+    lastQuizScore: 90,
+    enrollmentStatus: "enrolled",
     image: "https://placehold.co/800x400?text=Gestión+de+Proyectos",
     objectives: [
       "Comprender los principios fundamentales de la gestión de proyectos",
@@ -98,12 +97,10 @@ const CourseDetail = () => {
   };
 
   const handleContinue = () => {
-    // Implementation of continue functionality
     console.log("Continue learning from lesson ID:", courseData.currentLessonId);
   };
 
   const handleStartCourse = () => {
-    // Implementation of start course functionality
     console.log("Starting course:", courseData.id);
   };
 
@@ -118,15 +115,16 @@ const CourseDetail = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-6">
           <div className="text-white">
             <div className="flex items-center gap-2 mb-2">
-              <span className="bg-primary text-white text-xs font-medium px-2 py-1 rounded">
-                {courseData.category}
+              <span className="bg-primary/10 text-white text-xs font-medium px-2 py-1 rounded">
+                {courseData.level}
               </span>
               <span className="bg-white/20 text-white text-xs font-medium px-2 py-1 rounded">
-                {courseData.level}
+                {courseData.category}
               </span>
             </div>
             <h1 className="text-2xl md:text-3xl font-bold mb-2">{courseData.title}</h1>
             <div className="flex items-center gap-4 text-sm">
+              <span>Por {courseData.instructor}</span>
               <div className="flex items-center gap-1">
                 <Clock size={16} />
                 <span>{courseData.duration}</span>
@@ -134,14 +132,6 @@ const CourseDetail = () => {
               <div className="flex items-center gap-1">
                 <BookOpen size={16} />
                 <span>{courseData.lessons} lecciones</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Users size={16} />
-                <span>{courseData.students} estudiantes</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Star size={16} className="fill-yellow-400 text-yellow-400" />
-                <span>{courseData.rating} ({courseData.totalReviews} reseñas)</span>
               </div>
             </div>
           </div>
