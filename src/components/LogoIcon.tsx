@@ -13,7 +13,7 @@ const LogoIcon: React.FC = () => {
         xmlns="http://www.w3.org/2000/svg"
         className="transition-all duration-300 hover:scale-110"
       >
-        {/* Graduation cap logo */}
+        <rect width="24" height="24" fill="black" />
         <path 
           d="M12 2L2 7L12 12L22 7L12 2Z" 
           fill="#00B4FF" 
