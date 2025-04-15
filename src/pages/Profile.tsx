@@ -133,7 +133,7 @@ const Profile = () => {
           <TabsTrigger value="security">Seguridad</TabsTrigger>
         </TabsList>
         
-        {/* Profile Tab */}
+        {/* Profile Tab - Remove Recent Activity section */}
         <TabsContent value="profile" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
@@ -204,33 +204,6 @@ const Profile = () => {
                         </div>
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-            
-            {/* Activity column - moved to right side */}
-            <div className="lg:col-span-1 space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Actividad reciente</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {user.recentActivity.map((activity) => (
-                      <div key={activity.id} className="flex gap-4 pb-4 border-b last:border-b-0 last:pb-0">
-                        <div className="bg-primary/10 h-10 w-10 rounded-full flex items-center justify-center shrink-0">
-                          {activity.type === 'course_progress' && <BookOpen size={20} className="text-primary" />}
-                          {activity.type === 'quiz_completed' && <FileText size={20} className="text-primary" />}
-                          {activity.type === 'certificate_earned' && <Award size={20} className="text-primary" />}
-                        </div>
-                        <div>
-                          <div className="font-medium">{activity.title}</div>
-                          <div className="text-sm text-muted-foreground">{activity.course}</div>
-                          <div className="text-xs text-muted-foreground">{activity.date}</div>
-                        </div>
-                      </div>
-                    ))}
                   </div>
                 </CardContent>
               </Card>

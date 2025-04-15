@@ -6,6 +6,7 @@ import StatCard from "@/components/dashboard/StatCard";
 import StudyHoursChart from "@/components/dashboard/StudyHoursChart";
 import ScoreProgressChart from "@/components/dashboard/ScoreProgressChart";
 import RecentQuiz from "@/components/dashboard/RecentQuiz";
+import RecentActivity from "@/components/dashboard/RecentActivity";
 import DashboardCourses from "@/components/dashboard/DashboardCourses";
 import DashboardQuizzes from "@/components/dashboard/DashboardQuizzes";
 
@@ -135,6 +136,31 @@ const Dashboard = () => {
     navigate(`/dashboard/courses/${courseId}`);
   };
 
+  // Mock data for recent activity
+  const recentActivities = [
+    {
+      id: 1,
+      type: 'course_progress',
+      title: "Completaste el módulo 'Gestión de Stakeholders'",
+      course: "Avanzado en Gestión de Proyectos",
+      date: "Hace 2 días"
+    },
+    {
+      id: 2,
+      type: 'quiz_completed',
+      title: "Finalizaste el cuestionario con 85%",
+      course: "Metodologías Ágiles y Scrum",
+      date: "Hace 5 días"
+    },
+    {
+      id: 3,
+      type: 'certificate_earned',
+      title: "Obtuviste el certificado del curso",
+      course: "Introducción a PRINCE2",
+      date: "Hace 2 semanas"
+    }
+  ] as const;
+
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">Panel de control</h1>
@@ -180,7 +206,10 @@ const Dashboard = () => {
         <ScoreProgressChart data={scoreProgressData} />
       </div>
 
-      <RecentQuiz quiz={recentQuiz} />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <RecentQuiz quiz={recentQuiz} />
+        <RecentActivity activities={recentActivities} />
+      </div>
       
       <DashboardCourses 
         courses={courses}
