@@ -1,9 +1,11 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Badge, BookOpen, Clock } from "lucide-react";
+import { BookOpen, Clock } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface Course {
   id: number;

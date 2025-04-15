@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Clock, FileQuestion, Book, Award } from "lucide-react";
@@ -101,6 +102,10 @@ const Dashboard = () => {
       progress: 65,
       image: "https://placehold.co/400x200?text=Gestión+de+Proyectos",
       color: "from-indigo-400 to-indigo-600",
+      lessons: 12,
+      duration: "8 horas",
+      category: "Project Management",
+      level: "Principiante"
     },
     {
       id: 2,
@@ -109,6 +114,10 @@ const Dashboard = () => {
       progress: 30,
       image: "https://placehold.co/400x200?text=Scrum",
       color: "from-sky-400 to-sky-600",
+      lessons: 8,
+      duration: "6 horas",
+      category: "Agile",
+      level: "Intermedio"
     },
     {
       id: 3,
@@ -117,6 +126,10 @@ const Dashboard = () => {
       progress: 10,
       image: "https://placehold.co/400x200?text=PMP",
       color: "from-rose-400 to-rose-600",
+      lessons: 20,
+      duration: "15 horas",
+      category: "Certification",
+      level: "Avanzado"
     },
     {
       id: 4,
@@ -125,6 +138,10 @@ const Dashboard = () => {
       progress: 50,
       image: "https://placehold.co/400x200?text=Riesgos",
       color: "from-emerald-400 to-emerald-600",
+      lessons: 10,
+      duration: "7 horas",
+      category: "Risk Management",
+      level: "Intermedio"
     },
   ];
 

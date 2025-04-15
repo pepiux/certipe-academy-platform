@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,19 @@ import {
 import CourseCard from "@/components/courses/CourseCard";
 import { useNavigate } from "react-router-dom";
 
+interface Course {
+  id: number;
+  title: string;
+  category: string;
+  level: string;
+  instructor: string;
+  image: string;
+  progress: number;
+  enrolled: boolean;
+  lessons: number;
+  duration: string;
+}
+
 const Courses = () => {
   const [currentTab, setCurrentTab] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
@@ -34,7 +48,9 @@ const Courses = () => {
       students: 245,
       image: "https://placehold.co/400x200?text=Gestión+de+Proyectos",
       progress: 0,
-      enrolled: false
+      enrolled: false,
+      lessons: 12,
+      duration: "8 horas"
     },
     {
       id: 2,
@@ -45,7 +61,9 @@ const Courses = () => {
       students: 189,
       image: "https://placehold.co/400x200?text=Scrum",
       progress: 65,
-      enrolled: true
+      enrolled: true,
+      lessons: 8,
+      duration: "6 horas"
     },
     {
       id: 3,
@@ -56,7 +74,9 @@ const Courses = () => {
       students: 132,
       image: "https://placehold.co/400x200?text=Gestión+de+Riesgos",
       progress: 25,
-      enrolled: true
+      enrolled: true,
+      lessons: 10,
+      duration: "7 horas"
     },
     {
       id: 4,
@@ -67,7 +87,9 @@ const Courses = () => {
       students: 321,
       image: "https://placehold.co/400x200?text=PMP",
       progress: 10,
-      enrolled: true
+      enrolled: true,
+      lessons: 20,
+      duration: "15 horas"
     },
     {
       id: 5,
@@ -78,7 +100,9 @@ const Courses = () => {
       students: 176,
       image: "https://placehold.co/400x200?text=PMI-ACP",
       progress: 0,
-      enrolled: false
+      enrolled: false,
+      lessons: 14,
+      duration: "10 horas"
     },
     {
       id: 6,
@@ -89,7 +113,9 @@ const Courses = () => {
       students: 210,
       image: "https://placehold.co/400x200?text=Leadership",
       progress: 0,
-      enrolled: false
+      enrolled: false,
+      lessons: 12,
+      duration: "9 horas"
     },
     {
       id: 7,
@@ -100,7 +126,9 @@ const Courses = () => {
       students: 150,
       image: "https://placehold.co/400x200?text=MS+Project",
       progress: 0,
-      enrolled: false
+      enrolled: false,
+      lessons: 15,
+      duration: "12 horas"
     },
     {
       id: 8,
@@ -111,7 +139,9 @@ const Courses = () => {
       students: 198,
       image: "https://placehold.co/400x200?text=Comunicación",
       progress: 0,
-      enrolled: false
+      enrolled: false,
+      lessons: 8,
+      duration: "5 horas"
     },
     {
       id: 9,
@@ -122,7 +152,9 @@ const Courses = () => {
       students: 165,
       image: "https://placehold.co/400x200?text=Business+Analysis",
       progress: 0,
-      enrolled: false
+      enrolled: false,
+      lessons: 10,
+      duration: "8 horas"
     },
     {
       id: 10,
@@ -133,7 +165,9 @@ const Courses = () => {
       students: 142,
       image: "https://placehold.co/400x200?text=Benefits+Management",
       progress: 0,
-      enrolled: false
+      enrolled: false,
+      lessons: 12,
+      duration: "9 horas"
     },
     {
       id: 11,
@@ -144,7 +178,9 @@ const Courses = () => {
       students: 178,
       image: "https://placehold.co/400x200?text=Kanban",
       progress: 0,
-      enrolled: false
+      enrolled: false,
+      lessons: 6,
+      duration: "4 horas"
     },
     {
       id: 12,
@@ -155,7 +191,9 @@ const Courses = () => {
       students: 220,
       image: "https://placehold.co/400x200?text=Prince2",
       progress: 0,
-      enrolled: false
+      enrolled: false,
+      lessons: 14,
+      duration: "10 horas"
     }
   ];
   
