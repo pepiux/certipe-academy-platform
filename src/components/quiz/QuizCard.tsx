@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -81,7 +80,7 @@ const QuizCard = ({ quiz, onStart }: QuizCardProps) => {
         </div>
         
         <Button 
-          className="w-full mt-3 py-1 h-auto bg-[#00B4FF] hover:bg-[#00B4FF] text-white" 
+          className="w-full mt-3 py-1 h-auto bg-primary hover:bg-primary/90 text-white" 
           size="sm"
           onClick={() => onStart(quiz.id)}
         >

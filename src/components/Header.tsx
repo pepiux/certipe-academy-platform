@@ -51,7 +51,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
             variant="ghost" 
             size="sm"
             onClick={() => navigate("/dashboard/profile")}
-            className="rounded-full p-0 w-9 h-9 bg-brand-blue text-white hover:bg-brand-blue/90"
+            className="rounded-full p-0 w-9 h-9 bg-primary text-white hover:bg-primary/90"
           >
             JR
           </Button>

@@ -13,7 +13,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 224 71% 4%;
 
-    --primary: 210 100% 50%;
+    --primary: 199 100% 50%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 220 14.3% 95.9%;
@@ -37,7 +37,7 @@
     --sidebar-background: 222 47% 11%;
     --sidebar-foreground: 210 40% 98%;
     --sidebar-muted-foreground: 210 40% 70%;
-    --sidebar-primary: 210 100% 50%;
+    --sidebar-primary: 199 100% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 217.2 32.6% 17.5%;
     --sidebar-accent-foreground: 210 40% 98%;
@@ -48,7 +48,7 @@
     --toast-foreground: 224 71% 4%;
     --toast-border: 220 13% 91%;
 
-    --brand-blue: 195 100% 50%;
+    --brand-blue: 199 100% 50%;
   }
 
   .dark {
@@ -90,7 +90,7 @@
     --sidebar-accent: 217.2 32.6% 17.5%;
     --sidebar-accent-foreground: 210 40% 98%;
 
-    --brand-blue: 195 100% 50%;
+    --brand-blue: 199 100% 50%;
   }
 }
 
@@ -111,7 +111,7 @@
   }
   
   .sidebar-link:hover {
-    @apply bg-[#00B4FF] text-sidebar;
+    @apply bg-primary text-sidebar;
   }
   
   .sidebar-link.active {
@@ -141,11 +141,11 @@
   }
   
   .quiz-card-banner {
-    @apply h-2 rounded-t-md bg-brand-blue;
+    @apply h-2 rounded-t-md bg-primary;
   }
 
   .quiz-start-button, .quiz-continue-button, .quiz-retry-button {
-    @apply bg-brand-blue hover:bg-brand-blue/90 text-white;
+    @apply bg-primary hover:bg-primary/90 text-white;
   }
 
   .avatar-initials {

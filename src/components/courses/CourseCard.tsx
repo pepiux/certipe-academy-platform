@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -82,7 +81,7 @@ const CourseCard = ({ course, onStart, onContinue }: CourseCardProps) => {
         </div>
         
         <Button 
-          className="w-full mt-3 py-1 h-auto bg-[#00B4FF] hover:bg-[#00B4FF] text-white" 
+          className="w-full mt-3 py-1 h-auto bg-primary hover:bg-primary/90 text-white" 
           size="sm"
           onClick={() => course.progress > 0 ? onContinue(course.id) : onStart(course.id)}
         >
