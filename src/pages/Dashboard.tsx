@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Clock, FileQuestion, Book, Award } from "lucide-react";
+import { Clock, FileQuestion, Book, Award, ChevronRight } from "lucide-react";
 
 import StatCard from "@/components/dashboard/StatCard";
 import StudyHoursChart from "@/components/dashboard/StudyHoursChart";
@@ -254,15 +254,43 @@ const Dashboard = () => {
         <RecentActivity activities={recentActivities} />
       </div>
       
-      <DashboardCourses 
-        courses={courses}
-        onContinueCourse={handleContinueCourse}
-      />
+      <div className="mb-6">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-medium">Tus cursos</h2>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="gap-1 text-primary" 
+            onClick={() => navigate('/dashboard/courses')}
+          >
+            Ver todos <ChevronRight size={16} />
+          </Button>
+        </div>
+        
+        <DashboardCourses 
+          courses={courses}
+          onContinueCourse={handleContinueCourse}
+        />
+      </div>
       
-      <DashboardQuizzes
-        quizzes={quizzes}
-        onStartQuiz={handleStartQuiz}
-      />
+      <div className="mb-6">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-medium">Tus cuestionarios</h2>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="gap-1 text-primary" 
+            onClick={() => navigate('/dashboard/quizzes')}
+          >
+            Ver todos <ChevronRight size={16} />
+          </Button>
+        </div>
+        
+        <DashboardQuizzes
+          quizzes={quizzes}
+          onStartQuiz={handleStartQuiz}
+        />
+      </div>
     </div>
   );
 };
