@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Clock, FileQuestion, Book, Award, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 import StatCard from "@/components/dashboard/StatCard";
 import StudyHoursChart from "@/components/dashboard/StudyHoursChart";
