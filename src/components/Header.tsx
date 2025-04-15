@@ -2,7 +2,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Menu, Bell, LogOut, User } from "lucide-react";
+import { Menu, User, LogOut } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,6 +15,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import NotificationsDropdown from "./notifications/NotificationsDropdown";
+import { toast } from "sonner";
 
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -22,11 +24,27 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
   const navigate = useNavigate();
-  const [notifications] = React.useState(3); // Mock notifications count
 
   const handleLogout = () => {
-    // Here you would implement logout logic
-    navigate("/");
+    // Here you would implement the actual logout logic with PHP/MySQL
+    // Example: Make an API call to /api/auth/logout
+    // Clear local storage, session, cookies, etc.
+    
+    // Show loading toast
+    toast.loading("Cerrando sesión...");
+
+    // Simulate API call delay
+    setTimeout(() => {
+      // Clear any stored auth data
+      localStorage.removeItem("auth_token");
+      sessionStorage.clear();
+      
+      // Show success message
+      toast.success("Sesión cerrada correctamente");
+      
+      // Redirect to login
+      navigate("/");
+    }, 1500);
   };
 
   return (
@@ -53,27 +71,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
         </div>
 
         <div className="flex items-center gap-4">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="rounded-full w-9 h-9 p-0 relative"
-                >
-                  <Bell className="h-[1.2rem] w-[1.2rem]" />
-                  {notifications > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                      {notifications}
-                    </span>
-                  )}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Notificaciones</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <NotificationsDropdown />
 
           <DropdownMenu>
             <TooltipProvider>
