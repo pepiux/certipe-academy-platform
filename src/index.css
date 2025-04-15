@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -132,6 +133,16 @@
 
   .content-header-overlay {
     @apply absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6;
+  }
+  
+  /* Add custom styles for quiz flag button */
+  .quiz-flag-button.flagged {
+    background-color: rgb(254 226 226); /* bg-red-100 */
+  }
+  
+  /* Hide the "DESMARCA" text */
+  .quiz-flag-button.flagged span {
+    display: none;
   }
 }
 
