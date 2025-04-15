@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -108,12 +107,19 @@ const CourseDetail = () => {
   };
 
   const handleContinue = () => {
-    navigateToLesson(courseData.currentLessonId);
+    const currentModule = courseData.modules.find(module => 
+      module.lessons.some(lesson => lesson.id === courseData.currentLessonId)
+    );
+    
+    if (currentModule) {
+      const currentLesson = currentModule.lessons.find(lesson => lesson.id === courseData.currentLessonId);
+      if (currentLesson) {
+        navigateToLesson(currentLesson.id);
+      }
+    }
   };
 
   const handleStartCourse = () => {
-    console.log("Starting course:", courseData.id);
-    // Navigate to the first lesson
     if (courseData.modules[0]?.lessons[0]?.id) {
       navigateToLesson(courseData.modules[0].lessons[0].id);
     }
@@ -122,22 +128,8 @@ const CourseDetail = () => {
   const navigateToLesson = (lessonId: number) => {
     const lesson = findLessonById(lessonId);
     if (lesson) {
-      switch (lesson.type) {
-        case 'video':
-          navigate(`/dashboard/courses/${courseData.id}/lesson/${lessonId}/video`);
-          break;
-        case 'audio':
-          navigate(`/dashboard/courses/${courseData.id}/lesson/${lessonId}/audio`);
-          break;
-        case 'reading':
-          navigate(`/dashboard/courses/${courseData.id}/lesson/${lessonId}/reading`);
-          break;
-        case 'test':
-          navigate(`/dashboard/courses/${courseData.id}/lesson/${lessonId}/test`);
-          break;
-        default:
-          navigate(`/dashboard/courses/${courseData.id}/lesson/${lessonId}`);
-      }
+      const route = `/dashboard/courses/${courseData.id}/lesson/${lessonId}/${lesson.type}`;
+      navigate(route);
     }
   };
 
