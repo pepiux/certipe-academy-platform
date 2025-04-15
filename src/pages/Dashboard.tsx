@@ -53,7 +53,8 @@ const Dashboard = () => {
       image: "https://placehold.co/400x200?text=Gestión+de+Proyectos",
       progress: 0,
       lessons: 12,
-      duration: "8 horas"
+      duration: "8 horas",
+      color: "from-indigo-400 to-indigo-600"
     },
     {
       id: 2,
@@ -64,7 +65,8 @@ const Dashboard = () => {
       image: "https://placehold.co/400x200?text=Scrum",
       progress: 65,
       lessons: 8,
-      duration: "6 horas"
+      duration: "6 horas",
+      color: "from-blue-400 to-blue-600"
     },
     {
       id: 3,
@@ -75,7 +77,8 @@ const Dashboard = () => {
       image: "https://placehold.co/400x200?text=Gestión+de+Riesgos",
       progress: 25,
       lessons: 10,
-      duration: "7 horas"
+      duration: "7 horas",
+      color: "from-emerald-400 to-emerald-600"
     },
     {
       id: 4,
@@ -86,7 +89,8 @@ const Dashboard = () => {
       image: "https://placehold.co/400x200?text=PMP",
       progress: 10,
       lessons: 20,
-      duration: "15 horas"
+      duration: "15 horas",
+      color: "from-amber-400 to-amber-600"
     },
     {
       id: 5,
@@ -97,7 +101,8 @@ const Dashboard = () => {
       image: "https://placehold.co/400x200?text=PMI-ACP",
       progress: 0,
       lessons: 14,
-      duration: "10 horas"
+      duration: "10 horas",
+      color: "from-purple-400 to-purple-600"
     },
     {
       id: 6,
@@ -108,7 +113,8 @@ const Dashboard = () => {
       image: "https://placehold.co/400x200?text=Leadership",
       progress: 0,
       lessons: 12,
-      duration: "9 horas"
+      duration: "9 horas",
+      color: "from-pink-400 to-pink-600"
     }
   ];
 
