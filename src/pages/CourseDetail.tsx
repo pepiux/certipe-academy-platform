@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
-import { Clock, BookOpen, Users, Star, Award, ChevronDown, Play, FileText, FileAudio, Heart } from "lucide-react";
+import { Clock, BookOpen, Users, Star, Award, ChevronDown, Play, FileText, FileAudio, Heart, Check } from "lucide-react";
 
 const CourseDetail = () => {
   const { id } = useParams();
@@ -102,6 +102,30 @@ const CourseDetail = () => {
 
   const handleStartCourse = () => {
     console.log("Starting course:", courseData.id);
+  };
+
+  const getLessonAction = (lesson: { id: number; completed: boolean }) => {
+    if (lesson.completed) {
+      return (
+        <Button variant="outline" size="sm" className="w-28">
+          Repasar
+        </Button>
+      );
+    }
+    
+    if (isCurrentLesson(lesson.id)) {
+      return (
+        <Button size="sm" className="w-28">
+          Continuar
+        </Button>
+      );
+    }
+    
+    return (
+      <Button variant="ghost" size="sm" className="w-28">
+        Vista previa
+      </Button>
+    );
   };
 
   return (
@@ -211,46 +235,52 @@ const CourseDetail = () => {
                             {module.lessons.length} lecciones
                           </span>
                         </div>
-                        <ChevronDown className={`h-4 w-4 transition-transform ${expandedModule === module.id ? 'rotate-180' : ''}`} />
+                        <ChevronDown 
+                          className={`h-4 w-4 transition-transform ${
+                            expandedModule === module.id ? 'rotate-180' : ''
+                          }`} 
+                        />
                       </button>
                       <div className={`px-4 ${expandedModule === module.id ? 'block' : 'hidden'}`}>
                         {module.lessons.map((lesson) => (
                           <div
                             key={lesson.id}
-                            className={`flex items-center justify-between py-2 border-t ${isCurrentLesson(lesson.id) ? 'bg-slate-50' : ''}`}
+                            className={`grid grid-cols-12 gap-4 items-center py-3 border-t ${
+                              isCurrentLesson(lesson.id) ? 'bg-slate-50' : ''
+                            }`}
                           >
-                            <div className="flex items-center gap-3">
+                            <div className="col-span-5 flex items-center gap-3">
                               <div className="flex-shrink-0">
                                 {getLessonIcon(lesson.type)}
                               </div>
-                              <span className="text-sm">{lesson.title}</span>
-                              {isCurrentLesson(lesson.id) && (
-                                <span className="text-xs bg-blue-100 text-primary px-2 py-0.5 rounded">Actual</span>
-                              )}
+                              <span className="text-sm font-medium">{lesson.title}</span>
                             </div>
-                            <div className="flex items-center gap-3">
-                              <span className="text-xs text-muted-foreground">
+                            <div className="col-span-2 text-center">
+                              <span className="text-sm text-muted-foreground">
                                 {lesson.duration}
                               </span>
-                              {lesson.completed ? (
+                            </div>
+                            <div className="col-span-3 flex justify-center">
+                              {getLessonAction(lesson)}
+                            </div>
+                            <div className="col-span-2 flex justify-center">
+                              {lesson.completed && (
                                 <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
-                                  <span className="text-xs text-primary">✓</span>
+                                  <Check className="h-3 w-3 text-primary" />
                                 </div>
-                              ) : (
-                                <Button 
-                                  variant="ghost" 
-                                  size="sm" 
-                                  className="text-xs"
-                                >
-                                  {isCurrentLesson(lesson.id) ? "Continuar" : "Vista previa"}
-                                </Button>
                               )}
                             </div>
                           </div>
                         ))}
-                        {isCurrentLesson(module.lessons.find(l => l.id === courseData.currentLessonId)?.id || 0) && (
+                        {isCurrentLesson(
+                          module.lessons.find(l => l.id === courseData.currentLessonId)?.id || 0
+                        ) && (
                           <div className="p-3 bg-slate-50 text-sm border-t">
-                            <p>{module.lessons.find(l => l.id === courseData.currentLessonId)?.description}</p>
+                            <p>{
+                              module.lessons.find(
+                                l => l.id === courseData.currentLessonId
+                              )?.description
+                            }</p>
                           </div>
                         )}
                       </div>
