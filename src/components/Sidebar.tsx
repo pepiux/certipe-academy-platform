@@ -1,4 +1,3 @@
-
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { 
@@ -6,69 +5,14 @@ import {
   BookOpen, 
   FileQuestion, 
   Users, 
-  Settings,
-  LucideIcon
+  Settings 
 } from "lucide-react";
 import Logo from "./Logo";
 import LogoIcon from "./LogoIcon";
-import { 
-  Tooltip, 
-  TooltipContent, 
-  TooltipProvider, 
-  TooltipTrigger 
-} from "@/components/ui/tooltip";
 
 interface SidebarProps {
   isOpen: boolean;
 }
-
-const SidebarNavLink = ({ 
-  to, 
-  icon: Icon, 
-  label, 
-  isOpen 
-}: { 
-  to: string, 
-  icon: LucideIcon, 
-  label: string, 
-  isOpen: boolean 
-}) => {
-  const linkContent = (
-    <>
-      <Icon size={20} />
-      {isOpen && <span className="ml-2">{label}</span>}
-    </>
-  );
-
-  if (isOpen) {
-    return (
-      <NavLink 
-        to={to} 
-        className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
-      >
-        {linkContent}
-      </NavLink>
-    );
-  }
-
-  return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <NavLink 
-            to={to} 
-            className={({ isActive }) => `sidebar-link justify-center ${isActive ? "active" : ""}`}
-          >
-            {linkContent}
-          </NavLink>
-        </TooltipTrigger>
-        <TooltipContent side="right">
-          <p>{label}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  );
-};
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
   const location = useLocation();
@@ -77,12 +21,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
     <aside 
       className={`${
         isOpen ? "w-64" : "w-16"
-      } bg-sidebar transition-all duration-300 flex flex-col h-screen sticky top-0 overflow-y-auto md:relative`}
+      } bg-sidebar transition-all duration-300 flex flex-col h-screen sticky top-0 overflow-y-auto`}
     >
       {/* Logo */}
       <div className="p-4 flex items-center justify-center md:justify-start">
         {isOpen ? (
-          <Logo showText={true} />
+          <Logo />
         ) : (
           <LogoIcon />
         )}
@@ -94,59 +38,67 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
         <div className="mb-6">
           {isOpen && <div className="sidebar-category">Main Menu</div>}
           
-          <SidebarNavLink 
+          <NavLink 
             to="/dashboard" 
-            icon={LayoutDashboard} 
-            label="Panel de control" 
-            isOpen={isOpen} 
-          />
+            className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
+            end
+          >
+            <LayoutDashboard size={20} />
+            {isOpen && <span>Panel de control</span>}
+          </NavLink>
           
-          <SidebarNavLink 
+          <NavLink 
             to="/dashboard/courses" 
-            icon={BookOpen} 
-            label="Cursos" 
-            isOpen={isOpen} 
-          />
+            className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
+          >
+            <BookOpen size={20} />
+            {isOpen && <span>Cursos</span>}
+          </NavLink>
           
-          <SidebarNavLink 
+          <NavLink 
             to="/dashboard/quizzes" 
-            icon={FileQuestion} 
-            label="Cuestionarios" 
-            isOpen={isOpen} 
-          />
+            className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
+          >
+            <FileQuestion size={20} />
+            {isOpen && <span>Cuestionarios</span>}
+          </NavLink>
         </div>
 
         {/* Admin */}
         <div className="mb-6">
           {isOpen && <div className="sidebar-category">Admin</div>}
           
-          <SidebarNavLink 
+          <NavLink 
             to="/dashboard/admin/users" 
-            icon={Users} 
-            label="Gestión de usuarios" 
-            isOpen={isOpen} 
-          />
+            className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
+          >
+            <Users size={20} />
+            {isOpen && <span>Gestión de usuarios</span>}
+          </NavLink>
           
-          <SidebarNavLink 
+          <NavLink 
             to="/dashboard/admin/courses" 
-            icon={BookOpen} 
-            label="Gestión de cursos" 
-            isOpen={isOpen} 
-          />
+            className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
+          >
+            <BookOpen size={20} />
+            {isOpen && <span>Gestión de cursos</span>}
+          </NavLink>
           
-          <SidebarNavLink 
+          <NavLink 
             to="/dashboard/admin/quizzes" 
-            icon={FileQuestion} 
-            label="Gestión de cuestionarios" 
-            isOpen={isOpen} 
-          />
+            className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
+          >
+            <FileQuestion size={20} />
+            {isOpen && <span>Gestión de cuestionarios</span>}
+          </NavLink>
           
-          <SidebarNavLink 
+          <NavLink 
             to="/dashboard/admin/settings" 
-            icon={Settings} 
-            label="Configuración del sistema" 
-            isOpen={isOpen} 
-          />
+            className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
+          >
+            <Settings size={20} />
+            {isOpen && <span>Configuración del sistema</span>}
+          </NavLink>
         </div>
       </nav>
 

@@ -5,10 +5,9 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 interface LogoProps {
   size?: "small" | "medium" | "large";
-  showText?: boolean;
 }
 
-const Logo: React.FC<LogoProps> = ({ size = "medium", showText = true }) => {
+const Logo: React.FC<LogoProps> = ({ size = "medium" }) => {
   const isMobile = useIsMobile();
   
   const sizeClasses = {
@@ -18,7 +17,7 @@ const Logo: React.FC<LogoProps> = ({ size = "medium", showText = true }) => {
   };
 
   return (
-    <Link to="/dashboard" className="inline-flex items-center gap-2">
+    <Link to="/" className="inline-flex items-center gap-2">
       <svg 
         width="28" 
         height="28" 
@@ -61,7 +60,7 @@ const Logo: React.FC<LogoProps> = ({ size = "medium", showText = true }) => {
           strokeLinejoin="round"
         />
       </svg>
-      {showText && (
+      {!isMobile && (
         <div className={`font-bold ${sizeClasses[size]} flex items-center`}>
           <span className="text-white">Certi</span>
           <span className="text-brand-blue">PE</span>

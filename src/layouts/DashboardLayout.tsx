@@ -1,29 +1,16 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 
 const DashboardLayout = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(() => {
-    // Collapse sidebar by default on mobile
-    return window.innerWidth >= 768; 
-  });
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const location = useLocation();
   
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
-
-  // Add event listener to adjust sidebar state on window resize
-  useEffect(() => {
-    const handleResize = () => {
-      setSidebarOpen(window.innerWidth >= 768);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   // Log the current route for debugging purposes
   React.useEffect(() => {
