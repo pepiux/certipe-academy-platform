@@ -4,7 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
-import { Clock, BookOpen, Users, Star, Award, ChevronDown, Play, FileText, FileAudio, Heart, Check } from "lucide-react";
+import { Clock, BookOpen, Users, Star, Award, ChevronDown, Play, FileText, FileAudio, Heart, Check, RotateCw, Eye } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const CourseDetail = () => {
   const { id } = useParams();
@@ -107,24 +113,51 @@ const CourseDetail = () => {
   const getLessonAction = (lesson: { id: number; completed: boolean }) => {
     if (lesson.completed) {
       return (
-        <Button variant="outline" size="sm" className="w-28">
-          Repasar
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="sm" className="w-10 h-10">
+                <RotateCw className="h-4 w-4 text-muted-foreground" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Repasar</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       );
     }
     
     if (isCurrentLesson(lesson.id)) {
       return (
-        <Button size="sm" className="w-28">
-          Continuar
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="sm" className="w-10 h-10">
+                <Play className="h-4 w-4 text-[#0EA5E9]" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Continuar</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       );
     }
     
     return (
-      <Button variant="ghost" size="sm" className="w-28">
-        Vista previa
-      </Button>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant="ghost" size="sm" className="w-10 h-10">
+              <Eye className="h-4 w-4 text-muted-foreground" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Previsualizar</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     );
   };
 
