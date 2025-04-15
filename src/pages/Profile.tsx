@@ -126,88 +126,84 @@ const Profile = () => {
         <h1 className="text-2xl font-bold">Mi Perfil</h1>
       </div>
       
-      <Tabs defaultValue="profile">
+      <Tabs defaultValue="profile" className="w-full">
         <TabsList>
           <TabsTrigger value="profile">Perfil</TabsTrigger>
           <TabsTrigger value="certificates">Certificados</TabsTrigger>
           <TabsTrigger value="security">Seguridad</TabsTrigger>
         </TabsList>
         
-        {/* Profile Tab - Remove Recent Activity section */}
+        {/* Profile Tab */}
         <TabsContent value="profile" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2">
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex flex-col md:flex-row gap-6">
-                    {/* Avatar and basic info */}
-                    <div className="flex flex-col items-center md:items-start gap-4 md:w-1/3">
-                      <Avatar className="w-24 h-24">
-                        <AvatarImage src={user.avatar} alt={user.name} />
-                        <AvatarFallback>JP</AvatarFallback>
-                      </Avatar>
-                      
-                      <div className="text-center md:text-left">
-                        <h2 className="text-xl font-bold">{user.name}</h2>
-                        <p className="text-muted-foreground">{user.position}</p>
-                        <p className="text-sm text-muted-foreground">Miembro desde {user.joinedDate}</p>
-                      </div>
-                      
-                      <div className="w-full space-y-3">
-                        <div className="flex items-center gap-2">
-                          <Mail size={16} className="text-muted-foreground" />
-                          <span>{user.email}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Phone size={16} className="text-muted-foreground" />
-                          <span>{user.phone}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <MapPin size={16} className="text-muted-foreground" />
-                          <span>{user.location}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Building size={16} className="text-muted-foreground" />
-                          <span>{user.company}</span>
-                        </div>
-                      </div>
-                      
-                      <Button variant="outline" className="w-full">Editar perfil</Button>
+          <div className="grid grid-cols-1 gap-6">
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex flex-col md:flex-row gap-6">
+                  <div className="flex flex-col items-center md:items-start gap-4 md:w-1/3">
+                    <Avatar className="w-24 h-24">
+                      <AvatarImage src={user.avatar} alt={user.name} />
+                      <AvatarFallback>JP</AvatarFallback>
+                    </Avatar>
+                    
+                    <div className="text-center md:text-left">
+                      <h2 className="text-xl font-bold">{user.name}</h2>
+                      <p className="text-muted-foreground">{user.position}</p>
+                      <p className="text-sm text-muted-foreground">Miembro desde {user.joinedDate}</p>
                     </div>
                     
-                    {/* Bio and skills */}
-                    <div className="md:w-2/3 space-y-6">
-                      <div>
-                        <h3 className="text-lg font-medium mb-2">Acerca de mí</h3>
-                        <p className="text-muted-foreground">{user.bio}</p>
+                    <div className="w-full space-y-3">
+                      <div className="flex items-center gap-2">
+                        <Mail size={16} className="text-muted-foreground" />
+                        <span>{user.email}</span>
                       </div>
-                      
-                      <div>
-                        <h3 className="text-lg font-medium mb-2">Habilidades</h3>
-                        <div className="flex flex-wrap gap-2">
-                          {user.skills.map((skill, index) => (
-                            <Badge key={index} variant="secondary">{skill}</Badge>
-                          ))}
-                        </div>
+                      <div className="flex items-center gap-2">
+                        <Phone size={16} className="text-muted-foreground" />
+                        <span>{user.phone}</span>
                       </div>
-                      
-                      <div>
-                        <h3 className="text-lg font-medium mb-2">Educación</h3>
-                        <div className="space-y-4">
-                          {user.education.map((edu) => (
-                            <div key={edu.id}>
-                              <div className="font-medium">{edu.degree}</div>
-                              <div className="text-muted-foreground">{edu.institution}</div>
-                              <div className="text-sm text-muted-foreground">{edu.from} - {edu.to}</div>
-                            </div>
-                          ))}
-                        </div>
+                      <div className="flex items-center gap-2">
+                        <MapPin size={16} className="text-muted-foreground" />
+                        <span>{user.location}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Building size={16} className="text-muted-foreground" />
+                        <span>{user.company}</span>
+                      </div>
+                    </div>
+                    
+                    <Button variant="outline" className="w-full">Editar perfil</Button>
+                  </div>
+                  
+                  <div className="md:w-2/3 space-y-6">
+                    <div>
+                      <h3 className="text-lg font-medium mb-2">Acerca de mí</h3>
+                      <p className="text-muted-foreground">{user.bio}</p>
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-lg font-medium mb-2">Habilidades</h3>
+                      <div className="flex flex-wrap gap-2">
+                        {user.skills.map((skill, index) => (
+                          <Badge key={index} variant="secondary">{skill}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-lg font-medium mb-2">Educación</h3>
+                      <div className="space-y-4">
+                        {user.education.map((edu) => (
+                          <div key={edu.id}>
+                            <div className="font-medium">{edu.degree}</div>
+                            <div className="text-muted-foreground">{edu.institution}</div>
+                            <div className="text-sm text-muted-foreground">{edu.from} - {edu.to}</div>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </TabsContent>
         
