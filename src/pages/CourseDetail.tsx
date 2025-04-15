@@ -1,13 +1,16 @@
-import React from "react";
+
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
-import { Clock, BookOpen, Users, Star, Award, ChevronDown, Play } from "lucide-react";
+import { Clock, BookOpen, Users, Star, Award, ChevronDown, Play, FileText, FileAudio, Heart } from "lucide-react";
 
 const CourseDetail = () => {
   const { id } = useParams();
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [expandedModule, setExpandedModule] = useState<number | null>(1); // Default expanded to first module
   
   const courseData = {
     id: parseInt(id || "1"),
@@ -21,7 +24,12 @@ const CourseDetail = () => {
     totalReviews: 128,
     duration: "12 horas",
     lessons: 24,
-    progress: 0,
+    progress: 35,
+    currentLessonId: 5, // Added currentLessonId to track where user left off
+    completedLessons: 4, // Number of completed lessons
+    studyHours: 4.5, // Hours spent studying this course
+    lastQuizScore: 90, // Last quiz score percentage
+    enrollmentStatus: "enrolled", // "enrolled" or "not-enrolled"
     image: "https://placehold.co/800x400?text=Gestión+de+Proyectos",
     objectives: [
       "Comprender los principios fundamentales de la gestión de proyectos",
@@ -35,30 +43,68 @@ const CourseDetail = () => {
         id: 1,
         title: "Introducción a la Gestión de Proyectos",
         lessons: [
-          { id: 1, title: "¿Qué es un proyecto?", duration: "15:30", completed: false },
-          { id: 2, title: "Roles en la gestión de proyectos", duration: "22:45", completed: false },
-          { id: 3, title: "Ciclo de vida del proyecto", duration: "18:20", completed: false }
+          { id: 1, title: "¿Qué es un proyecto?", duration: "15:30", completed: true, type: "video" },
+          { id: 2, title: "Roles en la gestión de proyectos", duration: "22:45", completed: true, type: "video" },
+          { id: 3, title: "Ciclo de vida del proyecto", duration: "18:20", completed: true, type: "reading" }
         ]
       },
       {
         id: 2,
         title: "Planificación de Proyectos",
         lessons: [
-          { id: 4, title: "Definición de objetivos y alcance", duration: "25:10", completed: false },
-          { id: 5, title: "Estimación de tiempos y recursos", duration: "30:15", completed: false },
-          { id: 6, title: "Creación de cronogramas", duration: "28:40", completed: false }
+          { id: 4, title: "Definición de objetivos y alcance", duration: "25:10", completed: true, type: "audio" },
+          { id: 5, title: "Estimación de tiempos y recursos", duration: "30:15", completed: false, type: "video", description: "Aprende técnicas efectivas para estimar los recursos y tiempos necesarios para completar con éxito las tareas del proyecto." },
+          { id: 6, title: "Creación de cronogramas", duration: "28:40", completed: false, type: "reading" }
         ]
       },
       {
         id: 3,
         title: "Seguimiento y Control",
         lessons: [
-          { id: 7, title: "Indicadores de rendimiento", duration: "20:50", completed: false },
-          { id: 8, title: "Gestión de cambios", duration: "19:30", completed: false },
-          { id: 9, title: "Informes de estado", duration: "16:45", completed: false }
+          { id: 7, title: "Indicadores de rendimiento", duration: "20:50", completed: false, type: "video" },
+          { id: 8, title: "Gestión de cambios", duration: "19:30", completed: false, type: "reading" },
+          { id: 9, title: "Informes de estado", duration: "16:45", completed: false, type: "audio" }
         ]
       }
     ]
+  };
+
+  const toggleFavorite = () => {
+    setIsFavorite(!isFavorite);
+  };
+
+  const toggleModule = (moduleId: number) => {
+    if (expandedModule === moduleId) {
+      setExpandedModule(null);
+    } else {
+      setExpandedModule(moduleId);
+    }
+  };
+
+  const getLessonIcon = (type: string) => {
+    switch (type) {
+      case 'reading':
+        return <FileText className="h-4 w-4 text-muted-foreground" />;
+      case 'audio':
+        return <FileAudio className="h-4 w-4 text-muted-foreground" />;
+      case 'video':
+      default:
+        return <Play className="h-4 w-4 text-muted-foreground" />;
+    }
+  };
+
+  const isCurrentLesson = (lessonId: number) => {
+    return lessonId === courseData.currentLessonId;
+  };
+
+  const handleContinue = () => {
+    // Implementation of continue functionality
+    console.log("Continue learning from lesson ID:", courseData.currentLessonId);
+  };
+
+  const handleStartCourse = () => {
+    // Implementation of start course functionality
+    console.log("Starting course:", courseData.id);
   };
 
   return (
@@ -108,7 +154,7 @@ const CourseDetail = () => {
             <TabsList className="mb-4">
               <TabsTrigger value="overview">Información</TabsTrigger>
               <TabsTrigger value="content">Contenido</TabsTrigger>
-              <TabsTrigger value="reviews">Reseñas</TabsTrigger>
+              <TabsTrigger value="stats">Estadísticas</TabsTrigger>
             </TabsList>
             
             <TabsContent value="overview">
@@ -167,7 +213,7 @@ const CourseDetail = () => {
                     <div key={module.id} className="border-b last:border-b-0">
                       <button
                         className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50"
-                        onClick={() => {}} // Toggle module expansion
+                        onClick={() => toggleModule(module.id)}
                       >
                         <div className="flex items-center gap-3">
                           <span className="text-sm font-medium">{module.title}</span>
@@ -175,19 +221,22 @@ const CourseDetail = () => {
                             {module.lessons.length} lecciones
                           </span>
                         </div>
-                        <ChevronDown className="h-4 w-4" />
+                        <ChevronDown className={`h-4 w-4 transition-transform ${expandedModule === module.id ? 'rotate-180' : ''}`} />
                       </button>
-                      <div className="px-4">
+                      <div className={`px-4 ${expandedModule === module.id ? 'block' : 'hidden'}`}>
                         {module.lessons.map((lesson) => (
                           <div
                             key={lesson.id}
-                            className="flex items-center justify-between py-2 border-t"
+                            className={`flex items-center justify-between py-2 border-t ${isCurrentLesson(lesson.id) ? 'bg-slate-50' : ''}`}
                           >
                             <div className="flex items-center gap-3">
                               <div className="flex-shrink-0">
-                                <Play className="h-4 w-4 text-muted-foreground" />
+                                {getLessonIcon(lesson.type)}
                               </div>
                               <span className="text-sm">{lesson.title}</span>
+                              {isCurrentLesson(lesson.id) && (
+                                <span className="text-xs bg-blue-100 text-primary px-2 py-0.5 rounded">Actual</span>
+                              )}
                             </div>
                             <div className="flex items-center gap-3">
                               <span className="text-xs text-muted-foreground">
@@ -198,13 +247,22 @@ const CourseDetail = () => {
                                   <span className="text-xs text-primary">✓</span>
                                 </div>
                               ) : (
-                                <Button variant="ghost" size="sm" className="text-xs">
-                                  Vista previa
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  className="text-xs"
+                                >
+                                  {isCurrentLesson(lesson.id) ? "Continuar" : "Vista previa"}
                                 </Button>
                               )}
                             </div>
                           </div>
                         ))}
+                        {isCurrentLesson(module.lessons.find(l => l.id === courseData.currentLessonId)?.id || 0) && (
+                          <div className="p-3 bg-slate-50 text-sm border-t">
+                            <p>{module.lessons.find(l => l.id === courseData.currentLessonId)?.description}</p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -212,14 +270,41 @@ const CourseDetail = () => {
               </Card>
             </TabsContent>
             
-            <TabsContent value="reviews">
+            <TabsContent value="stats">
               <Card>
-                <CardContent className="pt-6">
-                  <div className="text-center p-8">
-                    <h3 className="font-semibold mb-2">Reseñas del curso</h3>
-                    <p className="text-muted-foreground">
-                      Esta es una versión de demostración. Las reseñas estarán disponibles próximamente.
-                    </p>
+                <CardHeader>
+                  <CardTitle>Estadísticas del curso</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-6">
+                    <div>
+                      <div className="flex justify-between text-sm mb-1">
+                        <span>Progreso del contenido</span>
+                        <span>{courseData.completedLessons}/{courseData.lessons} lecciones</span>
+                      </div>
+                      <Progress value={(courseData.completedLessons / courseData.lessons) * 100} className="h-2" />
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Has completado el {Math.round((courseData.completedLessons / courseData.lessons) * 100)}% del curso
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="border rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Clock size={16} className="text-primary" />
+                          <h4 className="font-medium">Tiempo de estudio</h4>
+                        </div>
+                        <p className="text-2xl font-bold">{courseData.studyHours} horas</p>
+                      </div>
+                      
+                      <div className="border rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Award size={16} className="text-primary" />
+                          <h4 className="font-medium">Último examen</h4>
+                        </div>
+                        <p className="text-2xl font-bold">{courseData.lastQuizScore}%</p>
+                      </div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -240,11 +325,16 @@ const CourseDetail = () => {
                     </div>
                     <Progress value={courseData.progress} className="h-2" />
                   </div>
-                  <Button className="w-full mb-3">
+                  <Button className="w-full mb-3" onClick={handleContinue}>
                     Continuar aprendiendo
                   </Button>
-                  <Button variant="outline" className="w-full">
-                    Ver material descargable
+                  <Button 
+                    variant="outline" 
+                    className="w-full flex items-center justify-center gap-2"
+                    onClick={toggleFavorite}
+                  >
+                    <Heart className={`h-4 w-4 ${isFavorite ? 'fill-red-500 text-red-500' : ''}`} />
+                    {isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
                   </Button>
                 </>
               ) : (
@@ -260,11 +350,16 @@ const CourseDetail = () => {
                       <span className="text-sm">Certificado de finalización</span>
                     </div>
                   </div>
-                  <Button className="w-full mb-3">
+                  <Button className="w-full mb-3" onClick={handleStartCourse}>
                     Comenzar ahora
                   </Button>
-                  <Button variant="outline" className="w-full">
-                    Añadir a favoritos
+                  <Button 
+                    variant="outline" 
+                    className="w-full flex items-center justify-center gap-2"
+                    onClick={toggleFavorite}
+                  >
+                    <Heart className={`h-4 w-4 ${isFavorite ? 'fill-red-500 text-red-500' : ''}`} />
+                    {isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
                   </Button>
                 </>
               )}

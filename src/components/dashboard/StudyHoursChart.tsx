@@ -13,7 +13,7 @@ const StudyHoursChart = ({ data }: StudyHoursChartProps) => {
         <h3 className="text-lg font-medium mb-4">Horas de estudio diarias</h3>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data} margin={{ left: 0, right: 8, top: 8, bottom: 0 }}>
+            <LineChart data={data} margin={{ left: -10, right: 8, top: 8, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis />

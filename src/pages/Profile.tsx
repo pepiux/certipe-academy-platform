@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,12 +16,10 @@ import {
   BookOpen,
   FileText,
   Clock,
-  Lock,
-  Settings
+  Lock
 } from "lucide-react";
 
 const Profile = () => {
-  // Mock user profile data
   const user = {
     id: 1,
     name: "Juan Pérez",
@@ -127,115 +124,118 @@ const Profile = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-start">
         <h1 className="text-2xl font-bold">Mi Perfil</h1>
-        <Button variant="outline">
-          <Settings size={16} className="mr-2" /> Configuración
-        </Button>
       </div>
       
       <Tabs defaultValue="profile">
         <TabsList>
           <TabsTrigger value="profile">Perfil</TabsTrigger>
           <TabsTrigger value="certificates">Certificados</TabsTrigger>
-          <TabsTrigger value="progress">Progreso</TabsTrigger>
           <TabsTrigger value="security">Seguridad</TabsTrigger>
         </TabsList>
         
         {/* Profile Tab */}
         <TabsContent value="profile" className="space-y-6">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex flex-col md:flex-row gap-6">
-                {/* Avatar and basic info */}
-                <div className="flex flex-col items-center md:items-start gap-4 md:w-1/3">
-                  <Avatar className="w-24 h-24">
-                    <AvatarImage src={user.avatar} alt={user.name} />
-                    <AvatarFallback>JP</AvatarFallback>
-                  </Avatar>
-                  
-                  <div className="text-center md:text-left">
-                    <h2 className="text-xl font-bold">{user.name}</h2>
-                    <p className="text-muted-foreground">{user.position}</p>
-                    <p className="text-sm text-muted-foreground">Miembro desde {user.joinedDate}</p>
-                  </div>
-                  
-                  <div className="w-full space-y-3">
-                    <div className="flex items-center gap-2">
-                      <Mail size={16} className="text-muted-foreground" />
-                      <span>{user.email}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Phone size={16} className="text-muted-foreground" />
-                      <span>{user.phone}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <MapPin size={16} className="text-muted-foreground" />
-                      <span>{user.location}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Building size={16} className="text-muted-foreground" />
-                      <span>{user.company}</span>
-                    </div>
-                  </div>
-                  
-                  <Button variant="outline" className="w-full">Editar perfil</Button>
-                </div>
-                
-                {/* Bio and skills */}
-                <div className="md:w-2/3 space-y-6">
-                  <div>
-                    <h3 className="text-lg font-medium mb-2">Acerca de mí</h3>
-                    <p className="text-muted-foreground">{user.bio}</p>
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-lg font-medium mb-2">Habilidades</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {user.skills.map((skill, index) => (
-                        <Badge key={index} variant="secondary">{skill}</Badge>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-lg font-medium mb-2">Educación</h3>
-                    <div className="space-y-4">
-                      {user.education.map((edu) => (
-                        <div key={edu.id}>
-                          <div className="font-medium">{edu.degree}</div>
-                          <div className="text-muted-foreground">{edu.institution}</div>
-                          <div className="text-sm text-muted-foreground">{edu.from} - {edu.to}</div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex flex-col md:flex-row gap-6">
+                    {/* Avatar and basic info */}
+                    <div className="flex flex-col items-center md:items-start gap-4 md:w-1/3">
+                      <Avatar className="w-24 h-24">
+                        <AvatarImage src={user.avatar} alt={user.name} />
+                        <AvatarFallback>JP</AvatarFallback>
+                      </Avatar>
+                      
+                      <div className="text-center md:text-left">
+                        <h2 className="text-xl font-bold">{user.name}</h2>
+                        <p className="text-muted-foreground">{user.position}</p>
+                        <p className="text-sm text-muted-foreground">Miembro desde {user.joinedDate}</p>
+                      </div>
+                      
+                      <div className="w-full space-y-3">
+                        <div className="flex items-center gap-2">
+                          <Mail size={16} className="text-muted-foreground" />
+                          <span>{user.email}</span>
                         </div>
-                      ))}
+                        <div className="flex items-center gap-2">
+                          <Phone size={16} className="text-muted-foreground" />
+                          <span>{user.phone}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <MapPin size={16} className="text-muted-foreground" />
+                          <span>{user.location}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Building size={16} className="text-muted-foreground" />
+                          <span>{user.company}</span>
+                        </div>
+                      </div>
+                      
+                      <Button variant="outline" className="w-full">Editar perfil</Button>
+                    </div>
+                    
+                    {/* Bio and skills */}
+                    <div className="md:w-2/3 space-y-6">
+                      <div>
+                        <h3 className="text-lg font-medium mb-2">Acerca de mí</h3>
+                        <p className="text-muted-foreground">{user.bio}</p>
+                      </div>
+                      
+                      <div>
+                        <h3 className="text-lg font-medium mb-2">Habilidades</h3>
+                        <div className="flex flex-wrap gap-2">
+                          {user.skills.map((skill, index) => (
+                            <Badge key={index} variant="secondary">{skill}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <h3 className="text-lg font-medium mb-2">Educación</h3>
+                        <div className="space-y-4">
+                          {user.education.map((edu) => (
+                            <div key={edu.id}>
+                              <div className="font-medium">{edu.degree}</div>
+                              <div className="text-muted-foreground">{edu.institution}</div>
+                              <div className="text-sm text-muted-foreground">{edu.from} - {edu.to}</div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>Actividad reciente</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {user.recentActivity.map((activity) => (
-                  <div key={activity.id} className="flex gap-4 pb-4 border-b last:border-b-0 last:pb-0">
-                    <div className="bg-primary/10 h-10 w-10 rounded-full flex items-center justify-center shrink-0">
-                      {activity.type === 'course_progress' && <BookOpen size={20} className="text-primary" />}
-                      {activity.type === 'quiz_completed' && <FileText size={20} className="text-primary" />}
-                      {activity.type === 'certificate_earned' && <Award size={20} className="text-primary" />}
-                    </div>
-                    <div>
-                      <div className="font-medium">{activity.title}</div>
-                      <div className="text-sm text-muted-foreground">{activity.course}</div>
-                      <div className="text-xs text-muted-foreground">{activity.date}</div>
-                    </div>
+                </CardContent>
+              </Card>
+            </div>
+            
+            {/* Activity column - moved to right side */}
+            <div className="lg:col-span-1 space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Actividad reciente</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {user.recentActivity.map((activity) => (
+                      <div key={activity.id} className="flex gap-4 pb-4 border-b last:border-b-0 last:pb-0">
+                        <div className="bg-primary/10 h-10 w-10 rounded-full flex items-center justify-center shrink-0">
+                          {activity.type === 'course_progress' && <BookOpen size={20} className="text-primary" />}
+                          {activity.type === 'quiz_completed' && <FileText size={20} className="text-primary" />}
+                          {activity.type === 'certificate_earned' && <Award size={20} className="text-primary" />}
+                        </div>
+                        <div>
+                          <div className="font-medium">{activity.title}</div>
+                          <div className="text-sm text-muted-foreground">{activity.course}</div>
+                          <div className="text-xs text-muted-foreground">{activity.date}</div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         </TabsContent>
         
         {/* Certificates Tab */}
@@ -275,111 +275,6 @@ const Profile = () => {
               </div>
             </CardContent>
           </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>Añadir certificado externo</CardTitle>
-              <CardDescription>
-                Añade tus certificaciones de otras plataformas para mantener todo en un solo lugar
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="cert-name">Nombre del certificado</Label>
-                    <Input id="cert-name" placeholder="ej. AWS Certified Solutions Architect" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="cert-issuer">Entidad emisora</Label>
-                    <Input id="cert-issuer" placeholder="ej. Amazon Web Services" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="cert-date">Fecha de emisión</Label>
-                    <Input id="cert-date" type="date" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="cert-expiry">Fecha de caducidad (opcional)</Label>
-                    <Input id="cert-expiry" type="date" />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="cert-file">Subir certificado (PDF)</Label>
-                  <Input id="cert-file" type="file" />
-                </div>
-                <Button>Añadir certificado</Button>
-              </form>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        {/* Progress Tab */}
-        <TabsContent value="progress" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Cursos completados
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-baseline justify-between">
-                  <div className="text-3xl font-bold">{user.stats.coursesCompleted}</div>
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <BookOpen size={14} className="mr-1" />
-                    <span>{user.stats.coursesInProgress} en progreso</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Puntuación promedio
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-baseline justify-between">
-                  <div className="text-3xl font-bold">{user.stats.averageScore}%</div>
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <FileText size={14} className="mr-1" />
-                    <span>{user.stats.quizzesTaken} cuestionarios</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Horas de estudio
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-baseline justify-between">
-                  <div className="text-3xl font-bold">{user.stats.studyHours}</div>
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <Clock size={14} className="mr-1" />
-                    <span>Total acumulado</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>Mis cursos</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center p-8">
-                <p className="text-muted-foreground">
-                  Esta es una versión de demostración. La vista detallada de progreso estará disponible próximamente.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
         </TabsContent>
         
         {/* Security Tab */}
@@ -413,20 +308,6 @@ const Profile = () => {
                 </div>
                 <Button>Actualizar contraseña</Button>
               </form>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>Preferencias de contacto</CardTitle>
-              <CardDescription>
-                Gestiona cómo prefieres recibir notificaciones
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="text-center p-8">
-              <p className="text-muted-foreground">
-                Esta es una versión de demostración. La configuración de preferencias estará disponible próximamente.
-              </p>
             </CardContent>
           </Card>
         </TabsContent>
