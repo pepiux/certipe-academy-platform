@@ -6,7 +6,8 @@ import {
   BookOpen, 
   FileQuestion, 
   Users, 
-  Settings 
+  Settings,
+  LucideIcon
 } from "lucide-react";
 import Logo from "./Logo";
 import LogoIcon from "./LogoIcon";
@@ -28,7 +29,7 @@ const SidebarNavLink = ({
   isOpen 
 }: { 
   to: string, 
-  icon: React.ComponentType<{ size?: number }>, 
+  icon: LucideIcon, 
   label: string, 
   isOpen: boolean 
 }) => {
