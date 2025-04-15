@@ -136,30 +136,30 @@ const Dashboard = () => {
     navigate(`/dashboard/courses/${courseId}`);
   };
 
-  // Mock data for recent activity
+  // Mock data for recent activity - modified to be a regular array instead of readonly tuple
   const recentActivities = [
     {
       id: 1,
-      type: 'course_progress',
+      type: 'course_progress' as const,
       title: "Completaste el módulo 'Gestión de Stakeholders'",
       course: "Avanzado en Gestión de Proyectos",
       date: "Hace 2 días"
     },
     {
       id: 2,
-      type: 'quiz_completed',
+      type: 'quiz_completed' as const,
       title: "Finalizaste el cuestionario con 85%",
       course: "Metodologías Ágiles y Scrum",
       date: "Hace 5 días"
     },
     {
       id: 3,
-      type: 'certificate_earned',
+      type: 'certificate_earned' as const,
       title: "Obtuviste el certificado del curso",
       course: "Introducción a PRINCE2",
       date: "Hace 2 semanas"
     }
-  ] as const;
+  ];
 
   return (
     <div className="space-y-6">

@@ -2,7 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen, FileText, Award } from "lucide-react";
 
-interface Activity {
+export interface Activity {
   id: number;
   type: 'course_progress' | 'quiz_completed' | 'certificate_earned';
   title: string;
