@@ -28,47 +28,41 @@ const DashboardCourses = ({ courses, onContinueCourse }: DashboardCoursesProps) 
   const navigate = useNavigate();
 
   return (
-    <div className="mb-6">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-medium">Tus cursos</h2>
-        <Button variant="ghost" size="sm" className="gap-1 text-primary" onClick={() => navigate('/dashboard/courses')}>
-          Ver todos <ChevronRight size={16} />
-        </Button>
-      </div>
-      
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {courses.map((course) => (
-          <Card key={course.id} className="overflow-hidden h-[420px]">
-            <div className={`h-32 overflow-hidden`}>
-              <img 
-                src={course.image} 
-                alt={course.title} 
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <CardContent className="p-4">
-              <Badge variant="outline" className="mb-2 bg-primary/10 text-primary border-primary/20">
-                {course.level}
-              </Badge>
-              <h4 className="font-medium line-clamp-1 mt-2">{course.title}</h4>
-              <p className="text-sm text-muted-foreground mt-1">
-                {course.category}
-              </p>
-              <p className="text-sm text-muted-foreground mt-2">
-                Por {course.instructor}
-              </p>
-              <div className="flex flex-col gap-1 mt-2 text-sm text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <BookOpen size={14} />
-                  <span>{course.lessons} lecciones</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Clock size={14} />
-                  <span>{course.duration}</span>
-                </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {courses.map((course) => (
+        <Card key={course.id} className="overflow-hidden flex flex-col h-[420px]">
+          <div className={`h-32 overflow-hidden`}>
+            <img 
+              src={course.image} 
+              alt={course.title} 
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <CardContent className="p-4 flex flex-col flex-1">
+            <Badge variant="outline" className="mb-2 bg-primary/10 text-primary border-primary/20 self-start">
+              {course.level}
+            </Badge>
+            <h4 className="font-medium line-clamp-1 mt-2">{course.title}</h4>
+            <p className="text-sm text-muted-foreground mt-1">
+              {course.category}
+            </p>
+            <p className="text-sm text-muted-foreground mt-2">
+              Por {course.instructor}
+            </p>
+            <div className="flex flex-col gap-1 mt-2 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <BookOpen size={14} />
+                <span>{course.lessons} lecciones</span>
               </div>
+              <div className="flex items-center gap-2">
+                <Clock size={14} />
+                <span>{course.duration}</span>
+              </div>
+            </div>
+            
+            <div className="flex-1 flex flex-col justify-end mt-3">
               {course.progress > 0 && (
-                <div className="mt-3">
+                <div>
                   <div className="flex justify-between text-xs mb-1">
                     <span>Progreso</span>
                     <span>{course.progress}%</span>
@@ -82,10 +76,10 @@ const DashboardCourses = ({ courses, onContinueCourse }: DashboardCoursesProps) 
               >
                 {course.progress > 0 ? "Continuar curso" : "Iniciar curso"}
               </Button>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
     </div>
   );
 };
