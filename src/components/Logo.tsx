@@ -5,9 +5,10 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 interface LogoProps {
   size?: "small" | "medium" | "large";
+  showText?: boolean;
 }
 
-const Logo: React.FC<LogoProps> = ({ size = "medium" }) => {
+const Logo: React.FC<LogoProps> = ({ size = "medium", showText = true }) => {
   const isMobile = useIsMobile();
   
   const sizeClasses = {
@@ -60,10 +61,12 @@ const Logo: React.FC<LogoProps> = ({ size = "medium" }) => {
           strokeLinejoin="round"
         />
       </svg>
-      <div className={`font-bold ${sizeClasses[size]} flex items-center`}>
-        <span className="text-white">Certi</span>
-        <span className="text-brand-blue">PE</span>
-      </div>
+      {showText && (
+        <div className={`font-bold ${sizeClasses[size]} flex items-center`}>
+          <span className="text-white">Certi</span>
+          <span className="text-brand-blue">PE</span>
+        </div>
+      )}
     </Link>
   );
 };

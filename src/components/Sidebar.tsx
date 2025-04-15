@@ -82,7 +82,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
       {/* Logo */}
       <div className="p-4 flex items-center justify-center md:justify-start">
         {isOpen ? (
-          <Logo />
+          <Logo showText={true} />
         ) : (
           <LogoIcon />
         )}
