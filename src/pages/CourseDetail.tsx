@@ -1,16 +1,14 @@
-
 import React from "react";
 import { useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
-import { Clock, BookOpen, Users, Star, Award } from "lucide-react";
+import { Clock, BookOpen, Users, Star, Award, ChevronDown, Play } from "lucide-react";
 
 const CourseDetail = () => {
   const { id } = useParams();
   
-  // This would be fetched from an API in a real application
   const courseData = {
     id: parseInt(id || "1"),
     title: "Fundamentos de Gestión de Proyectos",
@@ -65,7 +63,6 @@ const CourseDetail = () => {
 
   return (
     <div className="space-y-6">
-      {/* Course Header */}
       <div className="relative rounded-xl overflow-hidden">
         <img 
           src={courseData.image} 
@@ -105,51 +102,14 @@ const CourseDetail = () => {
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left side - Course content */}
         <div className="lg:col-span-2">
-          <Tabs defaultValue="content">
+          <Tabs defaultValue="overview">
             <TabsList className="mb-4">
-              <TabsTrigger value="content">Contenido</TabsTrigger>
               <TabsTrigger value="overview">Información</TabsTrigger>
+              <TabsTrigger value="content">Contenido</TabsTrigger>
               <TabsTrigger value="reviews">Reseñas</TabsTrigger>
             </TabsList>
-            
-            <TabsContent value="content" className="space-y-4">
-              {courseData.modules.map((module) => (
-                <Card key={module.id}>
-                  <CardHeader className="py-3">
-                    <CardTitle className="text-lg">{module.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="py-0">
-                    {module.lessons.map((lesson) => (
-                      <div 
-                        key={lesson.id} 
-                        className="flex items-center justify-between py-3 border-t"
-                      >
-                        <div className="flex items-start gap-3">
-                          <div className={`mt-0.5 w-5 h-5 rounded-full flex items-center justify-center border ${lesson.completed ? 'bg-primary border-primary text-primary-foreground' : 'border-gray-300'}`}>
-                            {lesson.completed && <span className="text-xs">✓</span>}
-                          </div>
-                          <div>
-                            <p className={`text-sm ${lesson.completed ? 'text-muted-foreground line-through' : ''}`}>
-                              {lesson.title}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {lesson.duration}
-                            </p>
-                          </div>
-                        </div>
-                        <Button variant="ghost" size="sm">
-                          Ver
-                        </Button>
-                      </div>
-                    ))}
-                  </CardContent>
-                </Card>
-              ))}
-            </TabsContent>
             
             <TabsContent value="overview">
               <Card>
@@ -168,7 +128,7 @@ const CourseDetail = () => {
                   </ul>
                   
                   <h3 className="font-semibold mb-2">Instructor</h3>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 mb-6">
                     <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
                       {courseData.instructor.charAt(0)}
                     </div>
@@ -177,6 +137,77 @@ const CourseDetail = () => {
                       <p className="text-sm text-muted-foreground">Instructor Senior</p>
                     </div>
                   </div>
+
+                  <h3 className="font-semibold mb-2">Valoraciones</h3>
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`w-4 h-4 ${
+                            i < Math.floor(courseData.rating)
+                              ? "fill-yellow-400 text-yellow-400"
+                              : "text-gray-300"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-sm">
+                      {courseData.rating} ({courseData.totalReviews} reseñas)
+                    </span>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="content">
+              <Card>
+                <CardContent className="p-0">
+                  {courseData.modules.map((module) => (
+                    <div key={module.id} className="border-b last:border-b-0">
+                      <button
+                        className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50"
+                        onClick={() => {}} // Toggle module expansion
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm font-medium">{module.title}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {module.lessons.length} lecciones
+                          </span>
+                        </div>
+                        <ChevronDown className="h-4 w-4" />
+                      </button>
+                      <div className="px-4">
+                        {module.lessons.map((lesson) => (
+                          <div
+                            key={lesson.id}
+                            className="flex items-center justify-between py-2 border-t"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="flex-shrink-0">
+                                <Play className="h-4 w-4 text-muted-foreground" />
+                              </div>
+                              <span className="text-sm">{lesson.title}</span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <span className="text-xs text-muted-foreground">
+                                {lesson.duration}
+                              </span>
+                              {lesson.completed ? (
+                                <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
+                                  <span className="text-xs text-primary">✓</span>
+                                </div>
+                              ) : (
+                                <Button variant="ghost" size="sm" className="text-xs">
+                                  Vista previa
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
                 </CardContent>
               </Card>
             </TabsContent>
@@ -196,7 +227,6 @@ const CourseDetail = () => {
           </Tabs>
         </div>
         
-        {/* Right side - Course actions */}
         <div>
           <Card className="sticky top-6">
             <CardContent className="p-6">

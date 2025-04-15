@@ -8,12 +8,12 @@ interface ScoreProgressChartProps {
 
 const ScoreProgressChart = ({ data }: ScoreProgressChartProps) => {
   return (
-    <Card>
-      <CardContent className="p-6">
+    <Card className="w-full">
+      <CardContent className="p-4">
         <h3 className="text-lg font-medium mb-4">Progreso de puntuación</h3>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data}>
+            <LineChart data={data} margin={{ left: 0, right: 8, top: 8, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis domain={[0, 100]} />
