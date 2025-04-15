@@ -1,4 +1,3 @@
-
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { 
@@ -21,17 +20,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
   return (
     <aside 
       className={`${
-        isOpen ? "translate-x-0" : "-translate-x-full"
-      } fixed md:sticky top-0 left-0 z-40 h-screen transition-transform duration-300 ease-in-out
-      md:translate-x-0 ${isOpen ? "w-64" : "w-16"} bg-sidebar`}
+        isOpen ? "w-64" : "w-16"
+      } bg-sidebar transition-all duration-300 flex flex-col h-screen sticky top-0 overflow-y-auto`}
     >
-      {/* Add a backdrop on mobile when sidebar is open */}
-      <div 
-        className={`${
-          isOpen ? "opacity-50 pointer-events-auto" : "opacity-0 pointer-events-none"
-        } fixed inset-0 bg-black md:hidden transition-opacity duration-300 ease-in-out -z-10`} 
-      />
-
       {/* Logo */}
       <div className="p-4 flex items-center justify-center md:justify-start">
         {isOpen ? (
