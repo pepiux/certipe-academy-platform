@@ -245,25 +245,23 @@ const CourseDetail = () => {
                         {module.lessons.map((lesson) => (
                           <div
                             key={lesson.id}
-                            className={`grid grid-cols-12 gap-4 items-center py-3 border-t ${
+                            className={`grid grid-cols-12 gap-2 items-center py-3 border-t ${
                               isCurrentLesson(lesson.id) ? 'bg-slate-50' : ''
                             }`}
                           >
-                            <div className="col-span-5 flex items-center gap-3">
+                            <div className="col-span-7 flex items-center gap-3">
                               <div className="flex-shrink-0">
                                 {getLessonIcon(lesson.type)}
                               </div>
-                              <span className="text-sm font-medium">{lesson.title}</span>
+                              <span className="text-sm font-medium truncate">{lesson.title}</span>
                             </div>
-                            <div className="col-span-2 text-center">
-                              <span className="text-sm text-muted-foreground">
-                                {lesson.duration}
-                              </span>
+                            <div className="col-span-2 text-right text-sm text-muted-foreground pr-2">
+                              {lesson.duration}
                             </div>
-                            <div className="col-span-3 flex justify-center">
+                            <div className="col-span-2 flex justify-end">
                               {getLessonAction(lesson)}
                             </div>
-                            <div className="col-span-2 flex justify-center">
+                            <div className="col-span-1 flex justify-center">
                               {lesson.completed && (
                                 <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
                                   <Check className="h-3 w-3 text-primary" />
