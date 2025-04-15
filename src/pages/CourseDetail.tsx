@@ -1,10 +1,11 @@
+
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
-import { Clock, BookOpen, Users, Star, Award, ChevronDown, Play, FileText, FileAudio, Heart, Check, RotateCw, Eye } from "lucide-react";
+import { Clock, BookOpen, Users, Star, Award, ChevronDown, Play, FileText, FileAudio, Heart, Check, RotateCw, Eye, FileVideo, ClipboardCheck } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -14,6 +15,7 @@ import {
 
 const CourseDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [isFavorite, setIsFavorite] = useState(false);
   const [expandedModule, setExpandedModule] = useState<number | null>(1);
 
@@ -68,7 +70,7 @@ const CourseDetail = () => {
         lessons: [
           { id: 7, title: "Indicadores de rendimiento", duration: "20:50", completed: false, type: "video" },
           { id: 8, title: "Gestión de cambios", duration: "19:30", completed: false, type: "reading" },
-          { id: 9, title: "Informes de estado", duration: "16:45", completed: false, type: "audio" }
+          { id: 9, title: "Evaluación de conceptos", duration: "15:00", completed: false, type: "test" }
         ]
       }
     ]
@@ -93,8 +95,11 @@ const CourseDetail = () => {
       case 'audio':
         return <FileAudio className="h-4 w-4 text-muted-foreground" />;
       case 'video':
+        return <FileVideo className="h-4 w-4 text-muted-foreground" />;
+      case 'test':
+        return <ClipboardCheck className="h-4 w-4 text-muted-foreground" />;
       default:
-        return <Play className="h-4 w-4 text-muted-foreground" />;
+        return <FileText className="h-4 w-4 text-muted-foreground" />;
     }
   };
 
@@ -103,20 +108,54 @@ const CourseDetail = () => {
   };
 
   const handleContinue = () => {
-    console.log("Continue learning from lesson ID:", courseData.currentLessonId);
+    navigateToLesson(courseData.currentLessonId);
   };
 
   const handleStartCourse = () => {
     console.log("Starting course:", courseData.id);
+    // Navigate to the first lesson
+    if (courseData.modules[0]?.lessons[0]?.id) {
+      navigateToLesson(courseData.modules[0].lessons[0].id);
+    }
   };
 
-  const getLessonAction = (lesson: { id: number; completed: boolean }) => {
+  const navigateToLesson = (lessonId: number) => {
+    const lesson = findLessonById(lessonId);
+    if (lesson) {
+      switch (lesson.type) {
+        case 'video':
+          navigate(`/dashboard/courses/${courseData.id}/lesson/${lessonId}/video`);
+          break;
+        case 'audio':
+          navigate(`/dashboard/courses/${courseData.id}/lesson/${lessonId}/audio`);
+          break;
+        case 'reading':
+          navigate(`/dashboard/courses/${courseData.id}/lesson/${lessonId}/reading`);
+          break;
+        case 'test':
+          navigate(`/dashboard/courses/${courseData.id}/lesson/${lessonId}/test`);
+          break;
+        default:
+          navigate(`/dashboard/courses/${courseData.id}/lesson/${lessonId}`);
+      }
+    }
+  };
+
+  const findLessonById = (lessonId: number) => {
+    for (const module of courseData.modules) {
+      const lesson = module.lessons.find(l => l.id === lessonId);
+      if (lesson) return lesson;
+    }
+    return null;
+  };
+
+  const getLessonAction = (lesson: { id: number; completed: boolean; type: string }) => {
     if (lesson.completed) {
       return (
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="sm" className="w-10 h-10">
+              <Button variant="ghost" size="sm" className="w-10 h-10" onClick={() => navigateToLesson(lesson.id)}>
                 <RotateCw className="h-4 w-4 text-muted-foreground" />
               </Button>
             </TooltipTrigger>
@@ -133,7 +172,7 @@ const CourseDetail = () => {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="sm" className="w-10 h-10">
+              <Button variant="ghost" size="sm" className="w-10 h-10" onClick={() => navigateToLesson(lesson.id)}>
                 <Play className="h-4 w-4 text-[#0EA5E9]" />
               </Button>
             </TooltipTrigger>
@@ -149,7 +188,7 @@ const CourseDetail = () => {
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="ghost" size="sm" className="w-10 h-10">
+            <Button variant="ghost" size="sm" className="w-10 h-10" onClick={() => navigateToLesson(lesson.id)}>
               <Eye className="h-4 w-4 text-muted-foreground" />
             </Button>
           </TooltipTrigger>

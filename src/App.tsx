@@ -24,6 +24,12 @@ import TakeQuiz from "./pages/TakeQuiz";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
+// Lesson pages
+import VideoLesson from "./pages/lessons/VideoLesson";
+import AudioLesson from "./pages/lessons/AudioLesson";
+import ReadingLesson from "./pages/lessons/ReadingLesson";
+import TestLesson from "./pages/lessons/TestLesson";
+
 // Admin pages
 import UsersManagement from "./pages/admin/UsersManagement";
 import CoursesManagement from "./pages/admin/CoursesManagement";
@@ -50,6 +56,13 @@ const App = () => (
             <Route index element={<Dashboard />} />
             <Route path="courses" element={<Courses />} />
             <Route path="courses/:id" element={<CourseDetail />} />
+            
+            {/* Lesson routes */}
+            <Route path="courses/:courseId/lesson/:lessonId/video" element={<VideoLesson />} />
+            <Route path="courses/:courseId/lesson/:lessonId/audio" element={<AudioLesson />} />
+            <Route path="courses/:courseId/lesson/:lessonId/reading" element={<ReadingLesson />} />
+            <Route path="courses/:courseId/lesson/:lessonId/test" element={<TestLesson />} />
+            
             <Route path="quizzes" element={<Quizzes />} />
             <Route path="quizzes/:id" element={<QuizDetail />} />
             <Route path="quizzes/:id/take" element={<TakeQuiz />} />
