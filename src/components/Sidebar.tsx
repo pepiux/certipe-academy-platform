@@ -10,10 +10,64 @@ import {
 } from "lucide-react";
 import Logo from "./Logo";
 import LogoIcon from "./LogoIcon";
+import { 
+  Tooltip, 
+  TooltipContent, 
+  TooltipProvider, 
+  TooltipTrigger 
+} from "@/components/ui/tooltip";
 
 interface SidebarProps {
   isOpen: boolean;
 }
+
+const SidebarNavLink = ({ 
+  to, 
+  icon: Icon, 
+  label, 
+  isOpen 
+}: { 
+  to: string, 
+  icon: React.ComponentType<{ size?: number }>, 
+  label: string, 
+  isOpen: boolean 
+}) => {
+  const linkContent = (
+    <>
+      <Icon size={20} />
+      {isOpen && <span>{label}</span>}
+    </>
+  );
+
+  if (isOpen) {
+    return (
+      <NavLink 
+        to={to} 
+        className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
+      >
+        {linkContent}
+      </NavLink>
+    );
+  }
+
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <NavLink 
+            to={to} 
+            className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
+          >
+            {linkContent}
+          </NavLink>
+        </TooltipTrigger>
+        <TooltipContent side="right">
+          <p>{label}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+};
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
   const location = useLocation();
@@ -39,67 +93,59 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
         <div className="mb-6">
           {isOpen && <div className="sidebar-category">Main Menu</div>}
           
-          <NavLink 
+          <SidebarNavLink 
             to="/dashboard" 
-            className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
-            end
-          >
-            <LayoutDashboard size={20} />
-            {isOpen && <span>Panel de control</span>}
-          </NavLink>
+            icon={LayoutDashboard} 
+            label="Panel de control" 
+            isOpen={isOpen} 
+          />
           
-          <NavLink 
+          <SidebarNavLink 
             to="/dashboard/courses" 
-            className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
-          >
-            <BookOpen size={20} />
-            {isOpen && <span>Cursos</span>}
-          </NavLink>
+            icon={BookOpen} 
+            label="Cursos" 
+            isOpen={isOpen} 
+          />
           
-          <NavLink 
+          <SidebarNavLink 
             to="/dashboard/quizzes" 
-            className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
-          >
-            <FileQuestion size={20} />
-            {isOpen && <span>Cuestionarios</span>}
-          </NavLink>
+            icon={FileQuestion} 
+            label="Cuestionarios" 
+            isOpen={isOpen} 
+          />
         </div>
 
         {/* Admin */}
         <div className="mb-6">
           {isOpen && <div className="sidebar-category">Admin</div>}
           
-          <NavLink 
+          <SidebarNavLink 
             to="/dashboard/admin/users" 
-            className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
-          >
-            <Users size={20} />
-            {isOpen && <span>Gestión de usuarios</span>}
-          </NavLink>
+            icon={Users} 
+            label="Gestión de usuarios" 
+            isOpen={isOpen} 
+          />
           
-          <NavLink 
+          <SidebarNavLink 
             to="/dashboard/admin/courses" 
-            className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
-          >
-            <BookOpen size={20} />
-            {isOpen && <span>Gestión de cursos</span>}
-          </NavLink>
+            icon={BookOpen} 
+            label="Gestión de cursos" 
+            isOpen={isOpen} 
+          />
           
-          <NavLink 
+          <SidebarNavLink 
             to="/dashboard/admin/quizzes" 
-            className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
-          >
-            <FileQuestion size={20} />
-            {isOpen && <span>Gestión de cuestionarios</span>}
-          </NavLink>
+            icon={FileQuestion} 
+            label="Gestión de cuestionarios" 
+            isOpen={isOpen} 
+          />
           
-          <NavLink 
+          <SidebarNavLink 
             to="/dashboard/admin/settings" 
-            className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
-          >
-            <Settings size={20} />
-            {isOpen && <span>Configuración del sistema</span>}
-          </NavLink>
+            icon={Settings} 
+            label="Configuración del sistema" 
+            isOpen={isOpen} 
+          />
         </div>
       </nav>
 
