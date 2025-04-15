@@ -2,9 +2,8 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, BookOpen, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { BookOpen, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface Course {
@@ -39,9 +38,8 @@ const DashboardCourses = ({ courses, onContinueCourse }: DashboardCoursesProps) 
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {courses.map((course) => (
-          <Card key={course.id} className="overflow-hidden h-[420px] quiz-card">
-            <div className={`quiz-card-banner bg-gradient-to-r ${course.color}`}></div>
-            <div className="h-32 overflow-hidden">
+          <Card key={course.id} className="overflow-hidden h-[420px]">
+            <div className={`h-32 overflow-hidden`}>
               <img 
                 src={course.image} 
                 alt={course.title} 
@@ -52,7 +50,7 @@ const DashboardCourses = ({ courses, onContinueCourse }: DashboardCoursesProps) 
               <Badge variant="outline" className="mb-2 bg-primary/10 text-primary border-primary/20">
                 {course.level}
               </Badge>
-              <h4 className="font-medium line-clamp-1">{course.title}</h4>
+              <h4 className="font-medium line-clamp-1 mt-2">{course.title}</h4>
               <p className="text-sm text-muted-foreground mt-1">
                 {course.category}
               </p>
@@ -79,8 +77,7 @@ const DashboardCourses = ({ courses, onContinueCourse }: DashboardCoursesProps) 
                 </div>
               )}
               <Button 
-                className="w-full mt-3 py-1 h-auto bg-primary hover:bg-primary/90 text-white"
-                size="sm"
+                className="w-full mt-3 bg-primary hover:bg-primary/90 text-white"
                 onClick={() => onContinueCourse(course.id)}
               >
                 {course.progress > 0 ? "Continuar curso" : "Iniciar curso"}

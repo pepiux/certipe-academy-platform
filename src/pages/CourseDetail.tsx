@@ -126,12 +126,12 @@ const CourseDetail = () => {
             <div className="flex items-center gap-4 text-sm">
               <span>Por {courseData.instructor}</span>
               <div className="flex items-center gap-1">
-                <Clock size={16} />
-                <span>{courseData.duration}</span>
-              </div>
-              <div className="flex items-center gap-1">
                 <BookOpen size={16} />
                 <span>{courseData.lessons} lecciones</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Clock size={16} />
+                <span>{courseData.duration}</span>
               </div>
             </div>
           </div>

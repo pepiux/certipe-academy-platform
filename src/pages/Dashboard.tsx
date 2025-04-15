@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Clock, FileQuestion, Book, Award } from "lucide-react";
@@ -47,17 +46,18 @@ const Dashboard = () => {
   };
 
   // Mock data for quizzes and courses
-  const quizzes = [
+  const courses = [
     {
       id: 1,
-      title: "PMP Project Management Knowledge Areas",
-      description: "Test your knowledge of the 10 PMI knowledge areas",
-      questions: 50,
-      duration: 60,
-      lastScore: 78,
-      bestScore: 85,
-      image: "https://placehold.co/400x100?text=PMP+Knowledge+Areas",
-      color: "from-purple-400 to-purple-600",
+      title: "Fundamentos de Gestión de Proyectos",
+      instructor: "María García",
+      progress: 65,
+      image: "https://placehold.co/400x200?text=Gestión+de+Proyectos",
+      color: "from-indigo-400 to-indigo-600",
+      lessons: 12,
+      duration: "8 horas",
+      category: "Project Management",
+      level: "Principiante"
     },
     {
       id: 2,
@@ -94,54 +94,58 @@ const Dashboard = () => {
     },
   ];
   
-  const courses = [
+  const quizzes = [
     {
       id: 1,
-      title: "Fundamentos de Gestión de Proyectos",
-      instructor: "María García",
-      progress: 65,
-      image: "https://placehold.co/400x200?text=Gestión+de+Proyectos",
-      color: "from-indigo-400 to-indigo-600",
-      lessons: 12,
-      duration: "8 horas",
-      category: "Project Management",
-      level: "Principiante"
+      title: "PMP Project Management Knowledge Areas",
+      description: "Test your knowledge of the 10 PMI knowledge areas",
+      questions: 50,
+      duration: 60,
+      lastScore: 78,
+      bestScore: 85,
+      image: "https://placehold.co/400x100?text=PMP+Knowledge+Areas",
+      color: "from-purple-400 to-purple-600",
+      difficulty: "Intermedio",
+      category: "Project Management"
     },
     {
       id: 2,
-      title: "Metodologías Ágiles y Scrum",
-      instructor: "Carlos Rodríguez",
-      progress: 30,
-      image: "https://placehold.co/400x200?text=Scrum",
-      color: "from-sky-400 to-sky-600",
-      lessons: 8,
-      duration: "6 horas",
-      category: "Agile",
-      level: "Intermedio"
+      title: "Agile and Scrum Fundamentals",
+      description: "Master the basics of Agile methodology and Scrum framework",
+      questions: 30,
+      duration: 45,
+      lastScore: 64,
+      bestScore: 72,
+      image: "https://placehold.co/400x100?text=Agile+Scrum",
+      color: "from-blue-400 to-blue-600",
+      difficulty: "Basico",
+      category: "Agile"
     },
     {
       id: 3,
-      title: "Certificación PMP: Guía Completa",
-      instructor: "Javier López",
-      progress: 10,
-      image: "https://placehold.co/400x200?text=PMP",
-      color: "from-rose-400 to-rose-600",
-      lessons: 20,
-      duration: "15 horas",
-      category: "Certification",
-      level: "Avanzado"
+      title: "Risk Management in Projects",
+      description: "Identify, analyze, and respond to project risks",
+      questions: 25,
+      duration: 30,
+      lastScore: 92,
+      bestScore: 92,
+      image: "https://placehold.co/400x100?text=Risk+Management",
+      color: "from-emerald-400 to-emerald-600",
+      difficulty: "Intermedio",
+      category: "Risk Management"
     },
     {
       id: 4,
-      title: "Gestión de Riesgos en Proyectos",
-      instructor: "Laura Martínez",
-      progress: 50,
-      image: "https://placehold.co/400x200?text=Riesgos",
-      color: "from-emerald-400 to-emerald-600",
-      lessons: 10,
-      duration: "7 horas",
-      category: "Risk Management",
-      level: "Intermedio"
+      title: "Project Stakeholder Management",
+      description: "Learn to effectively manage project stakeholders",
+      questions: 35,
+      duration: 40,
+      lastScore: 80,
+      bestScore: 85,
+      image: "https://placehold.co/400x100?text=Stakeholder+Management",
+      color: "from-amber-400 to-amber-600",
+      difficulty: "Basico",
+      category: "Project Management"
     },
   ];
 
