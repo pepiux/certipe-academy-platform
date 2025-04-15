@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -70,6 +71,7 @@ const CourseDetail = () => {
   };
 
   const handleContinue = () => {
+    console.log('Continue learning from lesson ID:', courseData.currentLessonId);
     const currentModule = courseData.modules.find(module => 
       module.lessons.some(lesson => lesson.id === courseData.currentLessonId)
     );
@@ -92,6 +94,7 @@ const CourseDetail = () => {
     const lesson = findLessonById(lessonId);
     if (lesson) {
       const route = `/dashboard/courses/${courseData.id}/lesson/${lessonId}/${lesson.type}`;
+      console.log(`Navigating to: ${route}`);
       navigate(route);
     }
   };

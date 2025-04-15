@@ -129,9 +129,10 @@ const CourseContent = ({ modules, currentLessonId, onLessonClick }: CourseConten
               {module.lessons.map((lesson) => (
                 <div
                   key={lesson.id}
-                  className={`grid grid-cols-12 gap-2 items-center py-3 border-t ${
+                  className={`grid grid-cols-12 gap-2 items-center py-3 border-t cursor-pointer hover:bg-slate-50 ${
                     lesson.id === currentLessonId ? 'bg-slate-50' : ''
                   }`}
+                  onClick={() => onLessonClick(lesson.id)}
                 >
                   <div className="col-span-7 flex items-center gap-3">
                     <div className="flex-shrink-0">
