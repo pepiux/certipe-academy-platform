@@ -1,22 +1,16 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Progress } from "@/components/ui/progress";
-import { Clock, BookOpen, Users, Star, Award, ChevronDown, Play, FileText, FileAudio, Heart, Check, RotateCw, Eye, FileVideo, ClipboardCheck } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import CourseHeader from "@/components/courses/CourseHeader";
+import CourseOverview from "@/components/courses/CourseOverview";
+import CourseContent from "@/components/courses/CourseContent";
+import CourseStats from "@/components/courses/CourseStats";
+import CourseActions from "@/components/courses/CourseActions";
 
 const CourseDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [isFavorite, setIsFavorite] = useState(false);
-  const [expandedModule, setExpandedModule] = useState<number | null>(1);
 
   const courseData = {
     id: parseInt(id || "1"),
@@ -75,37 +69,6 @@ const CourseDetail = () => {
     ]
   };
 
-  const toggleFavorite = () => {
-    setIsFavorite(!isFavorite);
-  };
-
-  const toggleModule = (moduleId: number) => {
-    if (expandedModule === moduleId) {
-      setExpandedModule(null);
-    } else {
-      setExpandedModule(moduleId);
-    }
-  };
-
-  const getLessonIcon = (type: string) => {
-    switch (type) {
-      case 'reading':
-        return <FileText className="h-4 w-4 text-muted-foreground" />;
-      case 'audio':
-        return <FileAudio className="h-4 w-4 text-muted-foreground" />;
-      case 'video':
-        return <FileVideo className="h-4 w-4 text-muted-foreground" />;
-      case 'test':
-        return <ClipboardCheck className="h-4 w-4 text-muted-foreground" />;
-      default:
-        return <FileText className="h-4 w-4 text-muted-foreground" />;
-    }
-  };
-
-  const isCurrentLesson = (lessonId: number) => {
-    return lessonId === courseData.currentLessonId;
-  };
-
   const handleContinue = () => {
     const currentModule = courseData.modules.find(module => 
       module.lessons.some(lesson => lesson.id === courseData.currentLessonId)
@@ -141,90 +104,17 @@ const CourseDetail = () => {
     return null;
   };
 
-  const getLessonAction = (lesson: { id: number; completed: boolean; type: string }) => {
-    if (lesson.completed) {
-      return (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="sm" className="w-10 h-10" onClick={() => navigateToLesson(lesson.id)}>
-                <RotateCw className="h-4 w-4 text-muted-foreground" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Repasar</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      );
-    }
-    
-    if (isCurrentLesson(lesson.id)) {
-      return (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="sm" className="w-10 h-10" onClick={() => navigateToLesson(lesson.id)}>
-                <Play className="h-4 w-4 text-[#0EA5E9]" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Continuar</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      );
-    }
-    
-    return (
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button variant="ghost" size="sm" className="w-10 h-10" onClick={() => navigateToLesson(lesson.id)}>
-              <Eye className="h-4 w-4 text-muted-foreground" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Previsualizar</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    );
-  };
-
   return (
     <div className="space-y-6">
-      <div className="relative rounded-xl overflow-hidden">
-        <img 
-          src={courseData.image} 
-          alt={courseData.title} 
-          className="w-full h-[240px] object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-6">
-          <div className="text-white">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="bg-primary/10 text-white text-xs font-medium px-2 py-1 rounded">
-                {courseData.level}
-              </span>
-              <span className="bg-white/20 text-white text-xs font-medium px-2 py-1 rounded">
-                {courseData.category}
-              </span>
-            </div>
-            <h1 className="text-2xl md:text-3xl font-bold mb-2">{courseData.title}</h1>
-            <div className="flex items-center gap-4 text-sm">
-              <span>Por {courseData.instructor}</span>
-              <div className="flex items-center gap-1">
-                <BookOpen size={16} />
-                <span>{courseData.lessons} lecciones</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Clock size={16} />
-                <span>{courseData.duration}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <CourseHeader
+        image={courseData.image}
+        title={courseData.title}
+        level={courseData.level}
+        category={courseData.category}
+        instructor={courseData.instructor}
+        lessons={courseData.lessons}
+        duration={courseData.duration}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
@@ -236,217 +126,43 @@ const CourseDetail = () => {
             </TabsList>
             
             <TabsContent value="overview">
-              <Card>
-                <CardContent className="pt-6">
-                  <h3 className="font-semibold mb-2">Descripción del curso</h3>
-                  <p className="text-muted-foreground mb-6">{courseData.description}</p>
-                  
-                  <h3 className="font-semibold mb-2">Lo que aprenderás</h3>
-                  <ul className="space-y-2 mb-6">
-                    {courseData.objectives.map((objective, index) => (
-                      <li key={index} className="flex items-start gap-2 text-sm">
-                        <span className="text-primary mt-0.5">✓</span>
-                        <span>{objective}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  
-                  <h3 className="font-semibold mb-2">Instructor</h3>
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-                      {courseData.instructor.charAt(0)}
-                    </div>
-                    <div>
-                      <p className="font-medium">{courseData.instructor}</p>
-                      <p className="text-sm text-muted-foreground">Instructor Senior</p>
-                    </div>
-                  </div>
-
-                  <h3 className="font-semibold mb-2">Valoraciones</h3>
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-center">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`w-4 h-4 ${
-                            i < Math.floor(courseData.rating)
-                              ? "fill-yellow-400 text-yellow-400"
-                              : "text-gray-300"
-                          }`}
-                        />
-                      ))}
-                    </div>
-                    <span className="text-sm">
-                      {courseData.rating} ({courseData.totalReviews} reseñas)
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
+              <CourseOverview
+                description={courseData.description}
+                objectives={courseData.objectives}
+                instructor={courseData.instructor}
+                rating={courseData.rating}
+                totalReviews={courseData.totalReviews}
+              />
             </TabsContent>
             
             <TabsContent value="content">
-              <Card>
-                <CardContent className="p-0">
-                  {courseData.modules.map((module) => (
-                    <div key={module.id} className="border-b last:border-b-0">
-                      <button
-                        className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50"
-                        onClick={() => toggleModule(module.id)}
-                      >
-                        <div className="flex items-center gap-3">
-                          <span className="text-sm font-medium">{module.title}</span>
-                          <span className="text-xs text-muted-foreground">
-                            {module.lessons.length} lecciones
-                          </span>
-                        </div>
-                        <ChevronDown 
-                          className={`h-4 w-4 transition-transform ${
-                            expandedModule === module.id ? 'rotate-180' : ''
-                          }`} 
-                        />
-                      </button>
-                      <div className={`px-4 ${expandedModule === module.id ? 'block' : 'hidden'}`}>
-                        {module.lessons.map((lesson) => (
-                          <div
-                            key={lesson.id}
-                            className={`grid grid-cols-12 gap-2 items-center py-3 border-t ${
-                              isCurrentLesson(lesson.id) ? 'bg-slate-50' : ''
-                            }`}
-                          >
-                            <div className="col-span-7 flex items-center gap-3">
-                              <div className="flex-shrink-0">
-                                {getLessonIcon(lesson.type)}
-                              </div>
-                              <span className="text-sm font-medium truncate">{lesson.title}</span>
-                            </div>
-                            <div className="col-span-2 text-right text-sm text-muted-foreground pr-2">
-                              {lesson.duration}
-                            </div>
-                            <div className="col-span-2 flex justify-end">
-                              {getLessonAction(lesson)}
-                            </div>
-                            <div className="col-span-1 flex justify-center">
-                              {lesson.completed && (
-                                <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
-                                  <Check className="h-3 w-3 text-primary" />
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                        {isCurrentLesson(
-                          module.lessons.find(l => l.id === courseData.currentLessonId)?.id || 0
-                        ) && (
-                          <div className="p-3 bg-slate-50 text-sm border-t">
-                            <p>{
-                              module.lessons.find(
-                                l => l.id === courseData.currentLessonId
-                              )?.description
-                            }</p>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
+              <CourseContent
+                modules={courseData.modules}
+                currentLessonId={courseData.currentLessonId}
+                onLessonClick={navigateToLesson}
+              />
             </TabsContent>
             
             <TabsContent value="stats">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Estadísticas del curso</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-6">
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span>Progreso del contenido</span>
-                        <span>{courseData.completedLessons}/{courseData.lessons} lecciones</span>
-                      </div>
-                      <Progress value={(courseData.completedLessons / courseData.lessons) * 100} className="h-2" />
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Has completado el {Math.round((courseData.completedLessons / courseData.lessons) * 100)}% del curso
-                      </p>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="border rounded-lg p-4">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Clock size={16} className="text-primary" />
-                          <h4 className="font-medium">Tiempo de estudio</h4>
-                        </div>
-                        <p className="text-2xl font-bold">{courseData.studyHours} horas</p>
-                      </div>
-                      
-                      <div className="border rounded-lg p-4">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Award size={16} className="text-primary" />
-                          <h4 className="font-medium">Último examen</h4>
-                        </div>
-                        <p className="text-2xl font-bold">{courseData.lastQuizScore}%</p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <CourseStats
+                completedLessons={courseData.completedLessons}
+                totalLessons={courseData.lessons}
+                studyHours={courseData.studyHours}
+                lastQuizScore={courseData.lastQuizScore}
+              />
             </TabsContent>
           </Tabs>
         </div>
         
         <div>
-          <Card className="sticky top-6">
-            <CardContent className="p-6">
-              {courseData.progress > 0 ? (
-                <>
-                  <h3 className="font-semibold mb-3">Tu progreso</h3>
-                  <div className="mb-6">
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>{courseData.progress}% completado</span>
-                      <span>{Math.round(courseData.progress * courseData.lessons / 100)}/{courseData.lessons} lecciones</span>
-                    </div>
-                    <Progress value={courseData.progress} className="h-2" />
-                  </div>
-                  <Button className="w-full mb-3" onClick={handleContinue}>
-                    Continuar aprendiendo
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="w-full flex items-center justify-center gap-2"
-                    onClick={toggleFavorite}
-                  >
-                    <Heart className={`h-4 w-4 ${isFavorite ? 'fill-red-500 text-red-500' : ''}`} />
-                    {isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <h3 className="font-semibold mb-3">Inscríbete en este curso</h3>
-                  <div className="mb-6 space-y-3">
-                    <div className="flex items-center gap-2">
-                      <Clock size={16} className="text-muted-foreground" />
-                      <span className="text-sm">Acceso de por vida</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Award size={16} className="text-muted-foreground" />
-                      <span className="text-sm">Certificado de finalización</span>
-                    </div>
-                  </div>
-                  <Button className="w-full mb-3" onClick={handleStartCourse}>
-                    Comenzar ahora
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="w-full flex items-center justify-center gap-2"
-                    onClick={toggleFavorite}
-                  >
-                    <Heart className={`h-4 w-4 ${isFavorite ? 'fill-red-500 text-red-500' : ''}`} />
-                    {isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
-                  </Button>
-                </>
-              )}
-            </CardContent>
-          </Card>
+          <CourseActions
+            progress={courseData.progress}
+            lessons={courseData.lessons}
+            isFavorite={isFavorite}
+            onToggleFavorite={() => setIsFavorite(!isFavorite)}
+            onContinue={handleContinue}
+            onStart={handleStartCourse}
+          />
         </div>
       </div>
     </div>
