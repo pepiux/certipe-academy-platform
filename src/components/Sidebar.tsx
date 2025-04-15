@@ -36,7 +36,7 @@ const SidebarNavLink = ({
   const linkContent = (
     <>
       <Icon size={20} />
-      {isOpen && <span>{label}</span>}
+      {isOpen && <span className="ml-2">{label}</span>}
     </>
   );
 
@@ -57,7 +57,7 @@ const SidebarNavLink = ({
         <TooltipTrigger asChild>
           <NavLink 
             to={to} 
-            className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
+            className={({ isActive }) => `sidebar-link justify-center ${isActive ? "active" : ""}`}
           >
             {linkContent}
           </NavLink>
