@@ -257,7 +257,7 @@ const Dashboard = () => {
       
       <div className="mb-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-medium">Tus cursos</h2>
+          <h2 className="text-xl font-medium">Cursos</h2>
           <Button 
             variant="ghost" 
             size="sm" 
@@ -276,7 +276,7 @@ const Dashboard = () => {
       
       <div className="mb-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-medium">Tus cuestionarios</h2>
+          <h2 className="text-xl font-medium">Cuestionarios</h2>
           <Button 
             variant="ghost" 
             size="sm" 
