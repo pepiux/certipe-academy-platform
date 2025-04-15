@@ -1,10 +1,11 @@
+
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "sonner";  // We'll use only sonner for toasts
 import authService from "@/services/authService";
 
 // Importar íconos locales
@@ -44,7 +45,14 @@ const Login = () => {
       const success = await authService.login({ email, password });
       
       if (success) {
-        toast.success("Inicio de sesión exitoso");
+        // Use a more harmonious color from the palette
+        toast.success("Inicio de sesión exitoso", {
+          style: {
+            background: "#7E69AB",  // Secondary Purple from the color palette
+            color: "white",
+            border: "none"
+          }
+        });
         navigate("/dashboard");
       } else {
         toast.error("Credenciales incorrectas");

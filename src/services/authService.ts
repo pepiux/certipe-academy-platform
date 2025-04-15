@@ -46,10 +46,8 @@ const authService = {
       localStorage.setItem('auth_token', response.token);
       localStorage.setItem('user', JSON.stringify(response.user));
       
-      toast.success('Inicio de sesión exitoso');
       return true;
     } catch (error) {
-      toast.error('Error al iniciar sesión');
       return false;
     }
   },
