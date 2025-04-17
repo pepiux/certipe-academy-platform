@@ -26,7 +26,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
           warning: "group-[.toaster]:!bg-yellow-500 group-[.toaster]:!border-yellow-700/30 group-[.toaster]:text-white",
           loading: "group-[.toaster]:!bg-background group-[.toaster]:!border-border/50 group-[.toaster]:text-foreground",
         },
-        closeButton: false,
+        closeButton: true,
+        duration: 5000,
       }}
       {...props}
     />

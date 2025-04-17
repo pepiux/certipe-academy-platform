@@ -29,13 +29,17 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
-      toast.error("Por favor, complete todos los campos");
+      toast.error("Por favor, complete todos los campos", {
+        duration: 3000
+      });
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      toast.error("Por favor, ingrese un correo electrónico válido");
+      toast.error("Por favor, ingrese un correo electrónico válido", {
+        duration: 3000
+      });
       return;
     }
 
@@ -45,20 +49,25 @@ const Login = () => {
       const success = await authService.login({ email, password });
       
       if (success) {
-        // Use a more harmonious color from the palette
+        // Clear any previous toasts
+        toast.dismiss();
+        
+        // Show success message with shorter duration
         toast.success("Inicio de sesión exitoso", {
-          style: {
-            background: "#7E69AB",  // Secondary Purple from the color palette
-            color: "white",
-            border: "none"
-          }
+          duration: 3000
         });
+        
+        // Navigate to dashboard
         navigate("/dashboard");
       } else {
-        toast.error("Credenciales incorrectas");
+        toast.error("Credenciales incorrectas", {
+          duration: 3000
+        });
       }
     } catch (error) {
-      toast.error("Error al iniciar sesión. Por favor, inténtelo de nuevo.");
+      toast.error("Error al iniciar sesión. Por favor, inténtelo de nuevo.", {
+        duration: 3000
+      });
     } finally {
       setIsLoading(false);
     }

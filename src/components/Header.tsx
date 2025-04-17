@@ -29,32 +29,28 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
     // Clear any existing toasts
     toast.dismiss();
     
-    // Show loading toast with a shorter duration
-    const loadingToast = toast.loading("Cerrando sesión...", {
-      duration: 3000 // Reduce to 3 seconds maximum
+    // Show loading toast with a short duration
+    toast.loading("Cerrando sesión...", {
+      duration: 2000, // Shorter duration for loading state
     });
     
     try {
       // Call the logout service
       await authService.logout();
       
-      // Clear loading toast
-      toast.dismiss(loadingToast);
-      
-      // Show success message
+      // Clear all toasts and show success
+      toast.dismiss();
       toast.success("Sesión cerrada correctamente", {
-        duration: 2000
+        duration: 3000
       });
       
       // Redirect to login immediately
-      navigate("/");
+      setTimeout(() => navigate("/"), 300);
     } catch (error) {
-      // Clear loading toast
-      toast.dismiss(loadingToast);
-      
-      // Show error message
+      // Clear loading toast and show error
+      toast.dismiss();
       toast.error("Error al cerrar sesión", {
-        duration: 2000
+        duration: 3000
       });
     }
   };
