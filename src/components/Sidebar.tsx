@@ -6,51 +6,30 @@ import {
   BookOpen, 
   FileQuestion, 
   Users, 
-  Settings,
-  X
+  Settings 
 } from "lucide-react";
 import Logo from "./Logo";
 import LogoIcon from "./LogoIcon";
 
 interface SidebarProps {
   isOpen: boolean;
-  onClose: () => void;
-  isMobile: boolean;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isMobile }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
   const location = useLocation();
   
-  // Usando exactamente la misma clase de fondo para ambas versiones
-  const sidebarClasses = `
-    bg-[#1A1F2C] transition-all duration-300 flex flex-col h-screen 
-    ${isMobile 
-      ? `fixed z-20 ${isOpen ? 'translate-x-0' : '-translate-x-full'} w-64`
-      : `sticky top-0 ${isOpen ? 'w-64' : 'w-16'}`
-    }
-  `;
-
   return (
-    <aside className={sidebarClasses}>
-      {/* Logo y botón cerrar */}
-      <div className="p-4 flex items-center justify-between">
-        <div className="flex justify-start">
-          {isOpen ? (
-            <Logo />
-          ) : (
-            <LogoIcon />
-          )}
-        </div>
-        
-        {/* Botón cerrar solo visible en móvil cuando el menú está abierto */}
-        {isMobile && isOpen && (
-          <button 
-            onClick={onClose} 
-            className="text-white hover:text-primary transition-colors"
-            aria-label="Cerrar menú"
-          >
-            <X size={24} />
-          </button>
+    <aside 
+      className={`${
+        isOpen ? "w-64" : "w-16"
+      } bg-sidebar transition-all duration-300 flex flex-col h-screen sticky top-0`}
+    >
+      {/* Logo */}
+      <div className="p-4 flex items-center justify-center md:justify-start">
+        {isOpen ? (
+          <Logo />
+        ) : (
+          <LogoIcon />
         )}
       </div>
 
@@ -63,7 +42,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isMobile }) => {
           <NavLink 
             to="/dashboard" 
             className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
-            onClick={isMobile ? onClose : undefined}
             end
           >
             <LayoutDashboard size={20} className="min-w-5 min-h-5" />
@@ -73,7 +51,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isMobile }) => {
           <NavLink 
             to="/dashboard/courses" 
             className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
-            onClick={isMobile ? onClose : undefined}
           >
             <BookOpen size={20} className="min-w-5 min-h-5" />
             {isOpen && <span>Cursos</span>}
@@ -82,7 +59,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isMobile }) => {
           <NavLink 
             to="/dashboard/quizzes" 
             className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
-            onClick={isMobile ? onClose : undefined}
           >
             <FileQuestion size={20} className="min-w-5 min-h-5" />
             {isOpen && <span>Cuestionarios</span>}
@@ -96,7 +72,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isMobile }) => {
           <NavLink 
             to="/dashboard/admin/users" 
             className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
-            onClick={isMobile ? onClose : undefined}
           >
             <Users size={20} className="min-w-5 min-h-5" />
             {isOpen && <span>Gestión de usuarios</span>}
@@ -105,7 +80,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isMobile }) => {
           <NavLink 
             to="/dashboard/admin/courses" 
             className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
-            onClick={isMobile ? onClose : undefined}
           >
             <BookOpen size={20} className="min-w-5 min-h-5" />
             {isOpen && <span>Gestión de cursos</span>}
@@ -114,7 +88,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isMobile }) => {
           <NavLink 
             to="/dashboard/admin/quizzes" 
             className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
-            onClick={isMobile ? onClose : undefined}
           >
             <FileQuestion size={20} className="min-w-5 min-h-5" />
             {isOpen && <span>Gestión de cuestionarios</span>}
@@ -123,7 +96,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isMobile }) => {
           <NavLink 
             to="/dashboard/admin/settings" 
             className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
-            onClick={isMobile ? onClose : undefined}
           >
             <Settings size={20} className="min-w-5 min-h-5" />
             {isOpen && <span>Configuración del sistema</span>}
@@ -135,15 +107,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isMobile }) => {
       <div className="p-4 text-xs text-sidebar-muted-foreground">
         {isOpen && <div>2025 Inflex. Todos los derechos reservados.</div>}
       </div>
-      
-      {/* Overlay para cerrar el menú en móvil cuando se hace clic fuera - Modificando la opacidad */}
-      {isMobile && isOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-10" 
-          onClick={onClose}
-          aria-hidden="true"
-        />
-      )}
     </aside>
   );
 };
