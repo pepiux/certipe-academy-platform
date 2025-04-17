@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -72,26 +73,16 @@ const CourseCard = ({ course, onStart, onContinue }: CourseCardProps) => {
           )}
         </div>
         
-      <div className="flex-1 flex flex-col justify-end mt-3">
-        {course.progress > 0 && (
-          <div>
-            <div className="flex justify-between text-xs mb-1">
-              <span>Progreso</span>
-              <span>{course.progress}%</span>
-            </div>
-            <Progress value={course.progress} className="h-1" />
-          </div>
-        )}
         <Button 
           className="w-full mt-3 bg-primary hover:bg-primary/90 text-white"
           onClick={() => onStart(course.id)}
         >
           Más detalles
         </Button>
-      </div>
-    </CardContent>
-  </Card>
+      </CardContent>
+    </Card>
   );
 };
 
 export default CourseCard;
+
