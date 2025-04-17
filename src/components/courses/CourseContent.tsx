@@ -127,39 +127,40 @@ const CourseContent = ({ modules, currentLessonId, onLessonClick }: CourseConten
             </button>
             <div className={`px-4 ${expandedModule === module.id ? 'block' : 'hidden'}`}>
               {module.lessons.map((lesson) => (
-                <div
-                  key={lesson.id}
-                  className={`grid grid-cols-12 gap-2 items-center py-3 border-t cursor-pointer hover:bg-slate-50 ${
-                    lesson.id === currentLessonId ? 'bg-slate-50' : ''
-                  }`}
-                  onClick={() => onLessonClick(lesson.id)}
-                >
-                  <div className="col-span-7 flex items-center gap-3">
-                    <div className="flex-shrink-0">
-                      {getLessonIcon(lesson.type)}
-                    </div>
-                    <span className="text-sm font-medium truncate">{lesson.title}</span>
-                  </div>
-                  <div className="col-span-2 text-right text-sm text-muted-foreground pr-2">
-                    {lesson.duration}
-                  </div>
-                  <div className="col-span-2 flex justify-end">
-                    {getLessonAction(lesson)}
-                  </div>
-                  <div className="col-span-1 flex justify-center">
-                    {lesson.completed && (
-                      <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
-                        <Check className="h-3 w-3 text-primary" />
+                <React.Fragment key={lesson.id}>
+                  <div
+                    className={`grid grid-cols-12 gap-2 items-center py-3 border-t cursor-pointer hover:bg-slate-50 ${
+                      lesson.id === currentLessonId ? 'bg-slate-50' : ''
+                    }`}
+                    onClick={() => onLessonClick(lesson.id)}
+                  >
+                    <div className="col-span-7 flex items-center gap-3">
+                      <div className="flex-shrink-0">
+                        {getLessonIcon(lesson.type)}
                       </div>
-                    )}
+                      <span className="text-sm font-medium truncate">{lesson.title}</span>
+                    </div>
+                    <div className="col-span-2 text-right text-sm text-muted-foreground pr-2">
+                      {lesson.duration}
+                    </div>
+                    <div className="col-span-2 flex justify-end">
+                      {getLessonAction(lesson)}
+                    </div>
+                    <div className="col-span-1 flex justify-center">
+                      {lesson.completed && (
+                        <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
+                          <Check className="h-3 w-3 text-primary" />
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
+                  {lesson.id === currentLessonId && lesson.description && (
+                    <div className="p-3 bg-slate-50 text-sm border-t mb-2">
+                      <p>{lesson.description}</p>
+                    </div>
+                  )}
+                </React.Fragment>
               ))}
-              {currentLessonId === module.lessons.find(l => l.id === currentLessonId)?.id && (
-                <div className="p-3 bg-slate-50 text-sm border-t">
-                  <p>{module.lessons.find(l => l.id === currentLessonId)?.description}</p>
-                </div>
-              )}
             </div>
           </div>
         ))}
