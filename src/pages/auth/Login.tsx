@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { toast } from "sonner";  // We'll use only sonner for toasts
 import authService from "@/services/authService";
+import { useMock } from "@/services/serviceAdapter";
 
 // Importar íconos locales
 import googleIcon from "@/assets/icons/google-icon.svg";
@@ -15,20 +16,33 @@ import linkedinIcon from "@/assets/icons/linkedin-icon.svg";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("demo@example.com");
-  const [password, setPassword] = useState("password");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  
+  // Verificar si estamos usando datos mock o backend real
+  const isMockData = useMock();
 
   useEffect(() => {
     if (authService.isAuthenticated()) {
       navigate('/dashboard');
     }
-  }, [navigate]);
+    
+    // Si es modo de desarrollo, establecer credenciales demo
+    if (isMockData) {
+      setEmail("demo@example.com");
+      setPassword("password");
+    }
+  }, [navigate, isMockData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+    
     if (!email || !password) {
+      setError("Por favor, complete todos los campos");
       toast.error("Por favor, complete todos los campos", {
         duration: 3000
       });
@@ -37,6 +51,7 @@ const Login = () => {
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
+      setError("Por favor, ingrese un correo electrónico válido");
       toast.error("Por favor, ingrese un correo electrónico válido", {
         duration: 3000
       });
@@ -60,11 +75,13 @@ const Login = () => {
         // Navigate to dashboard
         navigate("/dashboard");
       } else {
+        setError("Credenciales incorrectas");
         toast.error("Credenciales incorrectas", {
           duration: 3000
         });
       }
     } catch (error) {
+      setError("Error al iniciar sesión. Por favor, inténtelo de nuevo.");
       toast.error("Error al iniciar sesión. Por favor, inténtelo de nuevo.", {
         duration: 3000
       });
@@ -143,6 +160,12 @@ const Login = () => {
             </button>
           </div>
         </div>
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-2 rounded-md text-sm">
+            {error}
+          </div>
+        )}
 
         <Button 
           type="submit" 

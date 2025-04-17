@@ -1,3 +1,4 @@
+
 import { API_BASE_URL, defaultOptions, getAuthHeaders } from './config';
 import { toast } from 'sonner';
 import { useMock, httpClient } from '@/services/serviceAdapter';
@@ -44,7 +45,15 @@ const apiClient = {
   async post(endpoint: string, data = null, customOptions = {}): Promise<any> {
     // Si estamos usando el backend PHP, usar el httpClient
     if (!useMock() && httpClient) {
-      return httpClient.post(endpoint, data);
+      console.log('Usando httpClient para POST a:', endpoint);
+      try {
+        const response = await httpClient.post(endpoint, data);
+        console.log('Respuesta de httpClient:', response);
+        return response;
+      } catch (error) {
+        console.error('Error en httpClient POST:', error);
+        throw error;
+      }
     }
     return this.request('POST', endpoint, data, customOptions);
   },
@@ -77,6 +86,7 @@ const apiClient = {
   async request<T>(method: string, endpoint: string, data = null, customOptions = {}): Promise<T> {
     // Si estamos usando mock, utilizar el API_BASE_URL original
     const url = `${API_BASE_URL}${endpoint}`;
+    console.log(`Realizando petición ${method} a:`, url);
     
     // Configurar las opciones de la petición
     const options: RequestInit = {
@@ -93,16 +103,35 @@ const apiClient = {
     // Añadir el body si hay datos
     if (data) {
       options.body = JSON.stringify(data);
+      console.log('Enviando datos:', data);
     }
     
     try {
+      console.log('Opciones de fetch:', options);
       const response = await fetch(url, options);
-      const responseData = await response.json();
+      
+      // Log de la respuesta HTTP
+      console.log('Respuesta HTTP:', response.status, response.statusText);
+      
+      let responseData;
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        responseData = await response.json();
+      } else {
+        const text = await response.text();
+        try {
+          responseData = JSON.parse(text);
+        } catch (e) {
+          responseData = { message: text };
+        }
+      }
+      
+      console.log('Datos de respuesta:', responseData);
       
       // Manejar respuestas no exitosas
       if (!response.ok) {
         throw new ApiError(
-          responseData.message || 'Error en la petición', 
+          responseData.message || responseData.error || 'Error en la petición', 
           response.status, 
           responseData
         );
@@ -123,6 +152,8 @@ const apiClient = {
         }
         throw error;
       }
+      
+      console.error('Error en la petición:', error);
       
       // Para otros errores (como problemas de red)
       toast.error('Error de conexión. Por favor, inténtelo de nuevo.');

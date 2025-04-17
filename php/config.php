@@ -23,9 +23,12 @@ function connect_db() {
 
 // Función para manejar errores y devolver respuesta JSON
 function json_response($data, $status = 200) {
-    header('Content-Type: application/json');
-    http_response_code($status);
-    echo json_encode($data);
+    // Asegurar que los headers no se han enviado ya
+    if (!headers_sent()) {
+        header('Content-Type: application/json');
+        http_response_code($status);
+    }
+    echo json_encode($data, JSON_UNESCAPED_UNICODE);
     exit;
 }
 
@@ -68,5 +71,16 @@ function authenticate() {
     $conn->close();
     
     return $user_id;
+}
+
+// Habilitar CORS para desarrollo local
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+
+// Manejar OPTIONS request (para preflight CORS)
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    http_response_code(200);
+    exit();
 }
 ?>

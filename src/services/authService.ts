@@ -51,15 +51,42 @@ const authService = {
         return true;
       } else {
         // Llamar al backend PHP
-        const response = await apiClient.post<AuthResponse>('/auth.php', credentials);
+        console.log('Enviando credenciales al backend:', credentials);
+        
+        // Llamada directa al endpoint PHP
+        const response = await fetch('/php/auth.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(credentials)
+        });
+        
+        // Verificar respuesta HTTP
+        if (!response.ok) {
+          console.error('Error HTTP:', response.status, response.statusText);
+          const errorText = await response.text();
+          console.error('Respuesta de error:', errorText);
+          return false;
+        }
+        
+        const data = await response.json();
+        console.log('Respuesta del backend:', data);
+        
+        if (data.error) {
+          console.error('Error de autenticación:', data.error);
+          toast.error(data.error || "Credenciales incorrectas");
+          return false;
+        }
         
         // Guardar token y datos de usuario
-        localStorage.setItem('auth_token', response.token);
-        localStorage.setItem('user', JSON.stringify(response.user));
+        localStorage.setItem('auth_token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
         
         return true;
       }
     } catch (error) {
+      console.error('Error completo:', error);
       toast.error("Error de inicio de sesión");
       return false;
     }
