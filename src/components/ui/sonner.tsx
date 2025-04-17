@@ -27,7 +27,6 @@ const Toaster = ({ ...props }: ToasterProps) => {
           loading: "group-[.toaster]:!bg-background group-[.toaster]:!border-border/50 group-[.toaster]:text-foreground",
         },
         closeButton: false,
-        onClick: () => true, // This makes the toast dismissible when clicked
       }}
       {...props}
     />
