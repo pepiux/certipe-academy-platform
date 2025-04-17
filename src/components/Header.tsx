@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -30,10 +29,9 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
     // Clear any existing toasts
     toast.dismiss();
     
-    // Show loading toast
+    // Show loading toast with a shorter duration
     const loadingToast = toast.loading("Cerrando sesión...", {
-      duration: 10000, // Tiempo máximo de 10 segundos
-      dismissible: false
+      duration: 3000 // Reduce to 3 seconds maximum
     });
     
     try {
@@ -45,20 +43,19 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
       
       // Show success message
       toast.success("Sesión cerrada correctamente", {
-        duration: 3000,
-        onAutoClose: () => navigate("/")
+        duration: 2000
       });
       
-      // Redirect to login after a short delay
-      setTimeout(() => {
-        navigate("/");
-      }, 1000);
+      // Redirect to login immediately
+      navigate("/");
     } catch (error) {
       // Clear loading toast
       toast.dismiss(loadingToast);
       
       // Show error message
-      toast.error("Error al cerrar sesión");
+      toast.error("Error al cerrar sesión", {
+        duration: 2000
+      });
     }
   };
 
