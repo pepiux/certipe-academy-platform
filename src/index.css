@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -111,11 +112,11 @@
   }
   
   .sidebar-link:hover {
-    @apply bg-white text-[hsl(var(--sidebar-background))] dark:text-[hsl(var(--sidebar-foreground))];
+    @apply bg-white text-[#1A1F2C];
   }
   
   .sidebar-link.active {
-    @apply bg-white text-[hsl(var(--sidebar-background))] dark:text-[hsl(var(--sidebar-foreground))];
+    @apply bg-white text-[#1A1F2C];
   }
 
   .sidebar-category {

@@ -21,9 +21,9 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isMobile }) => {
   const location = useLocation();
   
-  // Determinar las clases CSS basadas en el estado del menú y si estamos en móvil
+  // Consistent styling for both mobile and desktop
   const sidebarClasses = `
-    bg-sidebar-background transition-all duration-300 flex flex-col h-screen 
+    bg-[#1A1F2C] transition-all duration-300 flex flex-col h-screen 
     ${isMobile 
       ? `fixed z-20 ${isOpen ? 'translate-x-0' : '-translate-x-full'} w-64`
       : `sticky top-0 ${isOpen ? 'w-64' : 'w-16'}`
@@ -132,7 +132,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isMobile }) => {
       {/* Overlay para cerrar el menú en móvil cuando se hace clic fuera */}
       {isMobile && isOpen && (
         <div 
-          className="fixed inset-0 bg-black/50 z-10" 
+          className="fixed inset-0 bg-black/80 z-10" 
           onClick={onClose}
           aria-hidden="true"
         />
