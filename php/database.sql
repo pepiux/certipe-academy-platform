@@ -1,3 +1,20 @@
+-- The database structure looks good with tables for:
+-- 1. users - For user management
+-- 2. user_tokens - For authentication tokens
+-- 3. courses - For course management
+-- 4. lessons - For lesson content
+-- 5. course_lesson_completions - For tracking completed lessons
+-- 6. course_progress - For tracking user progress in courses
+-- 7. quizzes - For quiz management
+-- 8. quiz_questions - For quiz questions
+-- 9. quiz_options - For quiz question options
+-- 10. quiz_fill_blanks - For fill-in-the-blank questions
+-- 11. quiz_attempts - For tracking quiz attempts
+-- 12. quiz_attempt_answers - For tracking quiz answers
+
+-- No changes needed to the database structure, it seems complete and properly designed
+-- with relationships between tables using foreign keys.
+-- The database includes sample data for testing as well.
 
 -- Crear base de datos
 CREATE DATABASE IF NOT EXISTS certipe_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

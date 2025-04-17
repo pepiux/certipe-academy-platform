@@ -1,4 +1,3 @@
-
 import { API_BASE_URL, defaultOptions, getAuthHeaders } from './config';
 import { toast } from 'sonner';
 import { useMock, httpClient } from '@/services/serviceAdapter';
@@ -75,7 +74,7 @@ const apiClient = {
   /**
    * Método genérico para realizar peticiones HTTP
    */
-  async request(method: string, endpoint: string, data = null, customOptions = {}): Promise<any> {
+  async request<T>(method: string, endpoint: string, data = null, customOptions = {}): Promise<T> {
     // Si estamos usando mock, utilizar el API_BASE_URL original
     const url = `${API_BASE_URL}${endpoint}`;
     
