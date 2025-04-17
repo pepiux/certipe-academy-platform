@@ -4,9 +4,10 @@ import { Link } from "react-router-dom";
 
 interface LogoProps {
   size?: "small" | "medium" | "large";
+  textColor?: string;
 }
 
-const Logo: React.FC<LogoProps> = ({ size = "medium" }) => {
+const Logo: React.FC<LogoProps> = ({ size = "medium", textColor = "text-white" }) => {
   const sizeClasses = {
     small: "text-xl",
     medium: "text-2xl",
@@ -58,7 +59,7 @@ const Logo: React.FC<LogoProps> = ({ size = "medium" }) => {
         />
       </svg>
       <div className={`font-bold ${sizeClasses[size]} flex items-center`}>
-        <span className="text-white">Certi</span>
+        <span className={textColor === "text-white" ? "text-white" : textColor}>Certi</span>
         <span className="text-brand-blue">PE</span>
       </div>
     </Link>
