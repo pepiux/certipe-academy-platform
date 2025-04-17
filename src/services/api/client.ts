@@ -35,8 +35,10 @@ const mockData = {
         image: "https://placehold.co/400x200?text=Gestión+de+Proyectos",
         lessons_count: 12,
         duration: "8 horas",
+        duration_hours: 8,
         level: "Principiante",
         progress: 35,
+        completed_date: null,
         instructor: {
           id: 1,
           name: "Carlos Rodríguez"
@@ -52,8 +54,10 @@ const mockData = {
         image: "https://placehold.co/400x200?text=Metodologías+Ágiles",
         lessons_count: 10,
         duration: "6 horas",
+        duration_hours: 6,
         level: "Intermedio",
         progress: 75,
+        completed_date: "2023-05-10",
         instructor: {
           id: 2,
           name: "Ana Martínez"
@@ -69,8 +73,10 @@ const mockData = {
         image: "https://placehold.co/400x200?text=Certificación+PMP",
         lessons_count: 20,
         duration: "15 horas",
+        duration_hours: 15,
         level: "Avanzado",
         progress: 0,
+        completed_date: null,
         instructor: {
           id: 3,
           name: "Javier López"
@@ -78,12 +84,50 @@ const mockData = {
         category: "Certificación",
         created_at: "2023-03-05",
         updated_at: "2023-05-12"
+      },
+      {
+        id: 4,
+        title: "Curso de PHP 1",
+        description: "Fundamentos de programación con PHP",
+        image: "https://placehold.co/400x200?text=PHP+Básico",
+        lessons_count: 15,
+        duration: "10.5 horas",
+        duration_hours: 10.5,
+        level: "Principiante",
+        progress: 100,
+        completed_date: "2023-04-15",
+        instructor: {
+          id: 2,
+          name: "Ana Martínez"
+        },
+        category: "Desarrollo",
+        created_at: "2023-01-20",
+        updated_at: "2023-04-15"
+      },
+      {
+        id: 5,
+        title: "Curso de PHP 2",
+        description: "Desarrollo avanzado con PHP y MySQL",
+        image: "https://placehold.co/400x200?text=PHP+Avanzado",
+        lessons_count: 25,
+        duration: "20 horas",
+        duration_hours: 20,
+        level: "Avanzado",
+        progress: 100,
+        completed_date: "2023-06-20",
+        instructor: {
+          id: 2,
+          name: "Ana Martínez"
+        },
+        category: "Desarrollo",
+        created_at: "2023-02-15",
+        updated_at: "2023-06-20"
       }
     ],
     meta: {
       current_page: 1,
       last_page: 1,
-      total: 3
+      total: 5
     }
   },
   quizzes: {
@@ -94,12 +138,19 @@ const mockData = {
         description: "Evalúa tu conocimiento sobre los conceptos básicos de la gestión de proyectos",
         course_id: 1,
         duration_minutes: 30,
+        duration_hours: 0.5,
         passing_score: 70,
         total_questions: 15,
         difficulty_level: "Principiante",
         is_published: true,
         last_score: 85,
         best_score: 85,
+        completed: true,
+        completed_date: "2023-03-10",
+        attempts_history: [
+          { date: "2023-03-10", score: 85 },
+          { date: "2023-02-20", score: 72 }
+        ],
         category: "Gestión",
         created_at: "2023-02-15",
         updated_at: "2023-02-15"
@@ -110,12 +161,20 @@ const mockData = {
         description: "Comprueba tus conocimientos sobre el rol del Scrum Master",
         course_id: 2,
         duration_minutes: 45,
+        duration_hours: 0.75,
         passing_score: 80,
         total_questions: 20,
         difficulty_level: "Intermedio",
         is_published: true,
         last_score: 65,
         best_score: 78,
+        completed: false,
+        completed_date: null,
+        attempts_history: [
+          { date: "2023-04-25", score: 65 },
+          { date: "2023-03-15", score: 78 },
+          { date: "2023-02-28", score: 60 }
+        ],
         category: "Agile",
         created_at: "2023-03-10",
         updated_at: "2023-03-10"
@@ -126,21 +185,172 @@ const mockData = {
         description: "Simulacro de examen para la certificación PMP",
         course_id: 3,
         duration_minutes: 60,
+        duration_hours: 1,
         passing_score: 75,
         total_questions: 30,
         difficulty_level: "Avanzado",
         is_published: true,
         last_score: null,
         best_score: null,
+        completed: false,
+        completed_date: null,
+        attempts_history: [],
         category: "Certificación",
         created_at: "2023-04-05",
         updated_at: "2023-04-05"
+      },
+      {
+        id: 4,
+        title: "PHP Básico",
+        description: "Evalúa tus conocimientos de PHP básico",
+        course_id: 4,
+        duration_minutes: 35,
+        duration_hours: 0.58,
+        passing_score: 70,
+        total_questions: 18,
+        difficulty_level: "Principiante",
+        is_published: true,
+        last_score: 92,
+        best_score: 92,
+        completed: true,
+        completed_date: "2023-04-25",
+        attempts_history: [
+          { date: "2023-04-25", score: 92 }
+        ],
+        category: "Desarrollo",
+        created_at: "2023-03-15",
+        updated_at: "2023-03-15"
+      },
+      {
+        id: 5,
+        title: "PHP Avanzado y MySQL",
+        description: "Evalúa tus conocimientos de PHP avanzado y MySQL",
+        course_id: 5,
+        duration_minutes: 60,
+        duration_hours: 1,
+        passing_score: 75,
+        total_questions: 25,
+        difficulty_level: "Avanzado",
+        is_published: true,
+        last_score: 88,
+        best_score: 88,
+        completed: true,
+        completed_date: "2023-07-05",
+        attempts_history: [
+          { date: "2023-07-05", score: 88 },
+          { date: "2023-06-30", score: 76 }
+        ],
+        category: "Desarrollo",
+        created_at: "2023-05-20",
+        updated_at: "2023-05-20"
+      },
+      {
+        id: 6,
+        title: "JavaScript Fundamentals",
+        description: "Test your knowledge of JavaScript basics",
+        course_id: null,
+        duration_minutes: 45,
+        duration_hours: 0.75,
+        passing_score: 70,
+        total_questions: 20,
+        difficulty_level: "Principiante",
+        is_published: true,
+        last_score: 82,
+        best_score: 82,
+        completed: true,
+        completed_date: "2023-05-15",
+        attempts_history: [
+          { date: "2023-05-15", score: 82 }
+        ],
+        category: "Desarrollo",
+        created_at: "2023-04-01",
+        updated_at: "2023-04-01"
       }
     ],
     meta: {
       current_page: 1,
       last_page: 1,
-      total: 3
+      total: 6
+    }
+  },
+  dashboard_stats: {
+    study_hours: {
+      total: 35.5,
+      by_course: [
+        { id: 4, title: "Curso de PHP 1", hours: 10.5, completed_date: "2023-04-15" },
+        { id: 5, title: "Curso de PHP 2", hours: 20, completed_date: "2023-06-20" },
+      ],
+      by_quiz: [
+        { id: 1, title: "Fundamentos de Gestión de Proyectos", hours: 0.5, completed_date: "2023-03-10" },
+        { id: 4, title: "PHP Básico", hours: 0.58, completed_date: "2023-04-25" },
+        { id: 5, title: "PHP Avanzado y MySQL", hours: 1, completed_date: "2023-07-05" },
+        { id: 6, title: "JavaScript Fundamentals", hours: 0.75, completed_date: "2023-05-15" }
+      ]
+    },
+    completed_quizzes: {
+      total: 4,
+      quizzes: [
+        { id: 1, title: "Fundamentos de Gestión de Proyectos", completed_date: "2023-03-10", score: 85 },
+        { id: 4, title: "PHP Básico", completed_date: "2023-04-25", score: 92 },
+        { id: 5, title: "PHP Avanzado y MySQL", completed_date: "2023-07-05", score: 88 },
+        { id: 6, title: "JavaScript Fundamentals", completed_date: "2023-05-15", score: 82 }
+      ]
+    },
+    average_scores: {
+      overall: 78,
+      by_quiz: [
+        { 
+          id: 1, 
+          title: "Fundamentos de Gestión de Proyectos", 
+          avg_score: 78.5,
+          attempts: [
+            { date: "2023-03-10", score: 85 },
+            { date: "2023-02-20", score: 72 }
+          ]
+        },
+        { 
+          id: 2, 
+          title: "Scrum Master", 
+          avg_score: 67.7,
+          attempts: [
+            { date: "2023-04-25", score: 65 },
+            { date: "2023-03-15", score: 78 },
+            { date: "2023-02-28", score: 60 }
+          ]
+        },
+        { 
+          id: 4, 
+          title: "PHP Básico", 
+          avg_score: 92,
+          attempts: [
+            { date: "2023-04-25", score: 92 }
+          ] 
+        },
+        { 
+          id: 5, 
+          title: "PHP Avanzado y MySQL", 
+          avg_score: 82,
+          attempts: [
+            { date: "2023-07-05", score: 88 },
+            { date: "2023-06-30", score: 76 }
+          ]
+        },
+        { 
+          id: 6, 
+          title: "JavaScript Fundamentals", 
+          avg_score: 82,
+          attempts: [
+            { date: "2023-05-15", score: 82 }
+          ] 
+        }
+      ]
+    },
+    courses_in_progress: {
+      total: 2,
+      courses: [
+        { id: 1, title: "Introducción a la Gestión de Proyectos", progress: 35, duration_hours: 8 },
+        { id: 2, title: "Metodologías Ágiles y Scrum", progress: 75, duration_hours: 6 }
+      ]
     }
   },
   quiz_questions: {

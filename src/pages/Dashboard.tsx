@@ -1,13 +1,20 @@
 
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Clock, FileQuestion, Book, Award, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import courseService from "@/services/courseService";
 import quizService from "@/services/quizService";
+import dashboardService, { DashboardStats } from "@/services/dashboardService";
 
-import StatCard from "@/components/dashboard/StatCard";
+// Componentes de widgets
+import StudyHoursWidget from "@/components/dashboard/StudyHoursWidget";
+import CompletedQuizzesWidget from "@/components/dashboard/CompletedQuizzesWidget";
+import AverageScoreWidget from "@/components/dashboard/AverageScoreWidget";
+import CoursesInProgressWidget from "@/components/dashboard/CoursesInProgressWidget";
+
+// Componentes de gráficas y actividad reciente
 import StudyHoursChart from "@/components/dashboard/StudyHoursChart";
 import ScoreProgressChart from "@/components/dashboard/ScoreProgressChart";
 import RecentQuiz from "@/components/dashboard/RecentQuiz";
@@ -19,10 +26,12 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState({
     courses: true,
-    quizzes: true
+    quizzes: true,
+    stats: true
   });
   const [courses, setCourses] = useState<any[]>([]);
   const [quizzes, setQuizzes] = useState<any[]>([]);
+  const [stats, setStats] = useState<DashboardStats | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   // Datos para las gráficas
@@ -81,14 +90,28 @@ const Dashboard = () => {
   ];
 
   useEffect(() => {
-    const fetchCourses = async () => {
+    const fetchData = async () => {
       try {
+        // Cargar estadísticas del dashboard
+        setLoading(prev => ({ ...prev, stats: true }));
+        const statsResponse = await dashboardService.getStats();
+        console.log("Estadísticas del dashboard:", statsResponse);
+        setStats(statsResponse);
+      } catch (err: any) {
+        console.error("Error al cargar las estadísticas:", err);
+        toast.error("Error al cargar las estadísticas del dashboard");
+      } finally {
+        setLoading(prev => ({ ...prev, stats: false }));
+      }
+
+      try {
+        // Cargar cursos
         setLoading(prev => ({ ...prev, courses: true }));
-        const response = await courseService.getCourses();
-        console.log("Cursos obtenidos:", response.data);
+        const coursesResponse = await courseService.getCourses();
+        console.log("Cursos obtenidos:", coursesResponse.data);
         
         // Formatear los datos de los cursos para el componente DashboardCourses
-        const formattedCourses = response.data.map((course: any) => ({
+        const formattedCourses = coursesResponse.data.map((course: any) => ({
           id: course.id,
           title: course.title,
           category: course.category || "Sin categoría",
@@ -109,16 +132,15 @@ const Dashboard = () => {
       } finally {
         setLoading(prev => ({ ...prev, courses: false }));
       }
-    };
 
-    const fetchQuizzes = async () => {
       try {
+        // Cargar quizzes
         setLoading(prev => ({ ...prev, quizzes: true }));
-        const response = await quizService.getQuizzes();
-        console.log("Cuestionarios obtenidos:", response.data);
+        const quizzesResponse = await quizService.getQuizzes();
+        console.log("Cuestionarios obtenidos:", quizzesResponse.data);
         
         // Formatear los datos de los quizzes para el componente DashboardQuizzes
-        const formattedQuizzes = response.data.map((quiz: any) => ({
+        const formattedQuizzes = quizzesResponse.data.map((quiz: any) => ({
           id: quiz.id,
           title: quiz.title,
           description: quiz.description || "Sin descripción",
@@ -142,8 +164,7 @@ const Dashboard = () => {
       }
     };
 
-    fetchCourses();
-    fetchQuizzes();
+    fetchData();
   }, []);
 
   const handleStartQuiz = (quizId: number) => {
@@ -159,38 +180,37 @@ const Dashboard = () => {
       <h1 className="text-2xl font-bold">Panel de control</h1>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard
-          title="Horas de estudio"
-          value={24.5}
-          subtitle="Horas de estudio"
-          icon={Clock}
-          iconColor="text-blue-600"
-          iconBgColor="bg-blue-100"
-        />
-        <StatCard
-          title="Cuestionarios completados"
-          value={18}
-          subtitle="Cuestionarios completados"
-          icon={FileQuestion}
-          iconColor="text-purple-600"
-          iconBgColor="bg-purple-100"
-        />
-        <StatCard
-          title="Puntuación media"
-          value="78%"
-          subtitle="Puntuación media"
-          icon={Award}
-          iconColor="text-green-600"
-          iconBgColor="bg-green-100"
-        />
-        <StatCard
-          title="Materiales de aprendizaje"
-          value={12}
-          subtitle="Materiales de aprendizaje"
-          icon={Book}
-          iconColor="text-amber-600"
-          iconBgColor="bg-amber-100"
-        />
+        {loading.stats ? (
+          // Mostrar placeholders mientras cargan los datos
+          Array(4).fill(0).map((_, i) => (
+            <div key={i} className="bg-muted/40 h-[120px] rounded-lg animate-pulse"></div>
+          ))
+        ) : stats ? (
+          <>
+            <StudyHoursWidget 
+              total={stats.study_hours.total} 
+              byCourse={stats.study_hours.by_course}
+              byQuiz={stats.study_hours.by_quiz}
+            />
+            <CompletedQuizzesWidget 
+              total={stats.completed_quizzes.total} 
+              quizzes={stats.completed_quizzes.quizzes}
+            />
+            <AverageScoreWidget 
+              overall={stats.average_scores.overall}
+              quizzes={stats.average_scores.by_quiz}
+            />
+            <CoursesInProgressWidget 
+              total={stats.courses_in_progress.total}
+              courses={stats.courses_in_progress.courses}
+            />
+          </>
+        ) : (
+          // Mensaje de error si no hay datos
+          <div className="col-span-4 text-center py-4 text-red-500">
+            Error al cargar las estadísticas del dashboard
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">

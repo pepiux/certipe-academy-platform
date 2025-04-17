@@ -1,21 +1,3 @@
--- The database structure looks good with tables for:
--- 1. users - For user management
--- 2. user_tokens - For authentication tokens
--- 3. courses - For course management
--- 4. lessons - For lesson content
--- 5. course_lesson_completions - For tracking completed lessons
--- 6. course_progress - For tracking user progress in courses
--- 7. quizzes - For quiz management
--- 8. quiz_questions - For quiz questions
--- 9. quiz_options - For quiz question options
--- 10. quiz_fill_blanks - For fill-in-the-blank questions
--- 11. quiz_attempts - For tracking quiz attempts
--- 12. quiz_attempt_answers - For tracking quiz answers
-
--- No changes needed to the database structure, it seems complete and properly designed
--- with relationships between tables using foreign keys.
--- The database includes sample data for testing as well.
-
 -- Crear base de datos
 CREATE DATABASE IF NOT EXISTS certipe_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE certipe_db;
@@ -54,6 +36,7 @@ CREATE TABLE IF NOT EXISTS courses (
     level ENUM('Principiante', 'Intermedio', 'Avanzado') NOT NULL,
     category VARCHAR(100) NOT NULL,
     instructor_id INT NOT NULL,
+    duration_hours DECIMAL(5,2) NOT NULL DEFAULT 0.00,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
@@ -97,6 +80,7 @@ CREATE TABLE IF NOT EXISTS course_progress (
     course_id INT NOT NULL,
     progress_percentage INT NOT NULL DEFAULT 0,
     last_accessed_lesson_id INT,
+    completed_at TIMESTAMP NULL, -- Fecha de finalización del curso
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     UNIQUE KEY (user_id, course_id),
@@ -182,6 +166,20 @@ CREATE TABLE IF NOT EXISTS quiz_attempt_answers (
     FOREIGN KEY (option_id) REFERENCES quiz_options(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Nueva tabla para estadísticas del dashboard
+CREATE TABLE IF NOT EXISTS dashboard_stats (
+    id INT AUTO_INCREMENT NOT NULL,
+    user_id INT NOT NULL,
+    total_study_hours DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    completed_quizzes INT NOT NULL DEFAULT 0,
+    average_score DECIMAL(5,2) NOT NULL DEFAULT 0.00,
+    courses_in_progress INT NOT NULL DEFAULT 0,
+    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE KEY (user_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Insertar datos de ejemplo
 -- Usuario administrador
 INSERT INTO users (name, email, password, role) VALUES 
@@ -198,11 +196,20 @@ INSERT INTO users (name, email, password, role) VALUES
 ('Estudiante Demo', 'estudiante@certipe.com', '$2y$10$7AjtB3ZA7DA4tSCfGvSKu.oQK7OldXVGWbMyG4grRd1bh2AK.XsnG', 'user');
 -- Contraseña: estudiante123
 
--- Cursos de ejemplo
-INSERT INTO courses (title, description, image, level, category, instructor_id) VALUES 
-('Introducción a la Programación Web', 'Aprende los fundamentos de HTML, CSS y JavaScript para crear tus primeras páginas web.', '/placeholder.svg', 'Principiante', 'Desarrollo Web', 2),
-('Desarrollo Frontend con React', 'Domina la biblioteca más popular para crear interfaces de usuario modernas y dinámicas.', '/placeholder.svg', 'Intermedio', 'Desarrollo Web', 2),
-('Análisis de Datos con Python', 'Aprende a procesar y analizar datos utilizando Python y sus librerías más populares.', '/placeholder.svg', 'Intermedio', 'Ciencia de Datos', 2);
+-- Cursos de ejemplo con duración en horas
+INSERT INTO courses (title, description, image, level, category, instructor_id, duration_hours) VALUES 
+('Introducción a la Programación Web', 'Aprende los fundamentos de HTML, CSS y JavaScript para crear tus primeras páginas web.', '/placeholder.svg', 'Principiante', 'Desarrollo Web', 2, 8.5),
+('Desarrollo Frontend con React', 'Domina la biblioteca más popular para crear interfaces de usuario modernas y dinámicas.', '/placeholder.svg', 'Intermedio', 'Desarrollo Web', 2, 12.0),
+('Análisis de Datos con Python', 'Aprende a procesar y analizar datos utilizando Python y sus librerías más populares.', '/placeholder.svg', 'Intermedio', 'Ciencia de Datos', 2, 15.0),
+('Curso de PHP 1', 'Fundamentos de programación con PHP', '/placeholder.svg', 'Principiante', 'Desarrollo', 2, 10.5),
+('Curso de PHP 2', 'Desarrollo avanzado con PHP y MySQL', '/placeholder.svg', 'Avanzado', 'Desarrollo', 2, 20.0);
+
+-- Marcamos algunos cursos como completados
+INSERT INTO course_progress (user_id, course_id, progress_percentage, completed_at) VALUES 
+(3, 4, 100, '2023-04-15 00:00:00'),
+(3, 5, 100, '2023-06-20 00:00:00'),
+(3, 1, 35, NULL),
+(3, 2, 75, NULL);
 
 -- Lecciones para el curso de Introducción a la Programación Web
 INSERT INTO lessons (course_id, title, description, content_type, content_data, duration_minutes, order_index) VALUES
@@ -228,11 +235,14 @@ INSERT INTO lessons (course_id, title, description, content_type, content_data, 
 (3, 'Análisis estadístico básico', 'Conceptos estadísticos esenciales para el análisis de datos', 'audio', '{"url": "https://example.com/python3.mp3", "transcript": "La estadística nos permite..."}', 20, 4),
 (3, 'Proyecto final: Análisis de un conjunto de datos', 'Aplica lo aprendido en un proyecto de análisis completo', 'test', '{"instructions": "En este proyecto final, analizarás..."}', 45, 5);
 
--- Quizzes de ejemplo
+-- Quizzes de ejemplo con duración en minutos
 INSERT INTO quizzes (title, description, course_id, duration_minutes, passing_score, difficulty_level, is_published) VALUES
-('Quiz de HTML básico', 'Pon a prueba tus conocimientos de HTML', 1, 15, 70, 'Fácil', 1),
-('Quiz de React', 'Evalúa tu comprensión de los conceptos fundamentales de React', 2, 20, 75, 'Medio', 1),
-('Quiz de Python y Pandas', 'Comprueba tus habilidades con Python y Pandas', 3, 25, 80, 'Difícil', 1);
+('Fundamentos de Gestión de Proyectos', 'Pon a prueba tus conocimientos de HTML', 1, 30, 70, 'Fácil', 1),
+('Scrum Master', 'Evalúa tu comprensión de los conceptos fundamentales de React', 2, 45, 75, 'Medio', 1),
+('Preparación PMP', 'Comprueba tus habilidades con Python y Pandas', 3, 60, 80, 'Difícil', 1),
+('PHP Básico', 'Evalúa tus conocimientos de PHP básico', 4, 35, 70, 'Fácil', 1),
+('PHP Avanzado y MySQL', 'Evalúa tus conocimientos de PHP avanzado y MySQL', 5, 60, 75, 'Difícil', 1),
+('JavaScript Fundamentals', 'Test your knowledge of JavaScript basics', NULL, 45, 70, 'Fácil', 1);
 
 -- Preguntas para el Quiz de HTML
 INSERT INTO quiz_questions (quiz_id, text, type) VALUES
@@ -277,3 +287,19 @@ INSERT INTO quiz_questions (quiz_id, text, type) VALUES
 -- (Continuar con inserciones similares para los demás quizzes)
 
 -- Añadir más datos de ejemplo según sea necesario
+
+-- Agregar intentos de quizzes completados
+INSERT INTO quiz_attempts (quiz_id, user_id, score, passed, completed_at) VALUES
+(1, 3, 85, 1, '2023-03-10 14:30:00'),
+(1, 3, 72, 1, '2023-02-20 10:15:00'),
+(2, 3, 65, 0, '2023-04-25 16:45:00'),
+(2, 3, 78, 1, '2023-03-15 11:20:00'),
+(2, 3, 60, 0, '2023-02-28 09:50:00'),
+(4, 3, 92, 1, '2023-04-25 13:10:00'),
+(5, 3, 88, 1, '2023-07-05 15:35:00'),
+(5, 3, 76, 1, '2023-06-30 14:25:00'),
+(6, 3, 82, 1, '2023-05-15 10:50:00');
+
+-- Estadísticas de dashboard para el usuario estudiante
+INSERT INTO dashboard_stats (user_id, total_study_hours, completed_quizzes, average_score, courses_in_progress)
+VALUES (3, 35.5, 4, 78, 2);
