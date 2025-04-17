@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/tooltip";
 import NotificationsDropdown from "./notifications/NotificationsDropdown";
 import { toast } from "sonner";
+import authService from "@/services/authService";
 
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -25,26 +26,39 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    // Here you would implement the actual logout logic with PHP/MySQL
-    // Example: Make an API call to /api/auth/logout
-    // Clear local storage, session, cookies, etc.
+  const handleLogout = async () => {
+    // Clear any existing toasts
+    toast.dismiss();
     
     // Show loading toast
-    toast.loading("Cerrando sesión...");
-
-    // Simulate API call delay
-    setTimeout(() => {
-      // Clear any stored auth data
-      localStorage.removeItem("auth_token");
-      sessionStorage.clear();
+    const loadingToast = toast.loading("Cerrando sesión...", {
+      closeButton: true
+    });
+    
+    try {
+      // Call the logout service
+      await authService.logout();
+      
+      // Clear loading toast
+      toast.dismiss(loadingToast);
       
       // Show success message
-      toast.success("Sesión cerrada correctamente");
+      toast.success("Sesión cerrada correctamente", {
+        duration: 3000,
+        closeButton: true
+      });
       
       // Redirect to login
       navigate("/");
-    }, 1500);
+    } catch (error) {
+      // Clear loading toast
+      toast.dismiss(loadingToast);
+      
+      // Show error message
+      toast.error("Error al cerrar sesión", {
+        closeButton: true
+      });
+    }
   };
 
   return (

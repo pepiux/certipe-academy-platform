@@ -15,12 +15,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetFooter,
+  SheetClose,
+} from "@/components/ui/sheet";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import QuizCard from "@/components/quiz/QuizCard";
 
 const Quizzes = () => {
   const [currentTab, setCurrentTab] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedDifficulties, setSelectedDifficulties] = useState<string[]>([]);
   const navigate = useNavigate();
   const itemsPerPage = 8;
   
@@ -147,10 +163,41 @@ const Quizzes = () => {
     }
   ];
   
+  const categories = [...new Set(allQuizzes.map(quiz => quiz.category))];
+  const difficulties = [...new Set(allQuizzes.map(quiz => quiz.difficulty))];
+  
+  const handleCategoryToggle = (category: string) => {
+    setSelectedCategories(prev => 
+      prev.includes(category) 
+        ? prev.filter(c => c !== category) 
+        : [...prev, category]
+    );
+  };
+  
+  const handleDifficultyToggle = (difficulty: string) => {
+    setSelectedDifficulties(prev => 
+      prev.includes(difficulty) 
+        ? prev.filter(d => d !== difficulty) 
+        : [...prev, difficulty]
+    );
+  };
+  
+  const resetFilters = () => {
+    setSelectedCategories([]);
+    setSelectedDifficulties([]);
+  };
+  
   const filteredQuizzes = allQuizzes.filter(quiz => {
-    if (currentTab === "my") return quiz.attempts > 0;
-    if (currentTab === "popular") return quiz.questions > 30;
-    return true; // "all" tab
+    if (currentTab === "my" && quiz.attempts === 0) return false;
+    if (currentTab === "popular" && quiz.questions <= 30) return false;
+    
+    if (searchQuery && !quiz.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    
+    if (selectedCategories.length > 0 && !selectedCategories.includes(quiz.category)) return false;
+    
+    if (selectedDifficulties.length > 0 && !selectedDifficulties.includes(quiz.difficulty)) return false;
+    
+    return true;
   });
   
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -159,22 +206,19 @@ const Quizzes = () => {
   const totalPages = Math.ceil(filteredQuizzes.length / itemsPerPage);
   
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+  
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1);
+  };
 
   const startQuiz = (quizId: number) => {
     navigate(`/dashboard/quizzes/${quizId}`);
   };
-
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case "Principiante":
-        return "bg-green-100 text-green-800";
-      case "Intermedio":
-        return "bg-blue-100 text-blue-800";
-      case "Avanzado":
-        return "bg-purple-100 text-purple-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
+  
+  const handleApplyFilters = () => {
+    setCurrentPage(1);
+    setFiltersOpen(false);
   };
 
   return (
@@ -182,19 +226,75 @@ const Quizzes = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 className="text-2xl font-bold">Cuestionarios</h1>
         
-        <div className="flex gap-2">
-          <div className="relative flex-1">
+        <div className="flex gap-2 w-full sm:w-auto">
+          <div className="relative flex-1 w-full sm:w-[350px]">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
               placeholder="Buscar cuestionarios..."
-              className="w-full pl-8 min-w-[200px]"
+              className="w-full pl-8"
+              value={searchQuery}
+              onChange={handleSearch}
             />
           </div>
-          <Button variant="outline">
-            <Filter className="mr-2 h-4 w-4" />
-            Filtros
-          </Button>
+          <Sheet open={filtersOpen} onOpenChange={setFiltersOpen}>
+            <SheetTrigger asChild>
+              <Button variant="outline">
+                <Filter className="mr-2 h-4 w-4" />
+                Filtros
+                {(selectedCategories.length > 0 || selectedDifficulties.length > 0) && (
+                  <span className="ml-1 h-4 w-4 rounded-full bg-primary text-[10px] text-primary-foreground flex items-center justify-center">
+                    {selectedCategories.length + selectedDifficulties.length}
+                  </span>
+                )}
+              </Button>
+            </SheetTrigger>
+            <SheetContent className="w-[300px] sm:w-[400px]">
+              <SheetHeader>
+                <SheetTitle>Filtros</SheetTitle>
+                <SheetDescription>
+                  Filtrar cuestionarios por categoría y dificultad
+                </SheetDescription>
+              </SheetHeader>
+              <div className="py-6">
+                <h3 className="font-medium mb-3">Categorías</h3>
+                <div className="space-y-3">
+                  {categories.map(category => (
+                    <div key={category} className="flex items-center space-x-2">
+                      <Checkbox 
+                        id={`category-${category}`} 
+                        checked={selectedCategories.includes(category)}
+                        onCheckedChange={() => handleCategoryToggle(category)}
+                      />
+                      <Label htmlFor={`category-${category}`}>{category}</Label>
+                    </div>
+                  ))}
+                </div>
+                
+                <h3 className="font-medium mb-3 mt-6">Dificultad</h3>
+                <div className="space-y-3">
+                  {difficulties.map(difficulty => (
+                    <div key={difficulty} className="flex items-center space-x-2">
+                      <Checkbox 
+                        id={`difficulty-${difficulty}`}
+                        checked={selectedDifficulties.includes(difficulty)}
+                        onCheckedChange={() => handleDifficultyToggle(difficulty)}
+                      />
+                      <Label htmlFor={`difficulty-${difficulty}`}>{difficulty}</Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <SheetFooter>
+                <SheetClose asChild>
+                  <Button variant="outline" onClick={resetFilters}>Restablecer</Button>
+                </SheetClose>
+                <SheetClose asChild>
+                  <Button onClick={handleApplyFilters}>Aplicar filtros</Button>
+                </SheetClose>
+              </SheetFooter>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
 
@@ -223,15 +323,21 @@ const Quizzes = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {currentQuizzes.map((quiz) => (
-          <QuizCard
-            key={quiz.id}
-            quiz={quiz}
-            onStart={startQuiz}
-          />
-        ))}
-      </div>
+      {currentQuizzes.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {currentQuizzes.map((quiz) => (
+            <QuizCard
+              key={quiz.id}
+              quiz={quiz}
+              onStart={startQuiz}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">No se encontraron cuestionarios</p>
+        </div>
+      )}
 
       {totalPages > 1 && (
         <div className="flex justify-start mt-8">

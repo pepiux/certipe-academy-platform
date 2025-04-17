@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Filter, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, Filter, ChevronLeft, ChevronRight, X } from "lucide-react";
 import {
   Tabs,
   TabsContent,
@@ -16,6 +16,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetFooter,
+  SheetClose,
+} from "@/components/ui/sheet";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import CourseCard from "@/components/courses/CourseCard";
 import { useNavigate } from "react-router-dom";
 
@@ -35,6 +47,10 @@ interface Course {
 const Courses = () => {
   const [currentTab, setCurrentTab] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedLevels, setSelectedLevels] = useState<string[]>([]);
   const coursesPerPage = 8;
   const navigate = useNavigate();
   
@@ -197,9 +213,45 @@ const Courses = () => {
     }
   ];
   
+  // Get unique categories and levels for filters
+  const categories = [...new Set(allCourses.map(course => course.category))];
+  const levels = [...new Set(allCourses.map(course => course.level))];
+  
+  const handleCategoryToggle = (category: string) => {
+    setSelectedCategories(prev => 
+      prev.includes(category) 
+        ? prev.filter(c => c !== category) 
+        : [...prev, category]
+    );
+  };
+  
+  const handleLevelToggle = (level: string) => {
+    setSelectedLevels(prev => 
+      prev.includes(level) 
+        ? prev.filter(l => l !== level) 
+        : [...prev, level]
+    );
+  };
+  
+  const resetFilters = () => {
+    setSelectedCategories([]);
+    setSelectedLevels([]);
+  };
+  
   const filteredCourses = allCourses.filter(course => {
-    if (currentTab === "my") return course.enrolled;
-    if (currentTab === "popular") return course.students > 200;
+    // Filter by tab
+    if (currentTab === "my" && !course.enrolled) return false;
+    if (currentTab === "popular" && course.students <= 200) return false;
+    
+    // Filter by search query
+    if (searchQuery && !course.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    
+    // Filter by selected categories
+    if (selectedCategories.length > 0 && !selectedCategories.includes(course.category)) return false;
+    
+    // Filter by selected levels
+    if (selectedLevels.length > 0 && !selectedLevels.includes(course.level)) return false;
+    
     return true;
   });
   
@@ -217,25 +269,91 @@ const Courses = () => {
   const continueCourse = (courseId: number) => {
     navigate(`/dashboard/courses/${courseId}`);
   };
+  
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1);
+  };
+  
+  const handleApplyFilters = () => {
+    setCurrentPage(1);
+    setFiltersOpen(false);
+  };
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 className="text-2xl font-bold">Cursos</h1>
         
-        <div className="flex gap-2">
-          <div className="relative flex-1">
+        <div className="flex gap-2 w-full sm:w-auto">
+          <div className="relative flex-1 w-full sm:w-[350px]">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
               placeholder="Buscar cursos..."
-              className="w-full pl-8 min-w-[200px]"
+              className="w-full pl-8"
+              value={searchQuery}
+              onChange={handleSearch}
             />
           </div>
-          <Button variant="outline">
-            <Filter className="mr-2 h-4 w-4" />
-            Filtros
-          </Button>
+          <Sheet open={filtersOpen} onOpenChange={setFiltersOpen}>
+            <SheetTrigger asChild>
+              <Button variant="outline">
+                <Filter className="mr-2 h-4 w-4" />
+                Filtros
+                {(selectedCategories.length > 0 || selectedLevels.length > 0) && (
+                  <span className="ml-1 h-4 w-4 rounded-full bg-primary text-[10px] text-primary-foreground flex items-center justify-center">
+                    {selectedCategories.length + selectedLevels.length}
+                  </span>
+                )}
+              </Button>
+            </SheetTrigger>
+            <SheetContent className="w-[300px] sm:w-[400px]">
+              <SheetHeader>
+                <SheetTitle>Filtros</SheetTitle>
+                <SheetDescription>
+                  Filtrar cursos por categoría y nivel
+                </SheetDescription>
+              </SheetHeader>
+              <div className="py-6">
+                <h3 className="font-medium mb-3">Categorías</h3>
+                <div className="space-y-3">
+                  {categories.map(category => (
+                    <div key={category} className="flex items-center space-x-2">
+                      <Checkbox 
+                        id={`category-${category}`} 
+                        checked={selectedCategories.includes(category)}
+                        onCheckedChange={() => handleCategoryToggle(category)}
+                      />
+                      <Label htmlFor={`category-${category}`}>{category}</Label>
+                    </div>
+                  ))}
+                </div>
+                
+                <h3 className="font-medium mb-3 mt-6">Nivel</h3>
+                <div className="space-y-3">
+                  {levels.map(level => (
+                    <div key={level} className="flex items-center space-x-2">
+                      <Checkbox 
+                        id={`level-${level}`}
+                        checked={selectedLevels.includes(level)}
+                        onCheckedChange={() => handleLevelToggle(level)}
+                      />
+                      <Label htmlFor={`level-${level}`}>{level}</Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <SheetFooter>
+                <SheetClose asChild>
+                  <Button variant="outline" onClick={resetFilters}>Restablecer</Button>
+                </SheetClose>
+                <SheetClose asChild>
+                  <Button onClick={handleApplyFilters}>Aplicar filtros</Button>
+                </SheetClose>
+              </SheetFooter>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
 
@@ -264,16 +382,22 @@ const Courses = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {currentCourses.map((course) => (
-          <CourseCard
-            key={course.id}
-            course={course}
-            onStart={startCourse}
-            onContinue={continueCourse}
-          />
-        ))}
-      </div>
+      {currentCourses.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {currentCourses.map((course) => (
+            <CourseCard
+              key={course.id}
+              course={course}
+              onStart={startCourse}
+              onContinue={continueCourse}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">No se encontraron cursos</p>
+        </div>
+      )}
 
       {totalPages > 1 && (
         <div className="flex justify-start mt-8">

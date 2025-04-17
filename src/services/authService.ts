@@ -1,3 +1,4 @@
+
 import apiClient from './api/client';
 import { toast } from 'sonner';
 
@@ -74,6 +75,9 @@ const authService = {
    * Cierra la sesión del usuario
    */
   async logout(): Promise<void> {
+    // Clear any existing toasts first to prevent duplicates or stuck toasts
+    toast.dismiss();
+    
     try {
       // Llamar al endpoint de logout (opcional, depende de tu implementación en Laravel)
       await apiClient.post('/auth/logout');
@@ -83,7 +87,10 @@ const authService = {
       // Limpiar datos de sesión locales
       localStorage.removeItem('auth_token');
       localStorage.removeItem('user');
-      toast.info('Sesión cerrada correctamente');
+      toast.success('Sesión cerrada correctamente', { 
+        duration: 3000,
+        closeButton: true
+      });
     }
   },
   
