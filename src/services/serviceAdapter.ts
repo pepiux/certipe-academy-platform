@@ -1,5 +1,5 @@
 
-import { configData, API_BASE_URL } from "@/config";
+import { configData, API_BASE_URL, DataSource } from "@/config";
 
 // Clase para realizar peticiones HTTP al backend PHP
 class HttpClient {
