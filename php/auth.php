@@ -51,6 +51,9 @@ try {
     $user = $result->fetch_assoc();
     error_log("Usuario encontrado: " . print_r($user, true));
     
+    // Log para ayudar en la depuración (¡remover en producción!)
+    error_log("Verificando contraseña: '$password' contra hash: '" . $user['password'] . "'");
+    
     // Verificar contraseña (usando password_verify para contraseñas hasheadas)
     if (password_verify($password, $user['password'])) {
         // Generar token de autenticación
@@ -70,6 +73,8 @@ try {
             'role' => $user['role']
         ];
         
+        error_log("Login exitoso para: $email");
+        
         // Enviar respuesta
         json_response([
             'user' => $userResponse,
@@ -77,6 +82,7 @@ try {
         ]);
     } else {
         error_log("Contraseña incorrecta para el usuario: $email");
+        error_log("Algoritmo del hash: " . password_get_info($user['password'])['algoName']);
         json_response(['error' => 'Credenciales inválidas'], 401);
     }
 } catch (Exception $e) {
