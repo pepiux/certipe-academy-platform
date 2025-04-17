@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Filter, ChevronLeft, ChevronRight } from "lucide-react";
@@ -29,6 +30,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import QuizCard from "@/components/quiz/QuizCard";
+import quizService from "@/services/quizService";
+import { toast } from "sonner";
 
 const Quizzes = () => {
   const [currentTab, setCurrentTab] = useState("all");
@@ -37,134 +40,78 @@ const Quizzes = () => {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedDifficulties, setSelectedDifficulties] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [quizzes, setQuizzes] = useState<any[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [difficulties, setDifficulties] = useState<string[]>([]);
+  
   const navigate = useNavigate();
   const itemsPerPage = 8;
   
-  const allQuizzes = [
-    {
-      id: 1,
-      title: "Fundamentos de la Gestión de Proyectos",
-      category: "Project Management",
-      questions: 50,
-      timeLimit: 60, // minutes
-      attempts: 0,
-      difficulty: "Principiante",
-      lastScore: null,
-      bestScore: null,
-      image: "https://placehold.co/400x80?text=Proyecto"
-    },
-    {
-      id: 2,
-      title: "Metodologías Ágiles y Scrum",
-      category: "Agile",
-      questions: 30,
-      timeLimit: 45,
-      attempts: 2,
-      difficulty: "Intermedio",
-      lastScore: 72,
-      bestScore: 84,
-      image: "https://placehold.co/400x80?text=Agile"
-    },
-    {
-      id: 3,
-      title: "Gestión de Riesgos en Proyectos",
-      category: "Risk Management",
-      questions: 25,
-      timeLimit: 30,
-      attempts: 1,
-      difficulty: "Avanzado",
-      lastScore: 68,
-      bestScore: 68,
-      image: "https://placehold.co/400x80?text=Riesgos"
-    },
-    {
-      id: 4,
-      title: "Certificación PMP: Práctica Oficial",
-      category: "Certification",
-      questions: 100,
-      timeLimit: 120,
-      attempts: 3,
-      difficulty: "Avanzado",
-      lastScore: 85,
-      bestScore: 92,
-      image: "https://placehold.co/400x80?text=PMP"
-    },
-    {
-      id: 5,
-      title: "Comunicación en Proyectos",
-      category: "Communication",
-      questions: 40,
-      timeLimit: 50,
-      attempts: 0,
-      difficulty: "Principiante",
-      lastScore: null,
-      bestScore: null,
-      image: "https://placehold.co/400x80?text=Comunicación"
-    },
-    {
-      id: 6,
-      title: "Gestión de Costos",
-      category: "Cost Management",
-      questions: 35,
-      timeLimit: 40,
-      attempts: 1,
-      difficulty: "Intermedio",
-      lastScore: 78,
-      bestScore: 78,
-      image: "https://placehold.co/400x80?text=Costos"
-    },
-    {
-      id: 7,
-      title: "Gestión de Adquisiciones",
-      category: "Procurement",
-      questions: 30,
-      timeLimit: 35,
-      attempts: 0,
-      difficulty: "Intermedio",
-      lastScore: null,
-      bestScore: null,
-      image: "https://placehold.co/400x80?text=Adquisiciones"
-    },
-    {
-      id: 8,
-      title: "Gestión de Stakeholders",
-      category: "Stakeholder Management",
-      questions: 25,
-      timeLimit: 30,
-      attempts: 1,
-      difficulty: "Principiante",
-      lastScore: 92,
-      bestScore: 92,
-      image: "https://placehold.co/400x80?text=Stakeholders"
-    },
-    {
-      id: 9,
-      title: "Agile Leadership",
-      category: "Leadership",
-      questions: 20,
-      timeLimit: 25,
-      attempts: 0,
-      difficulty: "Avanzado",
-      lastScore: null,
-      bestScore: null,
-      image: "https://placehold.co/400x80?text=Leadership"
-    },
-    {
-      id: 10,
-      title: "Herramientas de Project Management",
-      category: "Tools",
-      questions: 45,
-      timeLimit: 50,
-      attempts: 0,
-      difficulty: "Intermedio",
-      lastScore: null,
-      bestScore: null,
-      image: "https://placehold.co/400x80?text=Tools"
-    }
-  ];
-  
-  const categories = [...new Set(allQuizzes.map(quiz => quiz.category))];
-  const difficulties = [...new Set(allQuizzes.map(quiz => quiz.difficulty))];
+  // Cargar los datos de los cuestionarios desde el backend
+  useEffect(() => {
+    const fetchQuizzes = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // Construir los parámetros de filtrado para la API
+        const filters: Record<string, any> = {};
+        if (searchQuery) {
+          filters.search = searchQuery;
+        }
+        if (selectedDifficulties.length === 1) {
+          filters.difficulty = selectedDifficulties[0];
+        }
+        if (selectedCategories.length === 1) {
+          // Asumiendo que category_id podría ser requerido como número
+          // Y que tendrías un mapeo de nombres a IDs
+          filters.category = selectedCategories[0];
+        }
+        
+        // Añadir paginación
+        filters.page = currentPage;
+        filters.per_page = itemsPerPage;
+        
+        // Realizar la petición
+        const response = await quizService.getQuizzes(filters);
+        console.log("Cuestionarios obtenidos:", response);
+        
+        // Formatear los datos para el componente
+        const formattedQuizzes = response.data.map((quiz: any) => ({
+          id: quiz.id,
+          title: quiz.title,
+          category: quiz.category || "Uncategorized",
+          questions: quiz.total_questions || 0,
+          timeLimit: quiz.duration_minutes || 30,
+          attempts: quiz.attempts || 0,
+          difficulty: quiz.difficulty_level || "General",
+          lastScore: quiz.last_score,
+          bestScore: quiz.best_score,
+          image: quiz.image || `https://placehold.co/400x80?text=${encodeURIComponent(quiz.title)}`
+        }));
+        
+        setQuizzes(formattedQuizzes);
+        
+        // Extraer categorías y niveles de dificultad únicos
+        const uniqueCategories = [...new Set(response.data.map((q: any) => q.category).filter(Boolean))];
+        const uniqueDifficulties = [...new Set(response.data.map((q: any) => q.difficulty_level).filter(Boolean))];
+        
+        setCategories(uniqueCategories);
+        setDifficulties(uniqueDifficulties);
+        
+      } catch (err: any) {
+        console.error("Error al obtener los cuestionarios:", err);
+        setError(`Error al cargar los cuestionarios: ${err.message}`);
+        toast.error("Error al cargar los cuestionarios");
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchQuizzes();
+  }, [currentPage, searchQuery, selectedCategories, selectedDifficulties, currentTab]);
   
   const handleCategoryToggle = (category: string) => {
     setSelectedCategories(prev => 
@@ -187,23 +134,16 @@ const Quizzes = () => {
     setSelectedDifficulties([]);
   };
   
-  const filteredQuizzes = allQuizzes.filter(quiz => {
+  // Filtrar cuestionarios basado en la pestaña actual
+  const filteredQuizzes = quizzes.filter(quiz => {
     if (currentTab === "my" && quiz.attempts === 0) return false;
     if (currentTab === "popular" && quiz.questions <= 30) return false;
-    
-    if (searchQuery && !quiz.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
-    
-    if (selectedCategories.length > 0 && !selectedCategories.includes(quiz.category)) return false;
-    
-    if (selectedDifficulties.length > 0 && !selectedDifficulties.includes(quiz.difficulty)) return false;
     
     return true;
   });
   
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentQuizzes = filteredQuizzes.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredQuizzes.length / itemsPerPage);
+  const currentQuizzes = filteredQuizzes.slice(0, itemsPerPage); // Ya paginado del backend
   
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
   
@@ -323,7 +263,15 @@ const Quizzes = () => {
         </div>
       </div>
 
-      {currentQuizzes.length > 0 ? (
+      {loading ? (
+        <div className="text-center py-12">
+          <p>Cargando cuestionarios...</p>
+        </div>
+      ) : error ? (
+        <div className="text-center py-12 text-red-500">
+          <p>{error}</p>
+        </div>
+      ) : currentQuizzes.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {currentQuizzes.map((quiz) => (
             <QuizCard

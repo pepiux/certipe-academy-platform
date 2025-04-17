@@ -5,7 +5,20 @@ import { configData, API_BASE_URL, DataSource } from "@/config";
 class HttpClient {
   async get(endpoint: string) {
     try {
-      const response = await fetch(`${API_BASE_URL}${endpoint}`);
+      // Agregamos el token de autenticación para todas las peticiones
+      const token = localStorage.getItem('auth_token');
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
+      
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        headers
+      });
+      
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -18,11 +31,19 @@ class HttpClient {
 
   async post(endpoint: string, data: any) {
     try {
+      // Agregamos el token de autenticación para todas las peticiones
+      const token = localStorage.getItem('auth_token');
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
+      
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify(data)
       });
       if (!response.ok) {
@@ -37,11 +58,19 @@ class HttpClient {
 
   async put(endpoint: string, data: any) {
     try {
+      // Agregamos el token de autenticación para todas las peticiones
+      const token = localStorage.getItem('auth_token');
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
+      
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify(data)
       });
       if (!response.ok) {
@@ -56,8 +85,19 @@ class HttpClient {
 
   async delete(endpoint: string) {
     try {
+      // Agregamos el token de autenticación para todas las peticiones
+      const token = localStorage.getItem('auth_token');
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
+      
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

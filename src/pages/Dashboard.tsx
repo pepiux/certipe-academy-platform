@@ -1,7 +1,11 @@
-import React from "react";
+
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Clock, FileQuestion, Book, Award, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import courseService from "@/services/courseService";
+import quizService from "@/services/quizService";
 
 import StatCard from "@/components/dashboard/StatCard";
 import StudyHoursChart from "@/components/dashboard/StudyHoursChart";
@@ -13,7 +17,15 @@ import DashboardQuizzes from "@/components/dashboard/DashboardQuizzes";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState({
+    courses: true,
+    quizzes: true
+  });
+  const [courses, setCourses] = useState<any[]>([]);
+  const [quizzes, setQuizzes] = useState<any[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
+  // Datos para las gráficas
   const studyHoursData = [
     { name: 'Lun', hours: 2.5 },
     { name: 'Mar', hours: 1.8 },
@@ -44,144 +56,6 @@ const Dashboard = () => {
     timeSpent: "45 minutes"
   };
 
-  const courses = [
-    {
-      id: 1,
-      title: "Fundamentos de Gestión de Proyectos",
-      category: "Project Management",
-      level: "Principiante",
-      instructor: "María García",
-      image: "https://placehold.co/400x200?text=Gestión+de+Proyectos",
-      progress: 0,
-      lessons: 12,
-      duration: "8 horas",
-      color: "from-indigo-400 to-indigo-600"
-    },
-    {
-      id: 2,
-      title: "Metodologías Ágiles y Scrum",
-      category: "Agile",
-      level: "Intermedio",
-      instructor: "Carlos Rodríguez",
-      image: "https://placehold.co/400x200?text=Scrum",
-      progress: 65,
-      lessons: 8,
-      duration: "6 horas",
-      color: "from-blue-400 to-blue-600"
-    },
-    {
-      id: 3,
-      title: "Gestión de Riesgos en Proyectos",
-      category: "Risk Management",
-      level: "Avanzado",
-      instructor: "Ana Martínez",
-      image: "https://placehold.co/400x200?text=Gestión+de+Riesgos",
-      progress: 25,
-      lessons: 10,
-      duration: "7 horas",
-      color: "from-emerald-400 to-emerald-600"
-    },
-    {
-      id: 4,
-      title: "Certificación PMP: Guía Completa",
-      category: "Certification",
-      level: "Avanzado",
-      instructor: "Javier López",
-      image: "https://placehold.co/400x200?text=PMP",
-      progress: 10,
-      lessons: 20,
-      duration: "15 horas",
-      color: "from-amber-400 to-amber-600"
-    },
-    {
-      id: 5,
-      title: "Introducción a PMI-ACP",
-      category: "Agile",
-      level: "Intermedio",
-      instructor: "Laura Sánchez",
-      image: "https://placehold.co/400x200?text=PMI-ACP",
-      progress: 0,
-      lessons: 14,
-      duration: "10 horas",
-      color: "from-purple-400 to-purple-600"
-    },
-    {
-      id: 6,
-      title: "Liderazgo en Equipos de Proyecto",
-      category: "Leadership",
-      level: "Intermedio",
-      instructor: "Diego Ramírez",
-      image: "https://placehold.co/400x200?text=Leadership",
-      progress: 0,
-      lessons: 12,
-      duration: "9 horas",
-      color: "from-pink-400 to-pink-600"
-    }
-  ];
-
-  const quizzes = [
-    {
-      id: 1,
-      title: "PMP Project Management Knowledge Areas",
-      description: "Test your knowledge of the 10 PMI knowledge areas",
-      questions: 50,
-      duration: 60,
-      lastScore: 78,
-      bestScore: 85,
-      image: "https://placehold.co/400x100?text=PMP+Knowledge+Areas",
-      color: "from-purple-400 to-purple-600",
-      difficulty: "Intermedio",
-      category: "Project Management"
-    },
-    {
-      id: 2,
-      title: "Agile and Scrum Fundamentals",
-      description: "Master the basics of Agile methodology and Scrum framework",
-      questions: 30,
-      duration: 45,
-      lastScore: 64,
-      bestScore: 72,
-      image: "https://placehold.co/400x100?text=Agile+Scrum",
-      color: "from-blue-400 to-blue-600",
-      difficulty: "Basico",
-      category: "Agile"
-    },
-    {
-      id: 3,
-      title: "Risk Management in Projects",
-      description: "Identify, analyze, and respond to project risks",
-      questions: 25,
-      duration: 30,
-      lastScore: 92,
-      bestScore: 92,
-      image: "https://placehold.co/400x100?text=Risk+Management",
-      color: "from-emerald-400 to-emerald-600",
-      difficulty: "Intermedio",
-      category: "Risk Management"
-    },
-    {
-      id: 4,
-      title: "Project Stakeholder Management",
-      description: "Learn to effectively manage project stakeholders",
-      questions: 35,
-      duration: 40,
-      lastScore: 80,
-      bestScore: 85,
-      image: "https://placehold.co/400x100?text=Stakeholder+Management",
-      color: "from-amber-400 to-amber-600",
-      difficulty: "Basico",
-      category: "Project Management"
-    },
-  ];
-
-  const handleStartQuiz = (quizId: number) => {
-    navigate(`/dashboard/quizzes/${quizId}/take`);
-  };
-
-  const handleContinueCourse = (courseId: number) => {
-    navigate(`/dashboard/courses/${courseId}`);
-  };
-
   const recentActivities = [
     {
       id: 1,
@@ -205,6 +79,80 @@ const Dashboard = () => {
       date: "Hace 2 semanas"
     }
   ];
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        setLoading(prev => ({ ...prev, courses: true }));
+        const response = await courseService.getCourses();
+        console.log("Cursos obtenidos:", response.data);
+        
+        // Formatear los datos de los cursos para el componente DashboardCourses
+        const formattedCourses = response.data.map((course: any) => ({
+          id: course.id,
+          title: course.title,
+          category: course.category || "Sin categoría",
+          level: course.level || "General",
+          instructor: course.instructor?.name || "Desconocido",
+          image: course.image || "https://placehold.co/400x200?text=" + encodeURIComponent(course.title),
+          progress: course.progress || 0,
+          lessons: course.lessons_count || 0,
+          duration: course.duration || "0 horas",
+          color: "from-indigo-400 to-indigo-600" // Color por defecto
+        }));
+        
+        setCourses(formattedCourses);
+      } catch (err: any) {
+        console.error("Error al obtener los cursos:", err);
+        setError(`Error al cargar los cursos: ${err.message}`);
+        toast.error("Error al cargar los cursos");
+      } finally {
+        setLoading(prev => ({ ...prev, courses: false }));
+      }
+    };
+
+    const fetchQuizzes = async () => {
+      try {
+        setLoading(prev => ({ ...prev, quizzes: true }));
+        const response = await quizService.getQuizzes();
+        console.log("Cuestionarios obtenidos:", response.data);
+        
+        // Formatear los datos de los quizzes para el componente DashboardQuizzes
+        const formattedQuizzes = response.data.map((quiz: any) => ({
+          id: quiz.id,
+          title: quiz.title,
+          description: quiz.description || "Sin descripción",
+          questions: quiz.total_questions || 0,
+          duration: quiz.duration_minutes || 0,
+          lastScore: quiz.last_score,
+          bestScore: quiz.best_score,
+          image: quiz.image || "https://placehold.co/400x100?text=" + encodeURIComponent(quiz.title),
+          color: "from-blue-400 to-blue-600",
+          difficulty: quiz.difficulty_level || "General",
+          category: quiz.category || "Sin categoría"
+        }));
+        
+        setQuizzes(formattedQuizzes);
+      } catch (err: any) {
+        console.error("Error al obtener los cuestionarios:", err);
+        setError(`Error al cargar los cuestionarios: ${err.message}`);
+        toast.error("Error al cargar los cuestionarios");
+      } finally {
+        setLoading(prev => ({ ...prev, quizzes: false }));
+      }
+    };
+
+    fetchCourses();
+    fetchQuizzes();
+  }, []);
+
+  const handleStartQuiz = (quizId: number) => {
+    navigate(`/dashboard/quizzes/${quizId}/take`);
+  };
+
+  const handleContinueCourse = (courseId: number) => {
+    navigate(`/dashboard/courses/${courseId}`);
+  };
 
   return (
     <div className="space-y-6">
@@ -268,10 +216,18 @@ const Dashboard = () => {
           </Button>
         </div>
         
-        <DashboardCourses 
-          courses={courses}
-          onContinueCourse={handleContinueCourse}
-        />
+        {loading.courses ? (
+          <div className="text-center py-8">Cargando cursos...</div>
+        ) : error ? (
+          <div className="text-center py-8 text-red-500">{error}</div>
+        ) : courses.length > 0 ? (
+          <DashboardCourses 
+            courses={courses}
+            onContinueCourse={handleContinueCourse}
+          />
+        ) : (
+          <div className="text-center py-8">No se encontraron cursos disponibles</div>
+        )}
       </div>
       
       <div className="mb-6">
@@ -287,10 +243,18 @@ const Dashboard = () => {
           </Button>
         </div>
         
-        <DashboardQuizzes
-          quizzes={quizzes}
-          onStartQuiz={handleStartQuiz}
-        />
+        {loading.quizzes ? (
+          <div className="text-center py-8">Cargando cuestionarios...</div>
+        ) : error ? (
+          <div className="text-center py-8 text-red-500">{error}</div>
+        ) : quizzes.length > 0 ? (
+          <DashboardQuizzes
+            quizzes={quizzes}
+            onStartQuiz={handleStartQuiz}
+          />
+        ) : (
+          <div className="text-center py-8">No se encontraron cuestionarios disponibles</div>
+        )}
       </div>
     </div>
   );

@@ -34,7 +34,15 @@ const apiClient = {
   async get(endpoint: string, customOptions = {}): Promise<any> {
     // Si estamos usando el backend PHP, usar el httpClient
     if (!useMock() && httpClient) {
-      return httpClient.get(endpoint);
+      console.log('Usando httpClient para GET a:', endpoint);
+      try {
+        const response = await httpClient.get(endpoint);
+        console.log('Respuesta de httpClient GET:', response);
+        return response;
+      } catch (error) {
+        console.error('Error en httpClient GET:', error);
+        throw error;
+      }
     }
     return this.request('GET', endpoint, null, customOptions);
   },
@@ -48,7 +56,7 @@ const apiClient = {
       console.log('Usando httpClient para POST a:', endpoint);
       try {
         const response = await httpClient.post(endpoint, data);
-        console.log('Respuesta de httpClient:', response);
+        console.log('Respuesta de httpClient POST:', response);
         return response;
       } catch (error) {
         console.error('Error en httpClient POST:', error);
@@ -64,7 +72,15 @@ const apiClient = {
   async put(endpoint: string, data = null, customOptions = {}): Promise<any> {
     // Si estamos usando el backend PHP, usar el httpClient
     if (!useMock() && httpClient) {
-      return httpClient.put(endpoint, data);
+      console.log('Usando httpClient para PUT a:', endpoint);
+      try {
+        const response = await httpClient.put(endpoint, data);
+        console.log('Respuesta de httpClient PUT:', response);
+        return response;
+      } catch (error) {
+        console.error('Error en httpClient PUT:', error);
+        throw error;
+      }
     }
     return this.request('PUT', endpoint, data, customOptions);
   },
@@ -75,7 +91,15 @@ const apiClient = {
   async delete(endpoint: string, customOptions = {}): Promise<any> {
     // Si estamos usando el backend PHP, usar el httpClient
     if (!useMock() && httpClient) {
-      return httpClient.delete(endpoint);
+      console.log('Usando httpClient para DELETE a:', endpoint);
+      try {
+        const response = await httpClient.delete(endpoint);
+        console.log('Respuesta de httpClient DELETE:', response);
+        return response;
+      } catch (error) {
+        console.error('Error en httpClient DELETE:', error);
+        throw error;
+      }
     }
     return this.request('DELETE', endpoint, null, customOptions);
   },
