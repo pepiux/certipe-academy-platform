@@ -33,7 +33,9 @@ const courseService = {
    * Obtiene todos los cursos (con opción de filtrado)
    */
   async getCourses(filters: CourseFilters = {}): Promise<{data: Course[], meta: any}> {
-    // Si estamos en modo mock, seguimos el flujo original
+    // Si estamos en modo mock, seguimos el flujo original para mock
+    console.log("Consultando cursos en modo: ", useMock() ? "Mock" : "Backend");
+    
     if (useMock()) {
       // Convertir los filtros a query string
       const queryParams = new URLSearchParams();

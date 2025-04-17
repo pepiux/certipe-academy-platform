@@ -1,4 +1,3 @@
-
 import { API_BASE_URL, defaultOptions, getAuthHeaders } from './config';
 import { toast } from 'sonner';
 import { useMock, httpClient } from '@/services/serviceAdapter';
@@ -44,6 +43,9 @@ const apiClient = {
         throw error;
       }
     }
+    // Si estamos en modo Mock, seguir con el flujo original
+    const isMock = useMock();
+    console.log(`Realizando petición GET en modo ${isMock ? 'Mock' : 'API'} a:`, endpoint);
     return this.request('GET', endpoint, null, customOptions);
   },
   
@@ -63,6 +65,9 @@ const apiClient = {
         throw error;
       }
     }
+    // Si estamos en modo Mock, seguir con el flujo original
+    const isMock = useMock();
+    console.log(`Realizando petición POST en modo ${isMock ? 'Mock' : 'API'} a:`, endpoint);
     return this.request('POST', endpoint, data, customOptions);
   },
   
@@ -109,8 +114,9 @@ const apiClient = {
    */
   async request<T>(method: string, endpoint: string, data = null, customOptions = {}): Promise<T> {
     // Si estamos usando mock, utilizar el API_BASE_URL original
-    const url = `${API_BASE_URL}${endpoint}`;
-    console.log(`Realizando petición ${method} a:`, url);
+    const apiBaseUrl = useMock() ? 'http://localhost:8000/api' : API_BASE_URL;
+    const url = `${apiBaseUrl}${endpoint}`;
+    console.log(`Realizando petición ${method} a:`, url, 'Modo Mock:', useMock());
     
     // Configurar las opciones de la petición
     const options: RequestInit = {

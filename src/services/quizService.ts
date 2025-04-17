@@ -51,6 +51,8 @@ const quizService = {
    * Obtiene todos los quizzes
    */
   async getQuizzes(filters: Record<string, any> = {}): Promise<{data: Quiz[], meta: any}> {
+    console.log("Consultando quizzes en modo: ", useMock() ? "Mock" : "Backend");
+    
     if (useMock()) {
       const queryParams = new URLSearchParams();
       
