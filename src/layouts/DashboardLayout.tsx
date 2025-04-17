@@ -6,23 +6,24 @@ import Header from "@/components/Header";
 
 const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const location = useLocation();
   
-  // Initialize sidebar state based on screen size
+  // Detectar si estamos en móvil y configurar el estado inicial del menú
   useEffect(() => {
-    const handleResize = () => {
-      setSidebarOpen(window.innerWidth >= 768);
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      // Solo mostramos el sidebar expandido por defecto en desktop
+      setSidebarOpen(!mobile);
     };
 
-    // Set initial state
-    handleResize();
-
-    // Add event listener for window resize
-    window.addEventListener("resize", handleResize);
+    // Comprobar al cargar y en cada cambio de tamaño
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
     
-    // Cleanup
     return () => {
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("resize", checkMobile);
     };
   }, []);
   
@@ -30,18 +31,17 @@ const DashboardLayout = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  // Log the current route for debugging purposes
-  React.useEffect(() => {
-    console.log("Current route:", location.pathname);
-  }, [location.pathname]);
-
   // Check if we're on a lesson page
   const isLessonPage = location.pathname.includes('/lesson/');
 
   return (
     <div className="h-screen flex overflow-hidden bg-gray-100">
-      {/* Sidebar */}
-      <Sidebar isOpen={sidebarOpen} />
+      {/* Sidebar con nuevos props */}
+      <Sidebar 
+        isOpen={sidebarOpen} 
+        onClose={() => setSidebarOpen(false)}
+        isMobile={isMobile}
+      />
       
       {/* Main content */}
       <div className="flex-1 overflow-auto">
