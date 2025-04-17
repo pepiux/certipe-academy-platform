@@ -1,3 +1,4 @@
+
 import { API_BASE_URL, defaultOptions, getAuthHeaders } from './config';
 import { toast } from 'sonner';
 import { useMock, httpClient } from '@/services/serviceAdapter';
@@ -23,6 +24,143 @@ interface ApiClient {
   request<T>(method: string, endpoint: string, data?: any, customOptions?: Record<string, any>): Promise<T>;
 }
 
+// Mock data for testing without backend
+const mockData = {
+  courses: {
+    data: [
+      {
+        id: 1,
+        title: "Introducción a la Gestión de Proyectos",
+        description: "Aprende los fundamentos de la gestión de proyectos",
+        image: "https://placehold.co/400x200?text=Gestión+de+Proyectos",
+        lessons_count: 12,
+        duration: "8 horas",
+        level: "Principiante",
+        progress: 35,
+        instructor: {
+          id: 1,
+          name: "Carlos Rodríguez"
+        },
+        category: "Gestión",
+        created_at: "2023-01-15",
+        updated_at: "2023-03-22"
+      },
+      {
+        id: 2,
+        title: "Metodologías Ágiles y Scrum",
+        description: "Domina las metodologías ágiles y el framework Scrum",
+        image: "https://placehold.co/400x200?text=Metodologías+Ágiles",
+        lessons_count: 10,
+        duration: "6 horas",
+        level: "Intermedio",
+        progress: 75,
+        instructor: {
+          id: 2,
+          name: "Ana Martínez"
+        },
+        category: "Agile",
+        created_at: "2023-02-10",
+        updated_at: "2023-04-18"
+      },
+      {
+        id: 3,
+        title: "Certificación PMP",
+        description: "Preparación completa para el examen de certificación PMP",
+        image: "https://placehold.co/400x200?text=Certificación+PMP",
+        lessons_count: 20,
+        duration: "15 horas",
+        level: "Avanzado",
+        progress: 0,
+        instructor: {
+          id: 3,
+          name: "Javier López"
+        },
+        category: "Certificación",
+        created_at: "2023-03-05",
+        updated_at: "2023-05-12"
+      }
+    ],
+    meta: {
+      current_page: 1,
+      last_page: 1,
+      total: 3
+    }
+  },
+  quizzes: {
+    data: [
+      {
+        id: 1,
+        title: "Fundamentos de Gestión de Proyectos",
+        description: "Evalúa tu conocimiento sobre los conceptos básicos de la gestión de proyectos",
+        course_id: 1,
+        duration_minutes: 30,
+        passing_score: 70,
+        total_questions: 15,
+        difficulty_level: "Principiante",
+        is_published: true,
+        last_score: 85,
+        best_score: 85,
+        category: "Gestión",
+        created_at: "2023-02-15",
+        updated_at: "2023-02-15"
+      },
+      {
+        id: 2,
+        title: "Scrum Master",
+        description: "Comprueba tus conocimientos sobre el rol del Scrum Master",
+        course_id: 2,
+        duration_minutes: 45,
+        passing_score: 80,
+        total_questions: 20,
+        difficulty_level: "Intermedio",
+        is_published: true,
+        last_score: 65,
+        best_score: 78,
+        category: "Agile",
+        created_at: "2023-03-10",
+        updated_at: "2023-03-10"
+      },
+      {
+        id: 3,
+        title: "Preparación PMP",
+        description: "Simulacro de examen para la certificación PMP",
+        course_id: 3,
+        duration_minutes: 60,
+        passing_score: 75,
+        total_questions: 30,
+        difficulty_level: "Avanzado",
+        is_published: true,
+        last_score: null,
+        best_score: null,
+        category: "Certificación",
+        created_at: "2023-04-05",
+        updated_at: "2023-04-05"
+      }
+    ],
+    meta: {
+      current_page: 1,
+      last_page: 1,
+      total: 3
+    }
+  },
+  quiz_questions: {
+    1: [
+      {
+        id: 1,
+        quiz_id: 1,
+        text: "¿Qué es un proyecto?",
+        type: "single",
+        options: [
+          { id: 1, text: "Una operación continua", is_correct: false },
+          { id: 2, text: "Un esfuerzo temporal que crea un resultado único", is_correct: true },
+          { id: 3, text: "Un departamento dentro de una organización", is_correct: false },
+          { id: 4, text: "Un proceso repetitivo", is_correct: false }
+        ]
+      }
+    ]
+  }
+};
+
 /**
  * Cliente para realizar peticiones HTTP a la API
  */
@@ -43,9 +181,48 @@ const apiClient = {
         throw error;
       }
     }
-    // Si estamos en modo Mock, seguir con el flujo original
-    const isMock = useMock();
-    console.log(`Realizando petición GET en modo ${isMock ? 'Mock' : 'API'} a:`, endpoint);
+    
+    // Si estamos en modo Mock, manejar respuestas simuladas
+    if (useMock()) {
+      console.log('Usando datos mock para GET a:', endpoint);
+      
+      // Extraer el recurso del endpoint (quizzes, courses, etc)
+      const pathParts = endpoint.split('?')[0].split('/').filter(Boolean);
+      const resource = pathParts[0];
+      const resourceId = pathParts.length > 1 ? parseInt(pathParts[1]) : null;
+      const subResource = pathParts.length > 2 ? pathParts[2] : null;
+      
+      console.log('Recurso solicitado:', resource, 'ID:', resourceId, 'Subrecurso:', subResource);
+      
+      // Simular delay de red
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // Devolver datos mock según el recurso solicitado
+      if (resource === 'courses') {
+        if (resourceId) {
+          const course = mockData.courses.data.find(c => c.id === resourceId);
+          return course || { error: 'Course not found' };
+        }
+        return mockData.courses;
+      } 
+      else if (resource === 'quizzes') {
+        if (resourceId) {
+          if (subResource === 'questions') {
+            return mockData.quiz_questions[resourceId] || [];
+          }
+          const quiz = mockData.quizzes.data.find(q => q.id === resourceId);
+          return quiz || { error: 'Quiz not found' };
+        }
+        return mockData.quizzes;
+      }
+      
+      // Si no hay datos específicos para el endpoint
+      console.warn('No hay datos mock para el endpoint:', endpoint);
+      return { data: [], meta: { total: 0 } };
+    }
+    
+    // Si no estamos en modo Mock, seguir con el flujo original
+    console.log(`Realizando petición GET a la API:`, endpoint);
     return this.request('GET', endpoint, null, customOptions);
   },
   
@@ -65,9 +242,25 @@ const apiClient = {
         throw error;
       }
     }
-    // Si estamos en modo Mock, seguir con el flujo original
-    const isMock = useMock();
-    console.log(`Realizando petición POST en modo ${isMock ? 'Mock' : 'API'} a:`, endpoint);
+    
+    // Si estamos en modo Mock, simular respuestas POST
+    if (useMock()) {
+      console.log('Usando datos mock para POST a:', endpoint, 'con datos:', data);
+      
+      // Simular delay de red
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // Manejar casos específicos para POST
+      if (endpoint.includes('attempts')) {
+        return { attemptId: 1 };
+      }
+      
+      // Respuesta genérica para otros POST
+      return { success: true, data };
+    }
+    
+    // Si no estamos en modo Mock, seguir con el flujo original
+    console.log(`Realizando petición POST a la API:`, endpoint);
     return this.request('POST', endpoint, data, customOptions);
   },
   
@@ -87,6 +280,17 @@ const apiClient = {
         throw error;
       }
     }
+    
+    // Si estamos en modo Mock, simular respuestas PUT
+    if (useMock()) {
+      console.log('Usando datos mock para PUT a:', endpoint, 'con datos:', data);
+      
+      // Simular delay de red
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      return { success: true, data };
+    }
+    
     return this.request('PUT', endpoint, data, customOptions);
   },
   
@@ -106,6 +310,17 @@ const apiClient = {
         throw error;
       }
     }
+    
+    // Si estamos en modo Mock, simular respuestas DELETE
+    if (useMock()) {
+      console.log('Usando datos mock para DELETE a:', endpoint);
+      
+      // Simular delay de red
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      return { success: true };
+    }
+    
     return this.request('DELETE', endpoint, null, customOptions);
   },
   
