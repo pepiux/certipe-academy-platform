@@ -109,9 +109,6 @@ const authService = {
    * Cierra la sesión del usuario
    */
   async logout(): Promise<void> {
-    // Clear any existing toasts first to prevent duplicates or stuck toasts
-    toast.dismiss();
-    
     try {
       if (!useMock()) {
         // Llamar al endpoint de logout (opcional)
@@ -123,10 +120,7 @@ const authService = {
       // Limpiar datos de sesión locales
       localStorage.removeItem('auth_token');
       localStorage.removeItem('user');
-      toast.success('Sesión cerrada correctamente', { 
-        duration: 3000,
-        closeButton: true
-      });
+      // El mensaje de éxito se mostrará desde el componente Header
     }
   },
   

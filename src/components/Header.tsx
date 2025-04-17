@@ -32,7 +32,8 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
     
     // Show loading toast
     const loadingToast = toast.loading("Cerrando sesión...", {
-      closeButton: true
+      duration: 10000, // Tiempo máximo de 10 segundos
+      dismissible: false
     });
     
     try {
@@ -45,19 +46,19 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
       // Show success message
       toast.success("Sesión cerrada correctamente", {
         duration: 3000,
-        closeButton: true
+        onAutoClose: () => navigate("/")
       });
       
-      // Redirect to login
-      navigate("/");
+      // Redirect to login after a short delay
+      setTimeout(() => {
+        navigate("/");
+      }, 1000);
     } catch (error) {
       // Clear loading toast
       toast.dismiss(loadingToast);
       
       // Show error message
-      toast.error("Error al cerrar sesión", {
-        closeButton: true
-      });
+      toast.error("Error al cerrar sesión");
     }
   };
 

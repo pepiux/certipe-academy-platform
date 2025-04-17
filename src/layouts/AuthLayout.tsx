@@ -26,8 +26,11 @@ const AuthLayout = () => {
       {/* Right side - Auth forms */}
       <div className="w-full md:w-[40%] flex items-center justify-center p-4 md:p-8">
         <div className="w-full max-w-md">
-          <div className="md:hidden mb-8">
-            <Logo />
+          {/* Solución para que el logo se vea en modo móvil con un fondo que contraste */}
+          <div className="md:hidden mb-8 flex justify-center">
+            <div className="bg-primary/10 p-3 rounded-lg">
+              <Logo textColor="text-primary" />
+            </div>
           </div>
           <Outlet />
         </div>
