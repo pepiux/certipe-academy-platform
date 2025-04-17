@@ -28,7 +28,6 @@ const Toaster = ({ ...props }: ToasterProps) => {
         },
         // Quitar el botón de cerrar y hacer que los toasts se puedan cerrar haciendo clic en ellos
         closeButton: false,
-        dismissible: true,
       }}
       {...props}
     />
