@@ -112,11 +112,11 @@
   }
   
   .sidebar-link:hover {
-    @apply bg-primary text-sidebar;
+    @apply bg-white text-sidebar-background;
   }
   
   .sidebar-link.active {
-    @apply bg-white text-sidebar;
+    @apply bg-white text-sidebar-background;
   }
 
   .sidebar-category {

@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -8,12 +9,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import NotificationsDropdown from "./notifications/NotificationsDropdown";
 import { toast } from "sonner";
 import authService from "@/services/authService";
@@ -59,47 +54,29 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
     <header className="border-b px-4 py-3 bg-background">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={toggleSidebar}
-                  className="hover:bg-transparent hover:text-primary"
-                >
-                  <Menu className="h-5 w-5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Alternar menú lateral</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleSidebar}
+            className="hover:bg-transparent hover:text-primary"
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
         </div>
 
         <div className="flex items-center gap-4">
           <NotificationsDropdown />
 
           <DropdownMenu>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <DropdownMenuTrigger asChild>
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      className="rounded-full p-0 w-9 h-9 bg-primary text-white hover:bg-primary/90"
-                    >
-                      JR
-                    </Button>
-                  </DropdownMenuTrigger>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Menú de usuario</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                className="rounded-full p-0 w-9 h-9 bg-primary text-white hover:bg-primary/90"
+              >
+                JR
+              </Button>
+            </DropdownMenuTrigger>
 
             <DropdownMenuContent align="end" className="w-48">
               <DropdownMenuItem onClick={() => navigate("/dashboard/profile")}>

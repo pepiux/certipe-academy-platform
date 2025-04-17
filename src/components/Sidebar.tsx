@@ -23,7 +23,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isMobile }) => {
   
   // Determinar las clases CSS basadas en el estado del menú y si estamos en móvil
   const sidebarClasses = `
-    bg-sidebar transition-all duration-300 flex flex-col h-screen 
+    bg-sidebar-background transition-all duration-300 flex flex-col h-screen 
     ${isMobile 
       ? `fixed z-20 ${isOpen ? 'translate-x-0' : '-translate-x-full'} w-64`
       : `sticky top-0 ${isOpen ? 'w-64' : 'w-16'}`
