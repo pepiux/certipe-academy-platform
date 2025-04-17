@@ -21,7 +21,7 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isMobile }) => {
   const location = useLocation();
   
-  // Consistent styling for both mobile and desktop versions
+  // Usando exactamente la misma clase de fondo para ambas versiones
   const sidebarClasses = `
     bg-[#1A1F2C] transition-all duration-300 flex flex-col h-screen 
     ${isMobile 
@@ -136,10 +136,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isMobile }) => {
         {isOpen && <div>2025 Inflex. Todos los derechos reservados.</div>}
       </div>
       
-      {/* Overlay para cerrar el menú en móvil cuando se hace clic fuera */}
+      {/* Overlay para cerrar el menú en móvil cuando se hace clic fuera - Modificando la opacidad */}
       {isMobile && isOpen && (
         <div 
-          className="fixed inset-0 bg-black/80 z-10" 
+          className="fixed inset-0 bg-black/50 z-10" 
           onClick={onClose}
           aria-hidden="true"
         />
