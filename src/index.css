@@ -112,7 +112,7 @@
   }
   
   .sidebar-link:hover {
-    @apply bg-white text-[#1A1F2C];
+    @apply bg-brand-blue text-white;
   }
   
   .sidebar-link.active {

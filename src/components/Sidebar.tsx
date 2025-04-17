@@ -21,7 +21,7 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isMobile }) => {
   const location = useLocation();
   
-  // Consistent styling for both mobile and desktop
+  // Consistent styling for both mobile and desktop versions
   const sidebarClasses = `
     bg-[#1A1F2C] transition-all duration-300 flex flex-col h-screen 
     ${isMobile 
@@ -63,6 +63,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isMobile }) => {
           <NavLink 
             to="/dashboard" 
             className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
+            onClick={isMobile ? onClose : undefined}
             end
           >
             <LayoutDashboard size={20} className="min-w-5 min-h-5" />
@@ -72,6 +73,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isMobile }) => {
           <NavLink 
             to="/dashboard/courses" 
             className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
+            onClick={isMobile ? onClose : undefined}
           >
             <BookOpen size={20} className="min-w-5 min-h-5" />
             {isOpen && <span>Cursos</span>}
@@ -80,6 +82,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isMobile }) => {
           <NavLink 
             to="/dashboard/quizzes" 
             className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
+            onClick={isMobile ? onClose : undefined}
           >
             <FileQuestion size={20} className="min-w-5 min-h-5" />
             {isOpen && <span>Cuestionarios</span>}
@@ -93,6 +96,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isMobile }) => {
           <NavLink 
             to="/dashboard/admin/users" 
             className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
+            onClick={isMobile ? onClose : undefined}
           >
             <Users size={20} className="min-w-5 min-h-5" />
             {isOpen && <span>Gestión de usuarios</span>}
@@ -101,6 +105,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isMobile }) => {
           <NavLink 
             to="/dashboard/admin/courses" 
             className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
+            onClick={isMobile ? onClose : undefined}
           >
             <BookOpen size={20} className="min-w-5 min-h-5" />
             {isOpen && <span>Gestión de cursos</span>}
@@ -109,6 +114,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isMobile }) => {
           <NavLink 
             to="/dashboard/admin/quizzes" 
             className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
+            onClick={isMobile ? onClose : undefined}
           >
             <FileQuestion size={20} className="min-w-5 min-h-5" />
             {isOpen && <span>Gestión de cuestionarios</span>}
@@ -117,6 +123,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isMobile }) => {
           <NavLink 
             to="/dashboard/admin/settings" 
             className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
+            onClick={isMobile ? onClose : undefined}
           >
             <Settings size={20} className="min-w-5 min-h-5" />
             {isOpen && <span>Configuración del sistema</span>}
