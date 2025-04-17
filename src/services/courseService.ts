@@ -1,5 +1,6 @@
 
 import apiClient from './api/client';
+import { useMock } from '@/services/serviceAdapter';
 
 // Interfaces para los tipos de datos
 interface Course {
@@ -32,45 +33,71 @@ const courseService = {
    * Obtiene todos los cursos (con opción de filtrado)
    */
   async getCourses(filters: CourseFilters = {}): Promise<{data: Course[], meta: any}> {
-    // Convertir los filtros a query string
-    const queryParams = new URLSearchParams();
-    
-    for (const [key, value] of Object.entries(filters)) {
-      if (value !== undefined && value !== null) {
-        queryParams.append(key, value.toString());
+    // Si estamos en modo mock, seguimos el flujo original
+    if (useMock()) {
+      // Convertir los filtros a query string
+      const queryParams = new URLSearchParams();
+      
+      for (const [key, value] of Object.entries(filters)) {
+        if (value !== undefined && value !== null) {
+          queryParams.append(key, value.toString());
+        }
       }
+      
+      const query = queryParams.toString() ? `?${queryParams.toString()}` : '';
+      return await apiClient.get<{data: Course[], meta: any}>(`/courses${query}`);
+    } else {
+      // Si estamos usando backend PHP
+      let endpoint = '/courses.php';
+      if (Object.keys(filters).length > 0) {
+        endpoint += '?' + new URLSearchParams(filters as Record<string, string>).toString();
+      }
+      return await apiClient.get<{data: Course[], meta: any}>(endpoint);
     }
-    
-    const query = queryParams.toString() ? `?${queryParams.toString()}` : '';
-    return await apiClient.get<{data: Course[], meta: any}>(`/courses${query}`);
   },
   
   /**
    * Obtiene un curso por su ID
    */
   async getCourse(id: number): Promise<Course> {
-    return await apiClient.get<Course>(`/courses/${id}`);
+    if (useMock()) {
+      return await apiClient.get<Course>(`/courses/${id}`);
+    } else {
+      return await apiClient.get<Course>(`/course.php?id=${id}`);
+    }
   },
   
   /**
    * Crea un nuevo curso
    */
   async createCourse(courseData: Partial<Course>): Promise<Course> {
-    return await apiClient.post<Course>('/courses', courseData);
+    if (useMock()) {
+      return await apiClient.post<Course>('/courses', courseData);
+    } else {
+      return await apiClient.post<Course>('/course_create.php', courseData);
+    }
   },
   
   /**
    * Actualiza un curso existente
    */
   async updateCourse(id: number, courseData: Partial<Course>): Promise<Course> {
-    return await apiClient.put<Course>(`/courses/${id}`, courseData);
+    if (useMock()) {
+      return await apiClient.put<Course>(`/courses/${id}`, courseData);
+    } else {
+      return await apiClient.post<Course>(`/course_update.php`, { id, ...courseData });
+    }
   },
   
   /**
    * Elimina un curso
    */
   async deleteCourse(id: number): Promise<void> {
-    await apiClient.delete(`/courses/${id}`);
+    if (useMock()) {
+      await apiClient.delete(`/courses/${id}`);
+    } else {
+      await apiClient.post('/course_delete.php', { id });
+    }
   }
 };
 

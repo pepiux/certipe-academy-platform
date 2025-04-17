@@ -1,6 +1,7 @@
 
 import { API_BASE_URL, defaultOptions, getAuthHeaders } from './config';
 import { toast } from 'sonner';
+import { useMock, httpClient } from '@/services/serviceAdapter';
 
 class ApiError extends Error {
   status: number;
@@ -31,6 +32,10 @@ const apiClient = {
    * Realiza una petición GET
    */
   async get(endpoint: string, customOptions = {}): Promise<any> {
+    // Si estamos usando el backend PHP, usar el httpClient
+    if (!useMock() && httpClient) {
+      return httpClient.get(endpoint);
+    }
     return this.request('GET', endpoint, null, customOptions);
   },
   
@@ -38,6 +43,10 @@ const apiClient = {
    * Realiza una petición POST
    */
   async post(endpoint: string, data = null, customOptions = {}): Promise<any> {
+    // Si estamos usando el backend PHP, usar el httpClient
+    if (!useMock() && httpClient) {
+      return httpClient.post(endpoint, data);
+    }
     return this.request('POST', endpoint, data, customOptions);
   },
   
@@ -45,6 +54,10 @@ const apiClient = {
    * Realiza una petición PUT
    */
   async put(endpoint: string, data = null, customOptions = {}): Promise<any> {
+    // Si estamos usando el backend PHP, usar el httpClient
+    if (!useMock() && httpClient) {
+      return httpClient.put(endpoint, data);
+    }
     return this.request('PUT', endpoint, data, customOptions);
   },
   
@@ -52,6 +65,10 @@ const apiClient = {
    * Realiza una petición DELETE
    */
   async delete(endpoint: string, customOptions = {}): Promise<any> {
+    // Si estamos usando el backend PHP, usar el httpClient
+    if (!useMock() && httpClient) {
+      return httpClient.delete(endpoint);
+    }
     return this.request('DELETE', endpoint, null, customOptions);
   },
   
@@ -59,6 +76,7 @@ const apiClient = {
    * Método genérico para realizar peticiones HTTP
    */
   async request(method: string, endpoint: string, data = null, customOptions = {}): Promise<any> {
+    // Si estamos usando mock, utilizar el API_BASE_URL original
     const url = `${API_BASE_URL}${endpoint}`;
     
     // Configurar las opciones de la petición

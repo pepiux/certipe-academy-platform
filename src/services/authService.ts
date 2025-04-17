@@ -1,6 +1,7 @@
 
 import apiClient from './api/client';
 import { toast } from 'sonner';
+import { useMock } from '@/services/serviceAdapter';
 
 // Interfaces para los tipos de datos
 interface LoginCredentials {
@@ -31,24 +32,35 @@ const authService = {
    */
   async login(credentials: LoginCredentials): Promise<boolean> {
     try {
-      // Simulamos una respuesta exitosa para desarrollo
-      // En producción, esto sería una llamada real a la API
-      const response = {
-        user: {
-          id: 1,
-          name: 'Usuario Demo',
-          email: credentials.email,
-          role: 'user'
-        },
-        token: 'token-demo-123456'
-      };
-      
-      // Guardar token y datos de usuario
-      localStorage.setItem('auth_token', response.token);
-      localStorage.setItem('user', JSON.stringify(response.user));
-      
-      return true;
+      if (useMock()) {
+        // Simulamos una respuesta exitosa para desarrollo
+        const response = {
+          user: {
+            id: 1,
+            name: 'Usuario Demo',
+            email: credentials.email,
+            role: 'user'
+          },
+          token: 'token-demo-123456'
+        };
+        
+        // Guardar token y datos de usuario
+        localStorage.setItem('auth_token', response.token);
+        localStorage.setItem('user', JSON.stringify(response.user));
+        
+        return true;
+      } else {
+        // Llamar al backend PHP
+        const response = await apiClient.post<AuthResponse>('/auth.php', credentials);
+        
+        // Guardar token y datos de usuario
+        localStorage.setItem('auth_token', response.token);
+        localStorage.setItem('user', JSON.stringify(response.user));
+        
+        return true;
+      }
     } catch (error) {
+      toast.error("Error de inicio de sesión");
       return false;
     }
   },
@@ -58,15 +70,37 @@ const authService = {
    */
   async register(userData: RegisterData): Promise<boolean> {
     try {
-      const response = await apiClient.post<AuthResponse>('/auth/register', userData);
-      
-      // Guardar token y datos de usuario
-      localStorage.setItem('auth_token', response.token);
-      localStorage.setItem('user', JSON.stringify(response.user));
-      
-      toast.success('Registro exitoso');
-      return true;
+      if (useMock()) {
+        // Simulamos una respuesta exitosa para desarrollo
+        const response = {
+          user: {
+            id: 1,
+            name: userData.name,
+            email: userData.email,
+            role: 'user'
+          },
+          token: 'token-demo-123456'
+        };
+        
+        // Guardar token y datos de usuario
+        localStorage.setItem('auth_token', response.token);
+        localStorage.setItem('user', JSON.stringify(response.user));
+        
+        toast.success('Registro exitoso');
+        return true;
+      } else {
+        // Llamar al backend PHP
+        const response = await apiClient.post<AuthResponse>('/register.php', userData);
+        
+        // Guardar token y datos de usuario
+        localStorage.setItem('auth_token', response.token);
+        localStorage.setItem('user', JSON.stringify(response.user));
+        
+        toast.success('Registro exitoso');
+        return true;
+      }
     } catch (error) {
+      toast.error("Error en el registro");
       return false;
     }
   },
@@ -79,8 +113,10 @@ const authService = {
     toast.dismiss();
     
     try {
-      // Llamar al endpoint de logout (opcional, depende de tu implementación en Laravel)
-      await apiClient.post('/auth/logout');
+      if (!useMock()) {
+        // Llamar al endpoint de logout (opcional)
+        await apiClient.post('/logout.php', {});
+      }
     } catch (error) {
       console.error('Error al cerrar sesión en el servidor', error);
     } finally {
