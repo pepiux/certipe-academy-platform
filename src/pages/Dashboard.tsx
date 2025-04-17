@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
@@ -100,6 +99,7 @@ const Dashboard = () => {
       } catch (err: any) {
         console.error("Error al cargar las estadísticas:", err);
         toast.error("Error al cargar las estadísticas del dashboard");
+        setStats(null); // Ensure stats is null on error
       } finally {
         setLoading(prev => ({ ...prev, stats: false }));
       }
@@ -175,6 +175,30 @@ const Dashboard = () => {
     navigate(`/dashboard/courses/${courseId}`);
   };
 
+  // Create empty default stat objects for when data is not available
+  const emptyStats: DashboardStats = {
+    study_hours: { 
+      total: 0, 
+      by_course: [], 
+      by_quiz: [] 
+    },
+    completed_quizzes: { 
+      total: 0, 
+      quizzes: [] 
+    },
+    average_scores: { 
+      overall: 0, 
+      by_quiz: [] 
+    },
+    courses_in_progress: { 
+      total: 0, 
+      courses: [] 
+    }
+  };
+
+  // Use either the loaded stats or the empty stats object
+  const displayStats = stats || emptyStats;
+
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">Panel de control</h1>
@@ -185,31 +209,26 @@ const Dashboard = () => {
           Array(4).fill(0).map((_, i) => (
             <div key={i} className="bg-muted/40 h-[120px] rounded-lg animate-pulse"></div>
           ))
-        ) : stats ? (
+        ) : (
           <>
             <StudyHoursWidget 
-              total={stats.study_hours.total} 
-              byCourse={stats.study_hours.by_course}
-              byQuiz={stats.study_hours.by_quiz}
+              total={displayStats.study_hours.total} 
+              byCourse={displayStats.study_hours.by_course}
+              byQuiz={displayStats.study_hours.by_quiz}
             />
             <CompletedQuizzesWidget 
-              total={stats.completed_quizzes.total} 
-              quizzes={stats.completed_quizzes.quizzes}
+              total={displayStats.completed_quizzes.total} 
+              quizzes={displayStats.completed_quizzes.quizzes}
             />
             <AverageScoreWidget 
-              overall={stats.average_scores.overall}
-              quizzes={stats.average_scores.by_quiz}
+              overall={displayStats.average_scores.overall}
+              quizzes={displayStats.average_scores.by_quiz}
             />
             <CoursesInProgressWidget 
-              total={stats.courses_in_progress.total}
-              courses={stats.courses_in_progress.courses}
+              total={displayStats.courses_in_progress.total}
+              courses={displayStats.courses_in_progress.courses}
             />
           </>
-        ) : (
-          // Mensaje de error si no hay datos
-          <div className="col-span-4 text-center py-4 text-red-500">
-            Error al cargar las estadísticas del dashboard
-          </div>
         )}
       </div>
 

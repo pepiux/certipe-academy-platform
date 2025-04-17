@@ -25,20 +25,26 @@ const CoursesInProgressWidget = ({ total, courses }: CoursesInProgressWidgetProp
       iconColor="text-amber-600"
       iconBgColor="bg-amber-100"
     >
-      <ul className="space-y-3">
-        {courses.map((course) => (
-          <li key={course.id} className="space-y-1">
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">{course.title}</span>
-              <span className="font-medium">{course.progress}%</span>
-            </div>
-            <Progress value={course.progress} className="h-1.5" />
-            <div className="text-xs text-right text-muted-foreground">
-              {course.duration_hours} horas
-            </div>
-          </li>
-        ))}
-      </ul>
+      {courses && courses.length > 0 ? (
+        <ul className="space-y-3">
+          {courses.map((course) => (
+            <li key={course.id} className="space-y-1">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">{course.title}</span>
+                <span className="font-medium">{course.progress}%</span>
+              </div>
+              <Progress value={course.progress} className="h-1.5" />
+              <div className="text-xs text-right text-muted-foreground">
+                {course.duration_hours} horas
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div className="text-center py-2 text-sm text-muted-foreground">
+          No hay cursos en progreso
+        </div>
+      )}
     </ExpandableWidget>
   );
 };

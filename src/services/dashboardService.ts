@@ -64,10 +64,45 @@ const dashboardService = {
   async getStats(): Promise<DashboardStats> {
     console.log("Obteniendo estadísticas del dashboard en modo: ", useMock() ? "Mock" : "Backend");
     
-    if (useMock()) {
-      return await apiClient.get<DashboardStats>('/dashboard_stats');
-    } else {
-      return await apiClient.get<DashboardStats>('/dashboard_stats.php');
+    try {
+      let response;
+      if (useMock()) {
+        response = await apiClient.get<DashboardStats>('/dashboard_stats');
+      } else {
+        response = await apiClient.get<DashboardStats>('/dashboard_stats.php');
+      }
+      
+      // Ensure all required properties exist
+      const safeResponse: DashboardStats = {
+        study_hours: {
+          total: response?.study_hours?.total || 0,
+          by_course: response?.study_hours?.by_course || [],
+          by_quiz: response?.study_hours?.by_quiz || [],
+        },
+        completed_quizzes: {
+          total: response?.completed_quizzes?.total || 0,
+          quizzes: response?.completed_quizzes?.quizzes || [],
+        },
+        average_scores: {
+          overall: response?.average_scores?.overall || 0,
+          by_quiz: response?.average_scores?.by_quiz || [],
+        },
+        courses_in_progress: {
+          total: response?.courses_in_progress?.total || 0,
+          courses: response?.courses_in_progress?.courses || [],
+        }
+      };
+      
+      return safeResponse;
+    } catch (error) {
+      console.error("Error fetching dashboard stats:", error);
+      // Return a safe empty stats object
+      return {
+        study_hours: { total: 0, by_course: [], by_quiz: [] },
+        completed_quizzes: { total: 0, quizzes: [] },
+        average_scores: { overall: 0, by_quiz: [] },
+        courses_in_progress: { total: 0, courses: [] },
+      };
     }
   }
 };

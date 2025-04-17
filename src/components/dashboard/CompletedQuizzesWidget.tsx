@@ -26,21 +26,27 @@ const CompletedQuizzesWidget = ({ total, quizzes }: CompletedQuizzesWidgetProps)
       iconColor="text-purple-600"
       iconBgColor="bg-purple-100"
     >
-      <ul className="space-y-2">
-        {quizzes.map((quiz) => (
-          <li key={quiz.id} className="flex justify-between text-sm">
-            <span className="text-muted-foreground">{quiz.title}</span>
-            <div className="flex items-center gap-4">
-              <span className="text-xs text-muted-foreground">
-                {format(new Date(quiz.completed_date), 'dd/MM/yyyy', { locale: es })}
-              </span>
-              <span className={`font-medium ${quiz.score >= 70 ? 'text-green-600' : 'text-amber-600'}`}>
-                {quiz.score}%
-              </span>
-            </div>
-          </li>
-        ))}
-      </ul>
+      {quizzes && quizzes.length > 0 ? (
+        <ul className="space-y-2">
+          {quizzes.map((quiz) => (
+            <li key={quiz.id} className="flex justify-between text-sm">
+              <span className="text-muted-foreground">{quiz.title}</span>
+              <div className="flex items-center gap-4">
+                <span className="text-xs text-muted-foreground">
+                  {format(new Date(quiz.completed_date), 'dd/MM/yyyy', { locale: es })}
+                </span>
+                <span className={`font-medium ${quiz.score >= 70 ? 'text-green-600' : 'text-amber-600'}`}>
+                  {quiz.score}%
+                </span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div className="text-center py-2 text-sm text-muted-foreground">
+          No hay cuestionarios completados
+        </div>
+      )}
     </ExpandableWidget>
   );
 };
