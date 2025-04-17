@@ -22,7 +22,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
     <aside 
       className={`${
         isOpen ? "w-64" : "w-16"
-      } bg-sidebar transition-all duration-300 flex flex-col h-screen sticky top-0 overflow-y-auto`}
+      } bg-sidebar transition-all duration-300 flex flex-col h-screen sticky top-0`}
     >
       {/* Logo */}
       <div className="p-4 flex items-center justify-center md:justify-start">
@@ -33,8 +33,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
         )}
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 px-2 py-4 space-y-1">
+      {/* Navigation - Using flex-1 and overflow-y-auto for proper scrolling behavior */}
+      <nav className="flex-1 overflow-y-auto scrollbar-hide px-2 py-4 space-y-1">
         {/* Main Menu */}
         <div className="mb-6">
           {isOpen && <div className="sidebar-category">Main Menu</div>}
@@ -44,7 +44,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
             className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
             end
           >
-            <LayoutDashboard size={20} />
+            <LayoutDashboard size={20} className="min-w-5 min-h-5" />
             {isOpen && <span>Panel de control</span>}
           </NavLink>
           
@@ -52,7 +52,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
             to="/dashboard/courses" 
             className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
           >
-            <BookOpen size={20} />
+            <BookOpen size={20} className="min-w-5 min-h-5" />
             {isOpen && <span>Cursos</span>}
           </NavLink>
           
@@ -60,7 +60,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
             to="/dashboard/quizzes" 
             className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
           >
-            <FileQuestion size={20} />
+            <FileQuestion size={20} className="min-w-5 min-h-5" />
             {isOpen && <span>Cuestionarios</span>}
           </NavLink>
         </div>
@@ -73,7 +73,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
             to="/dashboard/admin/users" 
             className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
           >
-            <Users size={20} />
+            <Users size={20} className="min-w-5 min-h-5" />
             {isOpen && <span>Gestión de usuarios</span>}
           </NavLink>
           
@@ -81,7 +81,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
             to="/dashboard/admin/courses" 
             className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
           >
-            <BookOpen size={20} />
+            <BookOpen size={20} className="min-w-5 min-h-5" />
             {isOpen && <span>Gestión de cursos</span>}
           </NavLink>
           
@@ -89,7 +89,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
             to="/dashboard/admin/quizzes" 
             className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
           >
-            <FileQuestion size={20} />
+            <FileQuestion size={20} className="min-w-5 min-h-5" />
             {isOpen && <span>Gestión de cuestionarios</span>}
           </NavLink>
           
@@ -97,7 +97,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
             to="/dashboard/admin/settings" 
             className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
           >
-            <Settings size={20} />
+            <Settings size={20} className="min-w-5 min-h-5" />
             {isOpen && <span>Configuración del sistema</span>}
           </NavLink>
         </div>
