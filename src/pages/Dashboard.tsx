@@ -1,25 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import courseService from "@/services/courseService";
 import quizService from "@/services/quizService";
 import dashboardService, { DashboardStats } from "@/services/dashboardService";
 
-// Componentes de widgets
-import StudyHoursWidget from "@/components/dashboard/StudyHoursWidget";
-import CompletedQuizzesWidget from "@/components/dashboard/CompletedQuizzesWidget";
-import AverageScoreWidget from "@/components/dashboard/AverageScoreWidget";
-import CoursesInProgressWidget from "@/components/dashboard/CoursesInProgressWidget";
-
-// Componentes de gráficas y actividad reciente
-import StudyHoursChart from "@/components/dashboard/StudyHoursChart";
-import ScoreProgressChart from "@/components/dashboard/ScoreProgressChart";
-import RecentQuiz from "@/components/dashboard/RecentQuiz";
-import RecentActivity from "@/components/dashboard/RecentActivity";
-import DashboardCourses from "@/components/dashboard/DashboardCourses";
-import DashboardQuizzes from "@/components/dashboard/DashboardQuizzes";
+// Import new components
+import DashboardStats from "@/components/dashboard/DashboardStats";
+import DashboardCharts from "@/components/dashboard/DashboardCharts";
+import DashboardRecent from "@/components/dashboard/DashboardRecent";
+import DashboardCoursesSection from "@/components/dashboard/DashboardCoursesSection";
+import DashboardQuizzesSection from "@/components/dashboard/DashboardQuizzesSection";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -175,126 +166,35 @@ const Dashboard = () => {
     navigate(`/dashboard/courses/${courseId}`);
   };
 
-  // Create empty default stat objects for when data is not available
-  const emptyStats: DashboardStats = {
-    study_hours: { 
-      total: 0, 
-      by_course: [], 
-      by_quiz: [] 
-    },
-    completed_quizzes: { 
-      total: 0, 
-      quizzes: [] 
-    },
-    average_scores: { 
-      overall: 0, 
-      by_quiz: [] 
-    },
-    courses_in_progress: { 
-      total: 0, 
-      courses: [] 
-    }
-  };
-
-  // Use either the loaded stats or the empty stats object
-  const displayStats = stats || emptyStats;
-
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">Panel de control</h1>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {loading.stats ? (
-          // Mostrar placeholders mientras cargan los datos
-          Array(4).fill(0).map((_, i) => (
-            <div key={i} className="bg-muted/40 h-[120px] rounded-lg animate-pulse"></div>
-          ))
-        ) : (
-          <>
-            <StudyHoursWidget 
-              total={displayStats.study_hours.total} 
-              byCourse={displayStats.study_hours.by_course}
-              byQuiz={displayStats.study_hours.by_quiz}
-            />
-            <CompletedQuizzesWidget 
-              total={displayStats.completed_quizzes.total} 
-              quizzes={displayStats.completed_quizzes.quizzes}
-            />
-            <AverageScoreWidget 
-              overall={displayStats.average_scores.overall}
-              quizzes={displayStats.average_scores.by_quiz}
-            />
-            <CoursesInProgressWidget 
-              total={displayStats.courses_in_progress.total}
-              courses={displayStats.courses_in_progress.courses}
-            />
-          </>
-        )}
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <StudyHoursChart data={studyHoursData} />
-        <ScoreProgressChart data={scoreProgressData} />
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <RecentQuiz quiz={recentQuiz} />
-        <RecentActivity activities={recentActivities} />
-      </div>
+      <DashboardStats loading={loading.stats} stats={stats} />
       
-      <div className="mb-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-medium">Cursos</h2>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="gap-1 text-primary" 
-            onClick={() => navigate('/dashboard/courses')}
-          >
-            Ver todos <ChevronRight size={16} />
-          </Button>
-        </div>
-        
-        {loading.courses ? (
-          <div className="text-center py-8">Cargando cursos...</div>
-        ) : error ? (
-          <div className="text-center py-8 text-red-500">{error}</div>
-        ) : courses.length > 0 ? (
-          <DashboardCourses 
-            courses={courses}
-            onContinueCourse={handleContinueCourse}
-          />
-        ) : (
-          <div className="text-center py-8">No se encontraron cursos disponibles</div>
-        )}
-      </div>
+      <DashboardCharts 
+        studyHoursData={studyHoursData}
+        scoreProgressData={scoreProgressData}
+      />
       
-      <div className="mb-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-medium">Cuestionarios</h2>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="gap-1 text-primary" 
-            onClick={() => navigate('/dashboard/quizzes')}
-          >
-            Ver todos <ChevronRight size={16} />
-          </Button>
-        </div>
-        
-        {loading.quizzes ? (
-          <div className="text-center py-8">Cargando cuestionarios...</div>
-        ) : error ? (
-          <div className="text-center py-8 text-red-500">{error}</div>
-        ) : quizzes.length > 0 ? (
-          <DashboardQuizzes
-            quizzes={quizzes}
-            onStartQuiz={handleStartQuiz}
-          />
-        ) : (
-          <div className="text-center py-8">No se encontraron cuestionarios disponibles</div>
-        )}
-      </div>
+      <DashboardRecent 
+        recentQuiz={recentQuiz}
+        recentActivities={recentActivities}
+      />
+      
+      <DashboardCoursesSection
+        loading={loading.courses}
+        error={error}
+        courses={courses}
+        onContinueCourse={handleContinueCourse}
+      />
+      
+      <DashboardQuizzesSection
+        loading={loading.quizzes}
+        error={error}
+        quizzes={quizzes}
+        onStartQuiz={handleStartQuiz}
+      />
     </div>
   );
 };
