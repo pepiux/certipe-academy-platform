@@ -21,7 +21,7 @@ interface QuizScore {
 interface AverageScoreWidgetProps {
   overall: number;
   quizzes: QuizScore[];
-  infoTooltip?: string;
+  infoTooltip?: string; // We'll keep this in the props but not pass it to ExpandableWidget
 }
 
 const AverageScoreWidget = ({ overall, quizzes, infoTooltip }: AverageScoreWidgetProps) => {
@@ -37,7 +37,6 @@ const AverageScoreWidget = ({ overall, quizzes, infoTooltip }: AverageScoreWidge
       icon={Award}
       iconColor="text-green-600"
       iconBgColor="bg-green-100"
-      infoTooltip={infoTooltip}
     >
       {quizzes.length > 0 ? (
         <div className="space-y-3">

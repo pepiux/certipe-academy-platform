@@ -15,7 +15,7 @@ interface StudyHoursWidgetProps {
   total: number;
   byCourse: StudyHour[];
   byQuiz: StudyHour[];
-  infoTooltip?: string;
+  infoTooltip?: string; // We'll keep this in the props but not pass it to ExpandableWidget
 }
 
 const StudyHoursWidget = ({ total, byCourse, infoTooltip }: StudyHoursWidgetProps) => {
@@ -27,7 +27,6 @@ const StudyHoursWidget = ({ total, byCourse, infoTooltip }: StudyHoursWidgetProp
       icon={Clock}
       iconColor="text-blue-600"
       iconBgColor="bg-blue-100"
-      infoTooltip={infoTooltip}
     >
       <div className="space-y-4">
         <div>

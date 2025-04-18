@@ -14,7 +14,7 @@ interface CompletedQuiz {
 interface CompletedQuizzesWidgetProps {
   total: number;
   quizzes: CompletedQuiz[];
-  infoTooltip?: string;
+  infoTooltip?: string; // We'll keep this in the props but not pass it to ExpandableWidget
 }
 
 const CompletedQuizzesWidget = ({ total, quizzes, infoTooltip }: CompletedQuizzesWidgetProps) => {
@@ -26,7 +26,6 @@ const CompletedQuizzesWidget = ({ total, quizzes, infoTooltip }: CompletedQuizze
       icon={FileQuestion}
       iconColor="text-purple-600"
       iconBgColor="bg-purple-100"
-      infoTooltip={infoTooltip}
     >
       {quizzes && quizzes.length > 0 ? (
         <ul className="space-y-2">

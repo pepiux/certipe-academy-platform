@@ -13,7 +13,7 @@ interface CourseProgress {
 interface CoursesInProgressWidgetProps {
   total: number;
   courses: CourseProgress[];
-  infoTooltip?: string;
+  infoTooltip?: string; // We'll keep this in the props but not pass it to ExpandableWidget
 }
 
 const CoursesInProgressWidget = ({ total, courses, infoTooltip }: CoursesInProgressWidgetProps) => {
@@ -25,7 +25,6 @@ const CoursesInProgressWidget = ({ total, courses, infoTooltip }: CoursesInProgr
       icon={BookOpen}
       iconColor="text-amber-600"
       iconBgColor="bg-amber-100"
-      infoTooltip={infoTooltip}
     >
       {courses && courses.length > 0 ? (
         <ul className="space-y-3">
