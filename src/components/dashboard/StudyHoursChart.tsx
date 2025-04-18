@@ -138,7 +138,7 @@ const StudyHoursChart = ({ data: initialData }: StudyHoursChartProps) => {
               />
               <YAxis />
               <Tooltip 
-                formatter={(value, name) => [`${value} horas`, `Semana ${parseInt(name) + 1}`]}
+                formatter={(value, name) => [`${value} horas`, `Semana ${parseInt(String(name)) + 1}`]}
                 labelFormatter={(label) => `${label}`}
               />
               <Legend />
