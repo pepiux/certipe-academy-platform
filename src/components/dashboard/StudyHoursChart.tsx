@@ -46,10 +46,11 @@ const generateWeekData = (courseId: number) => {
 };
 
 interface StudyHoursChartProps {
-  data: Array<{ name: string; hours: number }>;
+  data: Array<{ date: string; hours: number }>;
+  className?: string;
 }
 
-const StudyHoursChart = ({ data: initialData }: StudyHoursChartProps) => {
+const StudyHoursChart = ({ data: initialData, className }: StudyHoursChartProps) => {
   const [selectedCourse, setSelectedCourse] = useState("1");
 
   const CustomTooltip = ({ active, payload, label }: any) => {

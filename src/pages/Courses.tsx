@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,8 @@ interface Course {
   enrolled: boolean;
   lessons: number;
   duration: string;
+  favorite?: boolean; // Adding the favorite property as optional
+  students?: number;
 }
 
 const Courses = () => {
@@ -52,7 +55,8 @@ const Courses = () => {
       progress: 0,
       enrolled: false,
       lessons: 12,
-      duration: "8 horas"
+      duration: "8 horas",
+      favorite: false
     },
     {
       id: 2,
@@ -65,7 +69,8 @@ const Courses = () => {
       progress: 65,
       enrolled: true,
       lessons: 8,
-      duration: "6 horas"
+      duration: "6 horas",
+      favorite: true
     },
     {
       id: 3,
@@ -78,7 +83,8 @@ const Courses = () => {
       progress: 25,
       enrolled: true,
       lessons: 10,
-      duration: "7 horas"
+      duration: "7 horas",
+      favorite: false
     },
     {
       id: 4,
@@ -91,7 +97,8 @@ const Courses = () => {
       progress: 10,
       enrolled: true,
       lessons: 20,
-      duration: "15 horas"
+      duration: "15 horas",
+      favorite: true
     },
     {
       id: 5,
@@ -104,7 +111,8 @@ const Courses = () => {
       progress: 0,
       enrolled: false,
       lessons: 14,
-      duration: "10 horas"
+      duration: "10 horas",
+      favorite: false
     },
     {
       id: 6,
@@ -117,7 +125,8 @@ const Courses = () => {
       progress: 0,
       enrolled: false,
       lessons: 12,
-      duration: "9 horas"
+      duration: "9 horas",
+      favorite: false
     },
     {
       id: 7,
@@ -130,7 +139,8 @@ const Courses = () => {
       progress: 0,
       enrolled: false,
       lessons: 15,
-      duration: "12 horas"
+      duration: "12 horas",
+      favorite: false
     },
     {
       id: 8,
@@ -143,7 +153,8 @@ const Courses = () => {
       progress: 0,
       enrolled: false,
       lessons: 8,
-      duration: "5 horas"
+      duration: "5 horas",
+      favorite: false
     },
     {
       id: 9,
@@ -156,7 +167,8 @@ const Courses = () => {
       progress: 0,
       enrolled: false,
       lessons: 10,
-      duration: "8 horas"
+      duration: "8 horas",
+      favorite: false
     },
     {
       id: 10,
@@ -169,7 +181,8 @@ const Courses = () => {
       progress: 0,
       enrolled: false,
       lessons: 12,
-      duration: "9 horas"
+      duration: "9 horas",
+      favorite: false
     },
     {
       id: 11,
@@ -182,7 +195,8 @@ const Courses = () => {
       progress: 0,
       enrolled: false,
       lessons: 6,
-      duration: "4 horas"
+      duration: "4 horas",
+      favorite: false
     },
     {
       id: 12,
@@ -195,7 +209,8 @@ const Courses = () => {
       progress: 0,
       enrolled: false,
       lessons: 14,
-      duration: "10 horas"
+      duration: "10 horas",
+      favorite: false
     }
   ];
   

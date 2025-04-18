@@ -21,12 +21,12 @@ const Dashboard = () => {
 
   // Transform mock data to match the required interface
   const studyHoursData = mockStudyHoursData.map(item => ({
-    date: new Date().toISOString().split('T')[0], // Use today's date as a fallback
+    date: item.date,
     hours: item.hours
   }));
 
   const scoreProgressData = mockScoreProgressData.map(item => ({
-    date: new Date().toISOString().split('T')[0], // Use today's date as a fallback
+    date: item.date,
     score: item.score
   }));
 

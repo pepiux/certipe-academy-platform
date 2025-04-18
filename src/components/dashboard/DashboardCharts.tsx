@@ -46,21 +46,6 @@ const DashboardCharts = ({ studyHoursData, scoreProgressData }: DashboardChartsP
   const [selectedCourse, setSelectedCourse] = useState(availableCourses[0].id.toString());
   const [selectedQuiz, setSelectedQuiz] = useState(availableQuizzes[0].id.toString());
   
-  // Ensure data has valid dates before passing to child components
-  const safeStudyHoursData = studyHoursData.map(item => {
-    return {
-      date: item.date,
-      hours: item.hours
-    };
-  });
-
-  const safeScoreData = scoreProgressData.map(item => {
-    return {
-      date: item.date,
-      score: item.score
-    };
-  });
-
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <Card>
@@ -96,7 +81,7 @@ const DashboardCharts = ({ studyHoursData, scoreProgressData }: DashboardChartsP
           </div>
         </CardHeader>
         <CardContent>
-          <StudyHoursChart data={safeStudyHoursData} className="h-[300px]" />
+          <StudyHoursChart data={studyHoursData} className="h-[300px]" />
         </CardContent>
       </Card>
 
@@ -133,7 +118,7 @@ const DashboardCharts = ({ studyHoursData, scoreProgressData }: DashboardChartsP
           </div>
         </CardHeader>
         <CardContent>
-          <ScoreProgressChart data={safeScoreData} className="h-[300px]" />
+          <ScoreProgressChart data={scoreProgressData} className="h-[300px]" />
         </CardContent>
       </Card>
     </div>
