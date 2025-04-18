@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useDashboardData } from "@/hooks/useDashboardData";
@@ -10,7 +11,7 @@ import {
   recentActivities 
 } from "@/utils/dashboardMockData";
 
-// Import components
+// Componentes
 import DashboardStats from "@/components/dashboard/DashboardStats";
 import DashboardCharts from "@/components/dashboard/DashboardCharts";
 import DashboardRecent from "@/components/dashboard/DashboardRecent";
