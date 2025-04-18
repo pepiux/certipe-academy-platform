@@ -16,7 +16,8 @@ import {
   Volume1,
   Volume,
   Check,
-  ChevronRight
+  ChevronRight,
+  Subtitles
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
@@ -31,6 +32,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Slider } from "@/components/ui/slider";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const VideoLesson = () => {
   const { courseId, lessonId } = useParams();
@@ -46,6 +53,9 @@ const VideoLesson = () => {
   const [volume, setVolume] = useState(1);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const volumeControlRef = useRef<HTMLDivElement>(null);
+  const videoContainerRef = useRef<HTMLDivElement>(null);
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const [controlsVisible, setControlsVisible] = useState(true);
 
   // Course and lesson data
   const courseData = {
@@ -115,6 +125,36 @@ const VideoLesson = () => {
       };
     }
   }, [videoRef]);
+
+  // Handle full screen changes
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      const isDocFullScreen = document.fullscreenElement !== null;
+      setIsFullScreen(isDocFullScreen);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+
+    // Handle Escape key for exiting full screen
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isFullScreen) {
+        exitFullScreen();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isFullScreen]);
 
   // Handle click outside volume slider
   useEffect(() => {
@@ -192,10 +232,32 @@ const VideoLesson = () => {
   };
 
   const handleFullScreen = () => {
-    if (videoRef) {
-      if (videoRef.requestFullscreen) {
-        videoRef.requestFullscreen();
+    if (videoContainerRef.current) {
+      if (!isFullScreen) {
+        if (videoContainerRef.current.requestFullscreen) {
+          videoContainerRef.current.requestFullscreen();
+        } else if ((videoContainerRef.current as any).webkitRequestFullscreen) {
+          (videoContainerRef.current as any).webkitRequestFullscreen();
+        } else if ((videoContainerRef.current as any).mozRequestFullScreen) {
+          (videoContainerRef.current as any).mozRequestFullScreen();
+        } else if ((videoContainerRef.current as any).msRequestFullscreen) {
+          (videoContainerRef.current as any).msRequestFullscreen();
+        }
+      } else {
+        exitFullScreen();
       }
+    }
+  };
+
+  const exitFullScreen = () => {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if ((document as any).webkitExitFullscreen) {
+      (document as any).webkitExitFullscreen();
+    } else if ((document as any).mozCancelFullScreen) {
+      (document as any).mozCancelFullScreen();
+    } else if ((document as any).msExitFullscreen) {
+      (document as any).msExitFullscreen();
     }
   };
 
@@ -225,12 +287,19 @@ const VideoLesson = () => {
     setShowCaptions(!showCaptions);
   };
 
+  const toggleCourseContent = () => {
+    setShowCourseContent(!showCourseContent);
+  };
+
   const getVolumeIcon = () => {
     if (isMuted || volume === 0) return <VolumeX className="h-5 w-5" />;
     if (volume < 0.5) return <Volume className="h-5 w-5" />;
     if (volume < 0.8) return <Volume1 className="h-5 w-5" />;
     return <Volume2 className="h-5 w-5" />;
   };
+
+  // Determine if we should show compact controls
+  const isCompact = false; // You could calculate this based on screen width
 
   return (
     <div className="flex h-full">
@@ -246,17 +315,17 @@ const VideoLesson = () => {
               variant="ghost" 
               size="sm" 
               className="ml-auto md:hidden"
-              onClick={() => setShowCourseContent(!showCourseContent)}
+              onClick={toggleCourseContent}
             >
               {showCourseContent ? 'Ocultar contenido' : 'Mostrar contenido'}
             </Button>
           </div>
           
-          <h1 className="text-2xl font-bold mb-2">{lessonData.title}</h1>
-          <p className="text-muted-foreground mb-6">{lessonData.description}</p>
+          <h1 className="text-2xl font-bold mb-2 text-left">{lessonData.title}</h1>
+          <p className="text-muted-foreground mb-6 text-left">{lessonData.description}</p>
           
           <div className="bg-black rounded-lg overflow-hidden shadow-lg mb-6">
-            <div className="relative">
+            <div ref={videoContainerRef} className="relative">
               <video
                 ref={(el) => setVideoRef(el)}
                 className="w-full aspect-video"
@@ -285,45 +354,81 @@ const VideoLesson = () => {
                 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="text-white" 
-                      onClick={handleRewind}
-                    >
-                      <Rewind className="h-5 w-5" />
-                    </Button>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="text-white" 
+                            onClick={handleRewind}
+                          >
+                            <Rewind className="h-5 w-5" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Retroceder 10s</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                     
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="text-white" 
-                      onClick={handlePlayPause}
-                    >
-                      {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
-                    </Button>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="text-white" 
+                            onClick={handlePlayPause}
+                          >
+                            {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>{isPlaying ? "Pausar" : "Reproducir"}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                     
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="text-white" 
-                      onClick={handleFastForward}
-                    >
-                      <FastForward className="h-5 w-5" />
-                    </Button>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="text-white" 
+                            onClick={handleFastForward}
+                          >
+                            <FastForward className="h-5 w-5" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Avanzar 10s</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                     
                     <div className="relative" ref={volumeControlRef}>
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="text-white" 
-                        onClick={() => setShowVolumeSlider(!showVolumeSlider)}
-                      >
-                        {getVolumeIcon()}
-                      </Button>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="text-white" 
+                              onClick={() => setShowVolumeSlider(!showVolumeSlider)}
+                            >
+                              {getVolumeIcon()}
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Volumen</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                       
                       {showVolumeSlider && (
-                        <div className="absolute bottom-10 left-0 w-24 h-36 bg-black/90 rounded p-4 flex flex-col items-center justify-center">
+                        <div className="absolute bottom-10 left-0 w-10 h-32 bg-black/90 rounded p-2 flex flex-col items-center justify-center">
                           <Slider
                             orientation="vertical"
                             defaultValue={[volume]}
@@ -333,27 +438,69 @@ const VideoLesson = () => {
                             value={[volume]}
                             onValueChange={handleVolumeChange}
                           />
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="text-white mt-2" 
-                            onClick={handleMuteToggle}
-                          >
-                            {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-                          </Button>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className="text-white mt-2" 
+                                  onClick={handleMuteToggle}
+                                >
+                                  {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>{isMuted ? "Activar sonido" : "Silenciar"}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
                         </div>
                       )}
                     </div>
                     
-                    <span className="text-white text-sm">
-                      {formatTime(currentTime)} / {formatTime(duration)}
-                    </span>
+                    {!isCompact && (
+                      <span className="text-white text-sm">
+                        {formatTime(currentTime)} / {formatTime(duration)}
+                      </span>
+                    )}
+
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="text-white" 
+                            onClick={handleToggleCaptions}
+                          >
+                            <Subtitles className={`h-5 w-5 ${showCaptions ? 'text-primary' : 'text-white'}`} />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Subtítulos</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
                   
                   <div className="flex items-center space-x-2">
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button variant="ghost" size="icon" className="text-white">
+                            <Settings className="h-5 w-5" onClick={() => {}} />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Configuración</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                    
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="text-white">
+                        <Button variant="ghost" size="icon" className="text-white hidden">
                           <Settings className="h-5 w-5" />
                         </Button>
                       </DropdownMenuTrigger>
@@ -372,17 +519,21 @@ const VideoLesson = () => {
                             </DropdownMenuItem>
                           ))}
                         </DropdownMenuGroup>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={handleToggleCaptions} className="flex justify-between">
-                          Subtítulos
-                          {showCaptions && <Check className="h-4 w-4" />}
-                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                     
-                    <Button variant="ghost" size="icon" className="text-white" onClick={handleFullScreen}>
-                      <Maximize className="h-5 w-5" />
-                    </Button>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button variant="ghost" size="icon" className="text-white" onClick={handleFullScreen}>
+                            <Maximize className="h-5 w-5" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Pantalla completa</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
                 </div>
               </div>
@@ -418,30 +569,43 @@ const VideoLesson = () => {
         </div>
       </div>
 
-      {/* Course Content Sidebar */}
-      {showCourseContent && (
-        <div className="w-full md:w-1/4 border-l border-border bg-background h-screen overflow-y-auto p-4">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="font-medium">Contenido del curso</h3>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => setShowCourseContent(false)}
+      {/* Course Content Sidebar - Now made toggleable */}
+      {!isFullScreen && (
+        <>
+          {showCourseContent ? (
+            <div className="w-full md:w-1/4 border-l border-border bg-background h-screen overflow-y-auto p-4 fixed right-0 top-0 bottom-0 z-10 md:relative">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="font-medium text-left">Contenido del curso</h3>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={toggleCourseContent}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+              <CourseContent 
+                modules={courseData.modules} 
+                currentLessonId={parseInt(lessonId || "0")} 
+                onLessonClick={(lessonId) => {
+                  const lesson = findLessonById(lessonId);
+                  if (lesson) {
+                    window.location.href = `/dashboard/courses/${courseId}/lesson/${lessonId}/${lesson.type}`;
+                  }
+                }}
+              />
+            </div>
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={toggleCourseContent}
+              className="fixed right-4 top-20 z-10 p-2 bg-background border border-border rounded-full"
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronLeft className="h-4 w-4" />
             </Button>
-          </div>
-          <CourseContent 
-            modules={courseData.modules} 
-            currentLessonId={parseInt(lessonId || "0")} 
-            onLessonClick={(lessonId) => {
-              const lesson = findLessonById(lessonId);
-              if (lesson) {
-                window.location.href = `/dashboard/courses/${courseId}/lesson/${lessonId}/${lesson.type}`;
-              }
-            }}
-          />
-        </div>
+          )}
+        </>
       )}
     </div>
   );

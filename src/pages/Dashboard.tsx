@@ -6,7 +6,8 @@ import { useDashboardData } from "@/hooks/useDashboardData";
 // Importar datos mock adaptados para el formato correcto
 import { 
   studyHoursData as mockStudyHoursData,
-  scoreProgressData as mockScoreProgressData 
+  scoreProgressData as mockScoreProgressData,
+  coursesData as mockCoursesData
 } from "@/utils/dashboardMockData";
 
 // Componentes
@@ -19,16 +20,18 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { courses, quizzes, stats, loading, error } = useDashboardData();
 
-  // Transform mock data to match the required interface
-  const studyHoursData = mockStudyHoursData.map(item => ({
-    date: item.date,
-    hours: item.hours
-  }));
-
-  const scoreProgressData = mockScoreProgressData.map(item => ({
-    date: item.date,
-    score: item.score
-  }));
+  // Use mock data
+  const studyHoursData = mockStudyHoursData;
+  const scoreProgressData = mockScoreProgressData;
+  
+  // Enhanced courses with favorite flag
+  const enhancedCourses = courses.map(course => {
+    const mockData = mockCoursesData.find(c => c.id === course.id);
+    return {
+      ...course,
+      favorite: mockData?.favorite || false
+    };
+  });
 
   const handleStartQuiz = (quizId: number) => {
     navigate(`/dashboard/quizzes/${quizId}/take`);
@@ -52,7 +55,7 @@ const Dashboard = () => {
       <DashboardCoursesSection
         loading={loading.courses}
         error={error}
-        courses={courses}
+        courses={enhancedCourses}
         onContinueCourse={handleContinueCourse}
       />
       

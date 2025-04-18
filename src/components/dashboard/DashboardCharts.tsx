@@ -48,7 +48,7 @@ const DashboardCharts = ({ studyHoursData, scoreProgressData }: DashboardChartsP
   
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <Card>
+      <Card className="h-auto">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg">Histórico horas estudio</CardTitle>
@@ -81,13 +81,13 @@ const DashboardCharts = ({ studyHoursData, scoreProgressData }: DashboardChartsP
           </div>
         </CardHeader>
         <CardContent className="p-4">
-          <div className="h-[300px]">
+          <div className="h-[250px]">
             <StudyHoursChart data={studyHoursData} className="h-full" />
           </div>
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="h-auto">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg">Progreso de puntuación</CardTitle>
@@ -120,7 +120,7 @@ const DashboardCharts = ({ studyHoursData, scoreProgressData }: DashboardChartsP
           </div>
         </CardHeader>
         <CardContent className="p-4">
-          <div className="h-[300px]">
+          <div className="h-[250px]">
             <ScoreProgressChart data={scoreProgressData} className="h-full" />
           </div>
         </CardContent>

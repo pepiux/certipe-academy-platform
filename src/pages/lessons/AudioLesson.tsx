@@ -16,7 +16,8 @@ import {
   FastForward,
   Volume1,
   Volume,
-  Check
+  Check,
+  Subtitles
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent } from "@/components/ui/card";
@@ -31,6 +32,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Slider } from "@/components/ui/slider";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const AudioLesson = () => {
   const { courseId, lessonId } = useParams();
@@ -211,6 +218,10 @@ const AudioLesson = () => {
     setShowCaptions(!showCaptions);
   };
 
+  const toggleCourseContent = () => {
+    setShowCourseContent(!showCourseContent);
+  };
+
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
@@ -238,14 +249,14 @@ const AudioLesson = () => {
               variant="ghost" 
               size="sm" 
               className="ml-auto md:hidden"
-              onClick={() => setShowCourseContent(!showCourseContent)}
+              onClick={toggleCourseContent}
             >
               {showCourseContent ? 'Ocultar contenido' : 'Mostrar contenido'}
             </Button>
           </div>
           
-          <h1 className="text-2xl font-bold mb-2">{lessonData.title}</h1>
-          <p className="text-muted-foreground mb-6">{lessonData.description}</p>
+          <h1 className="text-2xl font-bold mb-2 text-left">{lessonData.title}</h1>
+          <p className="text-muted-foreground mb-6 text-left">{lessonData.description}</p>
           
           <Card className="mb-6">
             <CardContent className="p-6">
@@ -282,50 +293,88 @@ const AudioLesson = () => {
                 </div>
                 
                 <div className="flex items-center space-x-4">
-                  <Button 
-                    variant="outline" 
-                    size="icon" 
-                    onClick={handleRewind}
-                    className="rounded-full"
-                  >
-                    <Rewind className="h-5 w-5" />
-                  </Button>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          onClick={handleRewind}
+                          className="rounded-full"
+                        >
+                          <Rewind className="h-5 w-5" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Retroceder 10s</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                   
-                  <Button 
-                    size="icon"
-                    className="h-12 w-12 rounded-full"
-                    onClick={handlePlayPause}
-                  >
-                    {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
-                  </Button>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button 
+                          size="icon"
+                          className="h-12 w-12 rounded-full"
+                          onClick={handlePlayPause}
+                        >
+                          {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{isPlaying ? "Pausar" : "Reproducir"}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                   
-                  <Button 
-                    variant="outline" 
-                    size="icon"
-                    onClick={handleFastForward}
-                    className="rounded-full"
-                  >
-                    <FastForward className="h-5 w-5" />
-                  </Button>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button 
+                          variant="outline" 
+                          size="icon"
+                          onClick={handleFastForward}
+                          className="rounded-full"
+                        >
+                          <FastForward className="h-5 w-5" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Avanzar 10s</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
                 
                 <div className="flex items-center mt-6 space-x-4">
                   <div className="relative" ref={volumeControlRef}>
-                    <Button 
-                      variant="outline" 
-                      size="icon"
-                      className="rounded-full"
-                      onClick={() => setShowVolumeSlider(!showVolumeSlider)}
-                    >
-                      {getVolumeIcon()}
-                    </Button>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button 
+                            variant="outline" 
+                            size="icon"
+                            className="rounded-full"
+                            onClick={() => setShowVolumeSlider(!showVolumeSlider)}
+                          >
+                            {getVolumeIcon()}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Volumen</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                     
                     {showVolumeSlider && (
-                      <div className="absolute bottom-12 left-0 w-48 bg-background border border-border rounded-md p-4">
+                      <div className="absolute bottom-12 left-0 w-10 h-32 bg-background border border-border rounded-md p-2 flex flex-col items-center justify-center">
                         <Slider
+                          orientation="vertical"
                           defaultValue={[volume]}
                           max={1}
                           step={0.01}
+                          className="h-24"
                           value={[volume]}
                           onValueChange={handleVolumeChange}
                         />
@@ -333,12 +382,47 @@ const AudioLesson = () => {
                     )}
                   </div>
                   
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button 
+                          variant="outline" 
+                          size="icon"
+                          className="rounded-full"
+                          onClick={handleToggleCaptions}
+                        >
+                          <Subtitles className={`h-5 w-5 ${showCaptions ? 'text-primary' : ''}`} />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Subtítulos</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button 
+                          variant="outline" 
+                          size="icon"
+                          className="rounded-full"
+                        >
+                          <Settings className="h-5 w-5" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Configuración</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button 
                         variant="outline" 
                         size="icon"
-                        className="rounded-full"
+                        className="rounded-full hidden"
                       >
                         <Settings className="h-5 w-5" />
                       </Button>
@@ -358,11 +442,6 @@ const AudioLesson = () => {
                           </DropdownMenuItem>
                         ))}
                       </DropdownMenuGroup>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={handleToggleCaptions} className="flex justify-between">
-                        Subtítulos
-                        {showCaptions && <Check className="h-4 w-4" />}
-                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
@@ -396,31 +475,42 @@ const AudioLesson = () => {
         </div>
       </div>
 
-      {/* Course Content Sidebar */}
-      {showCourseContent && (
-        <div className="w-full md:w-1/4 border-l border-border bg-background h-screen overflow-y-auto p-4">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="font-medium">Contenido del curso</h3>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => setShowCourseContent(false)}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
+      {/* Course Content Sidebar - Now made toggleable */}
+      <>
+        {showCourseContent ? (
+          <div className="w-full md:w-1/4 border-l border-border bg-background h-screen overflow-y-auto p-4 fixed right-0 top-0 bottom-0 z-10 md:relative">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-medium text-left">Contenido del curso</h3>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={toggleCourseContent}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+            <CourseContent 
+              modules={courseData.modules} 
+              currentLessonId={parseInt(lessonId || "0")} 
+              onLessonClick={(lessonId) => {
+                const lesson = findLessonById(lessonId);
+                if (lesson) {
+                  window.location.href = `/dashboard/courses/${courseId}/lesson/${lessonId}/${lesson.type}`;
+                }
+              }}
+            />
           </div>
-          <CourseContent 
-            modules={courseData.modules} 
-            currentLessonId={parseInt(lessonId || "0")} 
-            onLessonClick={(lessonId) => {
-              const lesson = findLessonById(lessonId);
-              if (lesson) {
-                window.location.href = `/dashboard/courses/${courseId}/lesson/${lessonId}/${lesson.type}`;
-              }
-            }}
-          />
-        </div>
-      )}
+        ) : (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={toggleCourseContent}
+            className="fixed right-4 top-20 z-10 p-2 bg-background border border-border rounded-full"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+        )}
+      </>
     </div>
   );
 };

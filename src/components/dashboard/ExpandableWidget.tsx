@@ -1,87 +1,83 @@
 
-import { useState, ReactNode } from 'react';
-import { Card, CardContent } from "@/components/ui/card";
+import React, { useState } from 'react';
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronUp } from "lucide-react";
-import { LucideIcon } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ExpandableWidgetProps {
   title: string;
-  value: string | number;
+  value: string;
   subtitle: string;
-  icon: LucideIcon;
-  iconColor: string;
-  iconBgColor: string;
+  icon: React.ElementType;
+  iconColor?: string;
+  iconBgColor?: string;
+  children: React.ReactNode;
   infoTooltip?: string;
-  children: ReactNode;
 }
 
 const ExpandableWidget = ({ 
   title, 
   value, 
-  subtitle, 
-  icon: Icon, 
-  iconColor, 
-  iconBgColor,
-  infoTooltip,
-  children 
+  subtitle,
+  icon: Icon,
+  iconColor = "text-primary",
+  iconBgColor = "bg-primary/10",
+  children,
+  infoTooltip
 }: ExpandableWidgetProps) => {
   const [expanded, setExpanded] = useState(false);
-
-  const toggleExpanded = () => {
-    setExpanded(!expanded);
-  };
-
+  
   return (
-    <TooltipProvider>
-      <Card className={`transition-all duration-300 ${expanded ? 'h-auto' : ''}`}>
-        <CardContent className="p-4">
-          <div className="flex justify-between items-start">
-            <div className="flex-grow">
-              <p className="text-sm text-muted-foreground">{title}</p>
-              <h3 className="text-2xl font-bold mt-1">{value}</h3>
-              <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>
+    <Card className="relative">
+      <CardHeader className="pb-2">
+        <div className="flex justify-between items-start">
+          <div className="flex items-start space-x-4">
+            <div className={`p-2 rounded-md ${iconBgColor}`}>
+              <Icon className={`h-5 w-5 ${iconColor}`} />
             </div>
-            <div className="flex flex-col items-end gap-2">
-              {infoTooltip && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className={`${iconBgColor} p-2 rounded-lg cursor-help`}>
-                      <Icon className={`h-6 w-6 ${iconColor}`} />
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent className="max-w-xs text-sm">
-                    {infoTooltip}
-                  </TooltipContent>
-                </Tooltip>
-              )}
-              {!infoTooltip && (
-                <div className={`${iconBgColor} p-2 rounded-lg`}>
-                  <Icon className={`h-6 w-6 ${iconColor}`} />
-                </div>
-              )}
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="p-0 h-6" 
-                onClick={toggleExpanded} 
-                aria-label={expanded ? 'Colapsar detalles' : 'Expandir detalles'}
-              >
-                {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-              </Button>
+            <div>
+              <div className="flex items-center">
+                <h3 className="text-lg font-semibold">{title}</h3>
+                {infoTooltip && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button variant="ghost" size="sm" className="px-0 h-4 w-4 ml-1 relative -top-1">
+                          <span className="text-xs font-bold rounded-full w-4 h-4 border text-muted-foreground inline-flex items-center justify-center">?</span>
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs">
+                        <p>{infoTooltip}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
+              </div>
+              <div className="flex items-baseline space-x-2">
+                <span className="text-2xl font-bold">{value}</span>
+                <span className="text-sm text-muted-foreground">{subtitle}</span>
+              </div>
             </div>
           </div>
-          
-          {expanded && (
-            <ScrollArea className="h-[300px] mt-2 pt-2 border-t border-border">
-              {children}
-            </ScrollArea>
-          )}
+          <Button 
+            variant="ghost" 
+            size="sm"
+            className="p-0 h-8 w-8"
+            onClick={() => setExpanded(!expanded)}
+          >
+            <ChevronDown 
+              className={`h-5 w-5 transition-transform ${expanded ? 'rotate-180' : ''}`}
+            />
+          </Button>
+        </div>
+      </CardHeader>
+      {expanded && (
+        <CardContent className="pb-3 pt-0">
+          {children}
         </CardContent>
-      </Card>
-    </TooltipProvider>
+      )}
+    </Card>
   );
 };
 

@@ -30,7 +30,7 @@ const StudyHoursChart = ({ data, className }: StudyHoursChartProps) => {
   const [selectedCourse, setSelectedCourse] = useState("1");
   const course = COURSES.find(c => c.id === parseInt(selectedCourse)) || COURSES[0];
   
-  // Transformar los datos para incluir el día de la semana
+  // Transformar los datos para incluir el día de la semana abreviado
   const chartData = data.map(item => {
     let date;
     try {
@@ -40,7 +40,19 @@ const StudyHoursChart = ({ data, className }: StudyHoursChartProps) => {
       date = new Date();
     }
 
-    const dayOfWeek = isValid(date) ? format(date, "EEE", { locale: es }).substring(0, 2) : "??";
+    // Usar abreviaturas en español: Lu, Ma, Mi, Ju, Vi, Sa, Do
+    const dayMap: Record<string, string> = {
+      "lun": "Lu",
+      "mar": "Ma",
+      "mié": "Mi",
+      "jue": "Ju",
+      "vie": "Vi",
+      "sáb": "Sa",
+      "dom": "Do"
+    };
+
+    const fullDay = isValid(date) ? format(date, "EEE", { locale: es }).toLowerCase() : "??";
+    const dayOfWeek = dayMap[fullDay] || fullDay.substring(0, 2);
     const formattedDate = isValid(date) ? format(date, "dd/MM") : "??/??";
     
     return {
@@ -69,7 +81,7 @@ const StudyHoursChart = ({ data, className }: StudyHoursChartProps) => {
       <LineChart margin={{ left: 0, right: 20, top: 8, bottom: 0 }}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis 
-          dataKey="displayDate"
+          dataKey="day"
           allowDuplicatedCategory={false}
         />
         <YAxis 

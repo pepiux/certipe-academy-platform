@@ -11,7 +11,7 @@ import CourseActions from "@/components/courses/CourseActions";
 const CourseDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(true); // Default to true for demonstration
 
   const courseData = {
     id: parseInt(id || "1"),
