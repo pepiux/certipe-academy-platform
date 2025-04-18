@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
 interface ExpandableWidgetProps { 
   title: string; 
@@ -38,28 +39,33 @@ const ExpandableWidget = ({
               </div>
             </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <Button 
-              variant="ghost" 
-              size="sm"
-              className="p-0 h-8 w-8"
-              onClick={() => setExpanded(!expanded)}
-            >
-              <ChevronDown 
-                className={`h-5 w-5 transition-transform ${expanded ? 'rotate-180' : ''}`}
-              />
-            </Button>
-            <div className={`p-2 rounded-md ${iconBgColor}`}>
-              <Icon className={`h-5 w-5 ${iconColor}`} />
-            </div>
+          <div className={`p-2 rounded-md ${iconBgColor}`}>
+            <Icon className={`h-5 w-5 ${iconColor}`} />
           </div>
         </div>
       </CardHeader>
+      
       {expanded && (
-        <CardContent className="pb-3 pt-0">
-          {children}
-        </CardContent>
+        <>
+          <Separator className="mx-4" />
+          <CardContent className="pb-8 pt-4">
+            {children}
+          </CardContent>
+        </>
       )}
+      
+      <div className="absolute bottom-3 right-3">
+        <Button 
+          variant="ghost" 
+          size="sm"
+          className="p-0 h-8 w-8"
+          onClick={() => setExpanded(!expanded)}
+        >
+          <ChevronDown 
+            className={`h-5 w-5 transition-transform ${expanded ? 'rotate-180' : ''}`}
+          />
+        </Button>
+      </div>
     </Card>
   );
 };
