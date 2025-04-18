@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import courseService from "@/services/courseService";
 import quizService from "@/services/quizService";
-import dashboardService, { DashboardStats as DashboardStatsType } from "@/services/dashboardService";
+import dashboardService, { type DashboardStats as DashboardStatsType } from "@/services/dashboardService";
 
 // Import components
 import DashboardStats from "@/components/dashboard/DashboardStats";

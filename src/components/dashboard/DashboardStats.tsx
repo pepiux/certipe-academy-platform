@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { DashboardStats as DashboardStatsType } from '@/services/dashboardService';
+import type { DashboardStats as DashboardStatsType } from '@/services/dashboardService';
 import StudyHoursWidget from "./StudyHoursWidget";
 import CompletedQuizzesWidget from "./CompletedQuizzesWidget";
 import AverageScoreWidget from "./AverageScoreWidget";
