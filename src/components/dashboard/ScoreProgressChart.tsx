@@ -15,23 +15,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 // Datos de ejemplo para cuestionarios
 const QUIZZES = [
-  { id: 1, name: "PMP Project Management Knowledge Areas" },
-  { id: 2, name: "Metodologías Ágiles y Scrum" },
-  { id: 3, name: "Fundamentos de PRINCE2" }
+  { id: 1, name: "PMP Project Management Knowledge Areas", minScore: 70 },
+  { id: 2, name: "Metodologías Ágiles y Scrum", minScore: 75 },
+  { id: 3, name: "Fundamentos de PRINCE2", minScore: 80 }
 ];
 
-// Función para generar intentos simulados
+// Función para generar intentos simulados ordenados
 const generateAttemptData = (quizId: number) => {
-  return Array.from({ length: 7 }, (_, i) => {
-    const dateObj = new Date();
-    dateObj.setDate(dateObj.getDate() - (i * 5));
-    
-    return {
-      name: `Intento ${i + 1}`,
-      score: Math.floor(Math.random() * 30) + 65,
-      date: format(dateObj, 'dd/MM/yyyy')
-    };
-  }).reverse();
+  return Array.from({ length: 7 }, (_, i) => ({
+    name: `${i + 1}`,
+    score: Math.floor(Math.random() * 30) + 65,
+    date: format(new Date(Date.now() - (6 - i) * 24 * 60 * 60 * 1000), 'dd/MM/yyyy')
+  }));
 };
 
 interface ScoreProgressChartProps {
@@ -43,7 +38,7 @@ import { es } from "date-fns/locale";
 
 const ScoreProgressChart = ({ data: initialData }: ScoreProgressChartProps) => {
   const [selectedQuiz, setSelectedQuiz] = useState("1");
-  const [quizData, setQuizData] = useState({
+  const [quizData] = useState({
     1: { attempts: generateAttemptData(1), minScore: 70 },
     2: { attempts: generateAttemptData(2), minScore: 75 },
     3: { attempts: generateAttemptData(3), minScore: 80 },
@@ -55,7 +50,7 @@ const ScoreProgressChart = ({ data: initialData }: ScoreProgressChartProps) => {
         <div className="flex flex-col md:flex-row justify-between items-start mb-4 gap-2">
           <h3 className="text-lg font-medium">Progreso de puntuación</h3>
           <Select value={selectedQuiz} onValueChange={setSelectedQuiz}>
-            <SelectTrigger className="w-full md:w-[300px]">
+            <SelectTrigger className="w-full md:w-[400px]">
               <SelectValue placeholder="Seleccionar cuestionario" />
             </SelectTrigger>
             <SelectContent>
@@ -77,50 +72,24 @@ const ScoreProgressChart = ({ data: initialData }: ScoreProgressChartProps) => {
               <YAxis domain={[0, 100]} />
               <Tooltip 
                 formatter={(value, name) => [`${value}%`, 'Puntuación']}
-                labelFormatter={(name, payload) => {
-                  if (payload && payload.length > 0 && payload[0].payload) {
-                    return `Intento ${name} - ${payload[0].payload.date}`;
-                  }
-                  return `Intento ${name}`;
-                }}
+                labelFormatter={(name) => `Intento ${name}`}
               />
               
               {/* Línea base del puntaje mínimo */}
               <ReferenceLine
                 y={quizData[parseInt(selectedQuiz)].minScore}
-                stroke="#666"
-                strokeDasharray="3 3"
+                stroke="#000000"
+                strokeWidth={1}
                 label={{ value: 'Puntaje mínimo', position: 'right' }}
               />
               
               <Line 
-                type="linear"
+                type="monotone"
                 dataKey="score"
-                data={quizData[parseInt(selectedQuiz)].attempts.slice(0, 7)}
+                data={quizData[parseInt(selectedQuiz)].attempts}
                 stroke="#8B5CF6"
                 strokeWidth={2}
-                dot={(props) => {
-                  const score = props.payload.score;
-                  const minScore = quizData[parseInt(selectedQuiz)].minScore;
-                  const diff = Math.abs(score - minScore);
-                  let color = '#EF4444'; // rojo
-                  
-                  if (score >= minScore) {
-                    color = diff <= 5 ? '#F59E0B' : '#10B981'; // ambar o verde
-                  } else {
-                    color = diff <= 5 ? '#F59E0B' : '#EF4444'; // ambar o rojo
-                  }
-                  
-                  return (
-                    <circle
-                      cx={props.cx}
-                      cy={props.cy}
-                      r={6}
-                      fill={color}
-                      stroke="none"
-                    />
-                  );
-                }}
+                dot={{ r: 6, fill: "#8B5CF6" }}
               />
             </LineChart>
           </ResponsiveContainer>
