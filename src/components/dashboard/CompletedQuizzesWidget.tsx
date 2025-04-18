@@ -21,7 +21,7 @@ const CompletedQuizzesWidget = ({ total, quizzes, infoTooltip }: CompletedQuizze
   return (
     <ExpandableWidget
       title="Cuestionarios completados"
-      value={total}
+      value={total.toString()}  // Convert number to string
       subtitle="Cuestionarios completados"
       icon={FileQuestion}
       iconColor="text-purple-600"

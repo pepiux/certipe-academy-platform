@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -310,8 +309,7 @@ const TestLesson = () => {
                 
                 <Progress 
                   value={testResult.score} 
-                  className="h-2 mb-4"
-                  indicatorColor={testResult.score >= 70 ? "bg-green-500" : "bg-red-500"}
+                  className={`h-2 mb-4 ${testResult.score >= 70 ? "bg-green-500" : "bg-red-500"}`}
                 />
               </CardContent>
             </Card>
@@ -362,7 +360,7 @@ const TestLesson = () => {
                       </div>
                       
                       {question.explanation && (
-                        <div className="mt-4 p-4 bg-blue-50 text-blue-900 rounded-md">
+                        <div className={`mt-4 p-4 bg-blue-50 text-blue-900 rounded-md`}>
                           <div className="flex items-start">
                             <HelpCircle className="h-5 w-5 text-blue-500 mr-2 mt-0.5 flex-shrink-0" />
                             <p>{question.explanation}</p>

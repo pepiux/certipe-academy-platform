@@ -20,7 +20,7 @@ const CoursesInProgressWidget = ({ total, courses, infoTooltip }: CoursesInProgr
   return (
     <ExpandableWidget
       title="Cursos en progreso"
-      value={total}
+      value={total.toString()}  // Convert number to string
       subtitle="Cursos activos"
       icon={BookOpen}
       iconColor="text-amber-600"

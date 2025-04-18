@@ -1,4 +1,3 @@
-
 // Datos mock para gráficos del dashboard
 export const studyHoursData = [
   { date: '2023-05-08', hours: 2.5 }, // Lunes
@@ -54,4 +53,3 @@ export const coursesData = [
     favorite: true
   }
 ];
-
