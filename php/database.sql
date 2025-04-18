@@ -180,6 +180,14 @@ CREATE TABLE IF NOT EXISTS dashboard_stats (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Modificar la tabla de quizzes para agregar el campo de puntaje mínimo
+ALTER TABLE quizzes ADD COLUMN min_passing_score INT NOT NULL DEFAULT 70;
+
+-- Actualizar los quizzes existentes con valores de ejemplo
+UPDATE quizzes SET min_passing_score = 70 WHERE id IN (1, 4, 6);
+UPDATE quizzes SET min_passing_score = 75 WHERE id IN (2, 5);
+UPDATE quizzes SET min_passing_score = 80 WHERE id = 3;
+
 -- Insertar datos de ejemplo
 -- Usuario administrador
 INSERT INTO users (name, email, password, role) VALUES 
@@ -303,3 +311,306 @@ INSERT INTO quiz_attempts (quiz_id, user_id, score, passed, completed_at) VALUES
 -- Estadísticas de dashboard para el usuario estudiante
 INSERT INTO dashboard_stats (user_id, total_study_hours, completed_quizzes, average_score, courses_in_progress)
 VALUES (3, 35.5, 4, 78, 2);
+```
+
+Write out the full new code that the AI meant to put in the file src/components/dashboard/StudyHoursChart.tsx, replacing the comments with the actual code.
+I want to be able to copy and paste the new code directly into my codebase, so you must write out the full code, leaving no placeholders like "Keep existing code".
+Write only the new code for `src/components/dashboard/StudyHoursChart.tsx` and **nothing** else. Expected output format:
+
+```typescript
+import { useState, useEffect } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { 
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { format, subWeeks, addDays, startOfWeek } from "date-fns";
+import { es } from "date-fns/locale";
+
+// Datos de ejemplo para cursos
+const COURSES = [
+  { id: 1, name: "Gestión de Proyectos" },
+  { id: 2, name: "Metodologías Ágiles" },
+  { id: 3, name: "PRINCE2" }
+];
+
+interface StudyHoursChartProps {
+  data: Array<{ name: string; hours: number }>;
+}
+
+// Función para generar datos de semana simulados
+const generateWeekData = (weekOffset: number) => {
+  const weekStart = startOfWeek(subWeeks(new Date(), weekOffset), { weekStartsOn: 1 });
+  return Array.from({ length: 7 }, (_, i) => {
+    const day = addDays(weekStart, i);
+    return {
+      fullName: format(day, 'EEEE', { locale: es }),
+      name: format(day, 'EEEEE', { locale: es }).toUpperCase(),
+      date: format(day, 'yyyy-MM-dd'),
+      hours: Math.random() * 5 + 0.5
+    };
+  });
+};
+
+const StudyHoursChart = ({ data: initialData }: StudyHoursChartProps) => {
+  const [selectedCourse, setSelectedCourse] = useState("1");
+  const [selectedWeeks, setSelectedWeeks] = useState<number[]>([0, 1]); // Últimas 2 semanas por defecto
+  const [startDate, setStartDate] = useState<Date | undefined>(subWeeks(new Date(), 3));
+  const [endDate, setEndDate] = useState<Date | undefined>(new Date());
+  const [weekData, setWeekData] = useState<Record<number, any[]>>({
+    0: generateWeekData(0),
+    1: generateWeekData(1),
+    2: generateWeekData(2),
+    3: generateWeekData(3),
+  });
+
+  // Colores para las líneas
+  const lineColors = ["#3B82F6", "#8B5CF6", "#EC4899", "#10B981"];
+
+  const toggleWeekSelection = (week: number) => {
+    if (selectedWeeks.includes(week)) {
+      setSelectedWeeks(selectedWeeks.filter(w => w !== week));
+    } else if (selectedWeeks.length < 4) {
+      setSelectedWeeks([...selectedWeeks, week]);
+    }
+  };
+
+  return (
+    <Card className="w-full">
+      <CardContent className="p-4">
+        <div className="flex flex-col md:flex-row justify-between items-start mb-4 gap-2">
+          <h3 className="text-lg font-medium">Horas de estudio diarias</h3>
+          <div className="flex flex-wrap gap-2 w-full md:w-auto">
+            <Select value={selectedCourse} onValueChange={setSelectedCourse}>
+              <SelectTrigger className="w-full md:w-[300px]">
+                <SelectValue placeholder="Seleccionar curso" />
+              </SelectTrigger>
+              <SelectContent>
+                {COURSES.map(course => (
+                  <SelectItem key={course.id} value={course.id.toString()}>{course.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            <div className="flex gap-2">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    {startDate ? format(startDate, 'dd/MM/yyyy') : 'Inicio'}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={startDate}
+                    onSelect={setStartDate}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+              
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    {endDate ? format(endDate, 'dd/MM/yyyy') : 'Fin'}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="end">
+                  <Calendar
+                    mode="single"
+                    selected={endDate}
+                    onSelect={setEndDate}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+          </div>
+        </div>
+        
+        <div className="flex flex-wrap gap-2 mb-4">
+          {[0, 1, 2, 3].map((week) => (
+            <Button
+              key={week}
+              size="sm"
+              variant={selectedWeeks.includes(week) ? "default" : "outline"}
+              onClick={() => toggleWeekSelection(week)}
+            >
+              Sem {week + 1}
+            </Button>
+          ))}
+        </div>
+        
+        <div className="h-64">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart margin={{ left: 0, right: 20, top: 8, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis 
+                dataKey="name" 
+                allowDuplicatedCategory={false}
+                padding={{ left: 0, right: 0 }}
+              />
+              <YAxis label={{ value: 'Horas', angle: -90, position: 'insideLeft' }} />
+              <Tooltip 
+                formatter={(value) => [`${value} horas`]}
+                labelFormatter={(label) => `${label}`}
+              />
+              <Legend />
+              
+              {selectedWeeks.map((week, index) => (
+                <Line 
+                  key={week}
+                  name={`Semana ${week + 1}`}
+                  data={weekData[week]}
+                  type="linear"
+                  dataKey="hours"
+                  stroke={lineColors[index % lineColors.length]}
+                  strokeWidth={2}
+                  activeDot={{ r: 6 }}
+                  connectNulls
+                />
+              ))}
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default StudyHoursChart;
+```
+
+Write out the full new code that the AI meant to put in the file src/components/dashboard/ScoreProgressChart.tsx, replacing the comments with the actual code.
+I want to be able to copy and paste the new code directly into my codebase, so you must write out the full code, leaving no placeholders like "Keep existing code".
+Write only the new code for `src/components/dashboard/ScoreProgressChart.tsx` and **nothing** else. Expected output format:
+
+```typescript
+import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+// Datos de ejemplo para cuestionarios
+const QUIZZES = [
+  { id: 1, name: "PMP Project Management Knowledge Areas" },
+  { id: 2, name: "Metodologías Ágiles y Scrum" },
+  { id: 3, name: "Fundamentos de PRINCE2" }
+];
+
+// Función para generar intentos simulados
+const generateAttemptData = (quizId: number) => {
+  return Array.from({ length: 7 }, (_, i) => {
+    const dateObj = new Date();
+    dateObj.setDate(dateObj.getDate() - (i * 5));
+    
+    return {
+      name: `Intento ${i + 1}`,
+      score: Math.floor(Math.random() * 30) + 65,
+      date: format(dateObj, 'dd/MM/yyyy')
+    };
+  }).reverse();
+};
+
+interface ScoreProgressChartProps {
+  data: Array<{ name: string; score: number }>;
+}
+
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+
+const ScoreProgressChart = ({ data: initialData }: ScoreProgressChartProps) => {
+  const [selectedQuiz, setSelectedQuiz] = useState("1");
+  const [quizData, setQuizData] = useState({
+    1: { attempts: generateAttemptData(1), minScore: 70 },
+    2: { attempts: generateAttemptData(2), minScore: 75 },
+    3: { attempts: generateAttemptData(3), minScore: 80 },
+  });
+
+  return (
+    <Card className="w-full">
+      <CardContent className="p-4">
+        <div className="flex flex-col md:flex-row justify-between items-start mb-4 gap-2">
+          <h3 className="text-lg font-medium">Progreso de puntuación</h3>
+          <Select value={selectedQuiz} onValueChange={setSelectedQuiz}>
+            <SelectTrigger className="w-full md:w-[300px]">
+              <SelectValue placeholder="Seleccionar cuestionario" />
+            </SelectTrigger>
+            <SelectContent>
+              {QUIZZES.map(quiz => (
+                <SelectItem key={quiz.id} value={quiz.id.toString()}>{quiz.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        
+        <div className="h-64">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart margin={{ left: 0, right: 20, top: 8, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis 
+                dataKey="name"
+                label={{ value: 'Intentos', position: 'bottom' }}
+              />
+              <YAxis domain={[0, 100]} />
+              <Tooltip 
+                formatter={(value, name) => [`${value}%`, 'Puntuación']}
+                labelFormatter={(name, payload) => {
+                  if (payload && payload.length > 0 && payload[0].payload) {
+                    return `Intento ${name} - ${payload[0].payload.date}`;
+                  }
+                  return `Intento ${name}`;
+                }}
+              />
+              
+              {/* Línea base del puntaje mínimo */}
+              <ReferenceLine
+                y={quizData[parseInt(selectedQuiz)].minScore}
+                stroke="#666"
+                strokeDasharray="3 3"
+                label={{ value: 'Puntaje mínimo', position: 'right' }}
+              />
+              
+              <Line 
+                type="linear"
+                dataKey="score"
+                data={quizData[parseInt(selectedQuiz)].attempts.slice(0, 7)}
+                stroke="#8B5CF6"
+                strokeWidth={2}
+                dot={(props) => {
+                  const score = props.payload.score;
+                  const minScore = quizData[parseInt(selectedQuiz)].minScore;
+                  const diff = Math.abs(score - minScore);
+                  let color = '#EF4444'; // rojo
+                  
+                  if (score >= minScore) {
+                    color = diff <= 5 ? '#F59E0B' : '#10B981'; // ambar o verde
+                  } else {
+                    color = diff <= 5 ? '#F59E0B' : '#EF4444'; // ambar o rojo
+                  }
+                  
+                  return (
+                    <circle
+                      cx={props.cx}
+                      cy={props.cy}
+                      r={6}
+                      fill={color}
+                      stroke="none"
+                    />
+                  );
+                }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default ScoreProgressChart;

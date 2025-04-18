@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
@@ -13,7 +12,6 @@ import { Calendar } from "@/components/ui/calendar";
 import { format, subWeeks, addDays, startOfWeek } from "date-fns";
 import { es } from "date-fns/locale";
 
-// Datos de ejemplo para cursos
 const COURSES = [
   { id: 1, name: "Gestión de Proyectos" },
   { id: 2, name: "Metodologías Ágiles" },
@@ -24,9 +22,8 @@ interface StudyHoursChartProps {
   data: Array<{ name: string; hours: number }>;
 }
 
-// Función para generar datos de semana simulados
 const generateWeekData = (weekOffset: number) => {
-  const weekStart = startOfWeek(subWeeks(new Date(), weekOffset));
+  const weekStart = startOfWeek(subWeeks(new Date(), weekOffset), { weekStartsOn: 1 });
   return Array.from({ length: 7 }, (_, i) => {
     const day = addDays(weekStart, i);
     return {
@@ -40,7 +37,7 @@ const generateWeekData = (weekOffset: number) => {
 
 const StudyHoursChart = ({ data: initialData }: StudyHoursChartProps) => {
   const [selectedCourse, setSelectedCourse] = useState("1");
-  const [selectedWeeks, setSelectedWeeks] = useState<number[]>([0, 1]); // Últimas 2 semanas por defecto
+  const [selectedWeeks, setSelectedWeeks] = useState<number[]>([0, 1]);
   const [startDate, setStartDate] = useState<Date | undefined>(subWeeks(new Date(), 3));
   const [endDate, setEndDate] = useState<Date | undefined>(new Date());
   const [weekData, setWeekData] = useState<Record<number, any[]>>({
@@ -50,7 +47,6 @@ const StudyHoursChart = ({ data: initialData }: StudyHoursChartProps) => {
     3: generateWeekData(3),
   });
 
-  // Colores para las líneas
   const lineColors = ["#3B82F6", "#8B5CF6", "#EC4899", "#10B981"];
 
   const toggleWeekSelection = (week: number) => {
@@ -66,9 +62,9 @@ const StudyHoursChart = ({ data: initialData }: StudyHoursChartProps) => {
       <CardContent className="p-4">
         <div className="flex flex-col md:flex-row justify-between items-start mb-4 gap-2">
           <h3 className="text-lg font-medium">Horas de estudio diarias</h3>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 w-full md:w-auto">
             <Select value={selectedCourse} onValueChange={setSelectedCourse}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full md:w-[300px]">
                 <SelectValue placeholder="Seleccionar curso" />
               </SelectTrigger>
               <SelectContent>
@@ -136,9 +132,9 @@ const StudyHoursChart = ({ data: initialData }: StudyHoursChartProps) => {
                 allowDuplicatedCategory={false}
                 padding={{ left: 0, right: 0 }}
               />
-              <YAxis />
+              <YAxis label={{ value: 'Horas', angle: -90, position: 'insideLeft' }} />
               <Tooltip 
-                formatter={(value, name) => [`${value} horas`, `Semana ${parseInt(String(name)) + 1}`]}
+                formatter={(value) => [`${value} horas`]}
                 labelFormatter={(label) => `${label}`}
               />
               <Legend />

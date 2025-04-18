@@ -34,10 +34,10 @@ import { es } from "date-fns/locale";
 
 const ScoreProgressChart = ({ data: initialData }: ScoreProgressChartProps) => {
   const [selectedQuiz, setSelectedQuiz] = useState("1");
-  const [attemptData, setAttemptData] = useState({
-    1: generateAttemptData(1),
-    2: generateAttemptData(2),
-    3: generateAttemptData(3),
+  const [quizData, setQuizData] = useState({
+    1: { attempts: generateAttemptData(1), minScore: 70 },
+    2: { attempts: generateAttemptData(2), minScore: 75 },
+    3: { attempts: generateAttemptData(3), minScore: 80 },
   });
 
   return (
@@ -46,7 +46,7 @@ const ScoreProgressChart = ({ data: initialData }: ScoreProgressChartProps) => {
         <div className="flex flex-col md:flex-row justify-between items-start mb-4 gap-2">
           <h3 className="text-lg font-medium">Progreso de puntuación</h3>
           <Select value={selectedQuiz} onValueChange={setSelectedQuiz}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-full md:w-[300px]">
               <SelectValue placeholder="Seleccionar cuestionario" />
             </SelectTrigger>
             <SelectContent>
@@ -59,29 +59,59 @@ const ScoreProgressChart = ({ data: initialData }: ScoreProgressChartProps) => {
         
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart 
-              data={attemptData[parseInt(selectedQuiz)]} 
-              margin={{ left: 0, right: 20, top: 8, bottom: 0 }}
-            >
+            <LineChart margin={{ left: 0, right: 20, top: 8, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
+              <XAxis 
+                dataKey="name"
+                label={{ value: 'Intentos', position: 'bottom' }}
+              />
               <YAxis domain={[0, 100]} />
               <Tooltip 
-                formatter={(value) => [`${value}%`, 'Puntuación']}
+                formatter={(value, name) => [`${value}%`, 'Puntuación']}
                 labelFormatter={(name, payload) => {
                   if (payload && payload.length > 0 && payload[0].payload) {
-                    return `${name} - ${payload[0].payload.date}`;
+                    return `Intento ${name} - ${payload[0].payload.date}`;
                   }
-                  return name;
+                  return `Intento ${name}`;
                 }}
               />
+              
+              {/* Línea base del puntaje mínimo */}
+              <ReferenceLine
+                y={quizData[parseInt(selectedQuiz)].minScore}
+                stroke="#666"
+                strokeDasharray="3 3"
+                label={{ value: 'Puntaje mínimo', position: 'right' }}
+              />
+              
               <Line 
-                type="linear" 
-                dataKey="score" 
-                stroke="#8B5CF6" 
-                strokeWidth={2} 
-                dot={{ strokeWidth: 2, r: 4 }}
-                activeDot={{ r: 6 }}
+                type="linear"
+                dataKey="score"
+                data={quizData[parseInt(selectedQuiz)].attempts.slice(0, 7)}
+                stroke="#8B5CF6"
+                strokeWidth={2}
+                dot={(props) => {
+                  const score = props.payload.score;
+                  const minScore = quizData[parseInt(selectedQuiz)].minScore;
+                  const diff = Math.abs(score - minScore);
+                  let color = '#EF4444'; // rojo
+                  
+                  if (score >= minScore) {
+                    color = diff <= 5 ? '#F59E0B' : '#10B981'; // ambar o verde
+                  } else {
+                    color = diff <= 5 ? '#F59E0B' : '#EF4444'; // ambar o rojo
+                  }
+                  
+                  return (
+                    <circle
+                      cx={props.cx}
+                      cy={props.cy}
+                      r={6}
+                      fill={color}
+                      stroke="none"
+                    />
+                  );
+                }}
               />
             </LineChart>
           </ResponsiveContainer>
@@ -90,5 +120,3 @@ const ScoreProgressChart = ({ data: initialData }: ScoreProgressChartProps) => {
     </Card>
   );
 };
-
-export default ScoreProgressChart;
