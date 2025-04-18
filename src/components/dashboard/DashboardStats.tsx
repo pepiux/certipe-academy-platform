@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { DashboardStats } from '@/services/dashboardService';
+import { DashboardStats as DashboardStatsType } from '@/services/dashboardService';
 import StudyHoursWidget from "./StudyHoursWidget";
 import CompletedQuizzesWidget from "./CompletedQuizzesWidget";
 import AverageScoreWidget from "./AverageScoreWidget";
@@ -9,7 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 interface DashboardStatsProps {
   loading: boolean;
-  stats: DashboardStats | null;
+  stats: DashboardStatsType | null;
 }
 
 const DashboardStats = ({ loading, stats }: DashboardStatsProps) => {

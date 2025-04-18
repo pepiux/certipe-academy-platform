@@ -1,11 +1,12 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import courseService from "@/services/courseService";
 import quizService from "@/services/quizService";
-import dashboardService, { DashboardStats } from "@/services/dashboardService";
+import dashboardService, { DashboardStats as DashboardStatsType } from "@/services/dashboardService";
 
-// Import new components
+// Import components
 import DashboardStats from "@/components/dashboard/DashboardStats";
 import DashboardCharts from "@/components/dashboard/DashboardCharts";
 import DashboardRecent from "@/components/dashboard/DashboardRecent";
@@ -21,7 +22,7 @@ const Dashboard = () => {
   });
   const [courses, setCourses] = useState<any[]>([]);
   const [quizzes, setQuizzes] = useState<any[]>([]);
-  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [stats, setStats] = useState<DashboardStatsType | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   // Datos para las gráficas
