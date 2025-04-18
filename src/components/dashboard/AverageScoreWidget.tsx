@@ -61,25 +61,22 @@ const AverageScoreWidget = ({ overall, quizzes }: AverageScoreWidgetProps) => {
           </div>
           
           {selectedQuiz && (
-            <div className="mt-3">
-              <div className="flex justify-between mb-2">
-                <span className="text-sm font-medium">Media del cuestionario:</span>
-                <span className="text-sm font-medium">
-                  {selectedQuiz.avg_score.toFixed(1)}%
-                </span>
-              </div>
-              
+            <div className="mt-3">              
               <div>
                 <h4 className="text-sm font-medium mb-1">Historial de intentos:</h4>
                 <ul className="space-y-1">
                   {selectedQuiz.attempts.map((attempt, index) => (
-                    <li key={index} className="flex justify-between text-sm">
-                      <span className="text-xs text-muted-foreground">
-                        {format(new Date(attempt.date), 'dd/MM/yyyy', { locale: es })}
-                      </span>
-                      <span className={`${attempt.score >= 70 ? 'text-green-600' : 'text-amber-600'}`}>
-                        {attempt.score}%
-                      </span>
+                    <li key={index} className="grid grid-cols-12 gap-2 text-sm">
+                      <div className="col-span-8">
+                        <p className="text-xs text-muted-foreground">
+                          {format(new Date(attempt.date), 'dd/MM/yyyy', { locale: es })}
+                        </p>
+                      </div>
+                      <div className="col-span-4 flex justify-end">
+                        <span className={`${attempt.score >= 70 ? 'text-green-600' : 'text-amber-600'}`}>
+                          {attempt.score}%
+                        </span>
+                      </div>
                     </li>
                   ))}
                 </ul>

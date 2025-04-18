@@ -6,15 +6,12 @@ import { useDashboardData } from "@/hooks/useDashboardData";
 // Importar datos mock de utilidades
 import { 
   studyHoursData, 
-  scoreProgressData, 
-  recentQuiz, 
-  recentActivities 
+  scoreProgressData
 } from "@/utils/dashboardMockData";
 
 // Componentes
 import DashboardStats from "@/components/dashboard/DashboardStats";
 import DashboardCharts from "@/components/dashboard/DashboardCharts";
-import DashboardRecent from "@/components/dashboard/DashboardRecent";
 import DashboardCoursesSection from "@/components/dashboard/DashboardCoursesSection";
 import DashboardQuizzesSection from "@/components/dashboard/DashboardQuizzesSection";
 
@@ -39,11 +36,6 @@ const Dashboard = () => {
       <DashboardCharts 
         studyHoursData={studyHoursData}
         scoreProgressData={scoreProgressData}
-      />
-      
-      <DashboardRecent 
-        recentQuiz={recentQuiz}
-        recentActivities={recentActivities}
       />
       
       <DashboardCoursesSection
