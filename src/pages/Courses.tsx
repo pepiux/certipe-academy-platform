@@ -1,8 +1,7 @@
-
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Filter, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import {
   Tabs,
   TabsContent,
@@ -16,20 +15,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-  SheetFooter,
-  SheetClose,
-} from "@/components/ui/sheet";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import CourseCard from "@/components/courses/CourseCard";
 import { useNavigate } from "react-router-dom";
+import CourseCard from "@/components/courses/CourseCard";
 
 interface Course {
   id: number;
@@ -48,7 +35,6 @@ const Courses = () => {
   const [currentTab, setCurrentTab] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filtersOpen, setFiltersOpen] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedLevels, setSelectedLevels] = useState<string[]>([]);
   const coursesPerPage = 8;
@@ -213,7 +199,6 @@ const Courses = () => {
     }
   ];
   
-  // Get unique categories and levels for filters
   const categories = [...new Set(allCourses.map(course => course.category))];
   const levels = [...new Set(allCourses.map(course => course.level))];
   
@@ -239,17 +224,13 @@ const Courses = () => {
   };
   
   const filteredCourses = allCourses.filter(course => {
-    // Filter by tab
     if (currentTab === "my" && !course.enrolled) return false;
-    if (currentTab === "popular" && course.students <= 200) return false;
+    if (currentTab === "favorites" && !course.favorite) return false;
     
-    // Filter by search query
     if (searchQuery && !course.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     
-    // Filter by selected categories
     if (selectedCategories.length > 0 && !selectedCategories.includes(course.category)) return false;
     
-    // Filter by selected levels
     if (selectedLevels.length > 0 && !selectedLevels.includes(course.level)) return false;
     
     return true;
@@ -274,11 +255,6 @@ const Courses = () => {
     setSearchQuery(e.target.value);
     setCurrentPage(1);
   };
-  
-  const handleApplyFilters = () => {
-    setCurrentPage(1);
-    setFiltersOpen(false);
-  };
 
   return (
     <div className="space-y-6">
@@ -296,64 +272,6 @@ const Courses = () => {
               onChange={handleSearch}
             />
           </div>
-          <Sheet open={filtersOpen} onOpenChange={setFiltersOpen}>
-            <SheetTrigger asChild>
-              <Button variant="outline">
-                <Filter className="mr-2 h-4 w-4" />
-                Filtros
-                {(selectedCategories.length > 0 || selectedLevels.length > 0) && (
-                  <span className="ml-1 h-4 w-4 rounded-full bg-primary text-[10px] text-primary-foreground flex items-center justify-center">
-                    {selectedCategories.length + selectedLevels.length}
-                  </span>
-                )}
-              </Button>
-            </SheetTrigger>
-            <SheetContent className="w-[300px] sm:w-[400px]">
-              <SheetHeader>
-                <SheetTitle>Filtros</SheetTitle>
-                <SheetDescription>
-                  Filtrar cursos por categoría y nivel
-                </SheetDescription>
-              </SheetHeader>
-              <div className="py-6">
-                <h3 className="font-medium mb-3">Categorías</h3>
-                <div className="space-y-3">
-                  {categories.map(category => (
-                    <div key={category} className="flex items-center space-x-2">
-                      <Checkbox 
-                        id={`category-${category}`} 
-                        checked={selectedCategories.includes(category)}
-                        onCheckedChange={() => handleCategoryToggle(category)}
-                      />
-                      <Label htmlFor={`category-${category}`}>{category}</Label>
-                    </div>
-                  ))}
-                </div>
-                
-                <h3 className="font-medium mb-3 mt-6">Nivel</h3>
-                <div className="space-y-3">
-                  {levels.map(level => (
-                    <div key={level} className="flex items-center space-x-2">
-                      <Checkbox 
-                        id={`level-${level}`}
-                        checked={selectedLevels.includes(level)}
-                        onCheckedChange={() => handleLevelToggle(level)}
-                      />
-                      <Label htmlFor={`level-${level}`}>{level}</Label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <SheetFooter>
-                <SheetClose asChild>
-                  <Button variant="outline" onClick={resetFilters}>Restablecer</Button>
-                </SheetClose>
-                <SheetClose asChild>
-                  <Button onClick={handleApplyFilters}>Aplicar filtros</Button>
-                </SheetClose>
-              </SheetFooter>
-            </SheetContent>
-          </Sheet>
         </div>
       </div>
 
@@ -362,7 +280,7 @@ const Courses = () => {
           <TabsList>
             <TabsTrigger value="all">Todos los cursos</TabsTrigger>
             <TabsTrigger value="my">Mis cursos</TabsTrigger>
-            <TabsTrigger value="popular">Populares</TabsTrigger>
+            <TabsTrigger value="favorites">Favoritos</TabsTrigger>
           </TabsList>
         </Tabs>
         

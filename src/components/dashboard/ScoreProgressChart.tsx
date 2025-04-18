@@ -1,130 +1,72 @@
-
-import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import React from "react";
+import {
   ResponsiveContainer,
+  LineChart,
+  Line,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
   ReferenceLine,
-  Area
+  Label,
+  Area,
 } from "recharts";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Info } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Tooltip as UITooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-
-// Datos de ejemplo para cuestionarios
-const QUIZZES = [
-  { id: 1, name: "PMP Project Management Knowledge Areas", minScore: 70 },
-  { id: 2, name: "Metodologías Ágiles y Scrum", minScore: 75 },
-  { id: 3, name: "Fundamentos de PRINCE2", minScore: 80 }
-];
-
-// Función para generar intentos simulados ordenados
-const generateAttemptData = (quizId: number) => {
-  return Array.from({ length: 7 }, (_, i) => ({
-    name: `${i + 1}`,
-    score: Math.floor(Math.random() * 30) + 65,
-    date: format(new Date(Date.now() - (6 - i) * 24 * 60 * 60 * 1000), 'dd/MM/yyyy')
-  }));
-};
 
 interface ScoreProgressChartProps {
-  data: Array<{ name: string; score: number }>;
+  data: { date: string; score: number }[];
+  className?: string;
 }
 
-const ScoreProgressChart = ({ data: initialData }: ScoreProgressChartProps) => {
-  const [selectedQuiz, setSelectedQuiz] = useState("1");
-  const [quizData] = useState({
-    1: { attempts: generateAttemptData(1), minScore: 70 },
-    2: { attempts: generateAttemptData(2), minScore: 75 },
-    3: { attempts: generateAttemptData(3), minScore: 80 },
-  });
-
+const ScoreProgressChart = ({ data, className }: ScoreProgressChartProps) => {
   return (
-    <Card className="w-full">
-      <CardContent className="p-4">
-        <div className="flex flex-col gap-4">
-          <div className="flex justify-between items-start">
-            <h3 className="text-lg font-medium">Progreso de puntuación</h3>
-            <TooltipProvider>
-              <UITooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-6 w-6">
-                    <Info className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent className="max-w-xs text-sm">
-                  Este indicador muestra los puntajes porcentuales de los últimos intentos obtenidos en el cuestionario seleccionado. La linea base representa el umbral minimo esperado.
-                </TooltipContent>
-              </UITooltip>
-            </TooltipProvider>
-          </div>
-          
-          <Select value={selectedQuiz} onValueChange={setSelectedQuiz}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Seleccionar cuestionario" />
-            </SelectTrigger>
-            <SelectContent>
-              {QUIZZES.map(quiz => (
-                <SelectItem key={quiz.id} value={quiz.id.toString()}>{quiz.name}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        
-        <div className="h-64 mt-4">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart margin={{ left: 0, right: 20, top: 8, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis 
-                dataKey="name"
-                label={{ value: 'Intentos', position: 'bottom' }}
-              />
-              <YAxis domain={[0, 100]} />
-              <Tooltip 
-                formatter={(value, name) => [`${value}%`, 'Puntuación']}
-                labelFormatter={(name) => `Intento ${name}`}
-              />
-              
-              <Area
-                type="monotone"
-                dataKey={() => quizData[parseInt(selectedQuiz)].minScore}
-                stroke="none"
-                fill="#f0f0f0"
-                data={quizData[parseInt(selectedQuiz)].attempts}
-              />
-              
-              <ReferenceLine
-                y={quizData[parseInt(selectedQuiz)].minScore}
-                stroke="#000000"
-                strokeWidth={1}
-              />
-              
-              <Line 
-                type="monotone"
-                dataKey="score"
-                data={quizData[parseInt(selectedQuiz)].attempts.slice(0, 7)}
-                stroke="#8B5CF6"
-                strokeWidth={2}
-                dot={{ r: 6, fill: "#8B5CF6" }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </CardContent>
-    </Card>
+    <ResponsiveContainer width="100%" height="100%" className={className}>
+      <LineChart
+        data={data}
+        margin={{ top: 10, right: 10, left: 10, bottom: 10 }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis
+          dataKey="date"
+          tickFormatter={(value) => format(new Date(value), "dd/MM")}
+        />
+        <YAxis 
+          domain={[0, 100]}
+          label={{ 
+            value: "Puntuación %", 
+            angle: -90, 
+            position: 'insideLeft',
+            style: { textAnchor: 'middle' }
+          }} 
+        />
+        <Tooltip
+          formatter={(value) => [`${value}%`, 'Puntuación']}
+          labelFormatter={(value) => format(new Date(value), "dd 'de' MMMM", { locale: es })}
+        />
+        <ReferenceLine
+          y={70}
+          label="Mínimo"
+          stroke="#FF8C42"
+          strokeDasharray="3 3"
+        />
+        <ReferenceLine
+          y={data.length > 0 ? data[data.length - 1].score : 0}
+          stroke="#82ca9d"
+          strokeDasharray="3 3"
+        >
+          <Label value="Actual" offset={0} position="insideBottomRight" />
+        </ReferenceLine>
+        <Area
+          type="monotone"
+          dataKey="score"
+          stroke="#0EA5E9"
+          fill="#0EA5E9"
+          fillOpacity={0.1}
+          activeDot={{ r: 8 }}
+        />
+      </LineChart>
+    </ResponsiveContainer>
   );
 };
 
