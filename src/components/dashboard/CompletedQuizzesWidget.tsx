@@ -14,9 +14,10 @@ interface CompletedQuiz {
 interface CompletedQuizzesWidgetProps {
   total: number;
   quizzes: CompletedQuiz[];
+  infoTooltip?: string;
 }
 
-const CompletedQuizzesWidget = ({ total, quizzes }: CompletedQuizzesWidgetProps) => {
+const CompletedQuizzesWidget = ({ total, quizzes, infoTooltip }: CompletedQuizzesWidgetProps) => {
   return (
     <ExpandableWidget
       title="Cuestionarios completados"
@@ -25,9 +26,11 @@ const CompletedQuizzesWidget = ({ total, quizzes }: CompletedQuizzesWidgetProps)
       icon={FileQuestion}
       iconColor="text-purple-600"
       iconBgColor="bg-purple-100"
+      infoTooltip={infoTooltip}
     >
       {quizzes && quizzes.length > 0 ? (
         <ul className="space-y-2">
+          <h4 className="text-sm font-medium mb-2">Cuestionarios</h4>
           {quizzes.map((quiz) => (
             <li key={quiz.id} className="flex justify-between text-sm">
               <span className="text-muted-foreground">{quiz.title}</span>

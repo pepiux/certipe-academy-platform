@@ -13,9 +13,10 @@ interface CourseProgress {
 interface CoursesInProgressWidgetProps {
   total: number;
   courses: CourseProgress[];
+  infoTooltip?: string;
 }
 
-const CoursesInProgressWidget = ({ total, courses }: CoursesInProgressWidgetProps) => {
+const CoursesInProgressWidget = ({ total, courses, infoTooltip }: CoursesInProgressWidgetProps) => {
   return (
     <ExpandableWidget
       title="Cursos en progreso"
@@ -24,6 +25,7 @@ const CoursesInProgressWidget = ({ total, courses }: CoursesInProgressWidgetProp
       icon={BookOpen}
       iconColor="text-amber-600"
       iconBgColor="bg-amber-100"
+      infoTooltip={infoTooltip}
     >
       {courses && courses.length > 0 ? (
         <ul className="space-y-3">

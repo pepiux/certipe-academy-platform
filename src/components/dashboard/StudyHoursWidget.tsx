@@ -15,9 +15,10 @@ interface StudyHoursWidgetProps {
   total: number;
   byCourse: StudyHour[];
   byQuiz: StudyHour[];
+  infoTooltip?: string;
 }
 
-const StudyHoursWidget = ({ total, byCourse }: StudyHoursWidgetProps) => {
+const StudyHoursWidget = ({ total, byCourse, infoTooltip }: StudyHoursWidgetProps) => {
   return (
     <ExpandableWidget
       title="Horas de estudio"
@@ -26,6 +27,7 @@ const StudyHoursWidget = ({ total, byCourse }: StudyHoursWidgetProps) => {
       icon={Clock}
       iconColor="text-blue-600"
       iconBgColor="bg-blue-100"
+      infoTooltip={infoTooltip}
     >
       <div className="space-y-4">
         <div>

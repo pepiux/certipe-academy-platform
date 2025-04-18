@@ -21,9 +21,10 @@ interface QuizScore {
 interface AverageScoreWidgetProps {
   overall: number;
   quizzes: QuizScore[];
+  infoTooltip?: string;
 }
 
-const AverageScoreWidget = ({ overall, quizzes }: AverageScoreWidgetProps) => {
+const AverageScoreWidget = ({ overall, quizzes, infoTooltip }: AverageScoreWidgetProps) => {
   const [selectedQuizId, setSelectedQuizId] = useState<string>(quizzes.length > 0 ? quizzes[0].id.toString() : "");
   
   const selectedQuiz = quizzes.find(quiz => quiz.id.toString() === selectedQuizId);
@@ -36,6 +37,7 @@ const AverageScoreWidget = ({ overall, quizzes }: AverageScoreWidgetProps) => {
       icon={Award}
       iconColor="text-green-600"
       iconBgColor="bg-green-100"
+      infoTooltip={infoTooltip}
     >
       {quizzes.length > 0 ? (
         <div className="space-y-3">
