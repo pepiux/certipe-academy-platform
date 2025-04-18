@@ -1,7 +1,16 @@
 
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { 
+  LineChart, 
+  Line, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer,
+  ReferenceLine
+} from "recharts";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // Datos de ejemplo para cuestionarios
@@ -120,3 +129,5 @@ const ScoreProgressChart = ({ data: initialData }: ScoreProgressChartProps) => {
     </Card>
   );
 };
+
+export default ScoreProgressChart;
