@@ -80,8 +80,10 @@ const DashboardCharts = ({ studyHoursData, scoreProgressData }: DashboardChartsP
             </Select>
           </div>
         </CardHeader>
-        <CardContent>
-          <StudyHoursChart data={studyHoursData} className="h-[300px]" />
+        <CardContent className="p-4">
+          <div className="h-[300px]">
+            <StudyHoursChart data={studyHoursData} className="h-full" />
+          </div>
         </CardContent>
       </Card>
 
@@ -117,8 +119,10 @@ const DashboardCharts = ({ studyHoursData, scoreProgressData }: DashboardChartsP
             </Select>
           </div>
         </CardHeader>
-        <CardContent>
-          <ScoreProgressChart data={scoreProgressData} className="h-[300px]" />
+        <CardContent className="p-4">
+          <div className="h-[300px]">
+            <ScoreProgressChart data={scoreProgressData} className="h-full" />
+          </div>
         </CardContent>
       </Card>
     </div>
