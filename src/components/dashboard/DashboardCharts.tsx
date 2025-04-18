@@ -1,10 +1,9 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import StudyHoursChart from "@/components/dashboard/StudyHoursChart";
 import ScoreProgressChart from "@/components/dashboard/ScoreProgressChart";
-import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
 import { Clock, Award } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -46,16 +45,21 @@ const DashboardCharts = ({ studyHoursData, scoreProgressData }: DashboardChartsP
 
   const [selectedCourse, setSelectedCourse] = useState(availableCourses[0].id.toString());
   const [selectedQuiz, setSelectedQuiz] = useState(availableQuizzes[0].id.toString());
+  
+  // Ensure data has valid dates before passing to child components
+  const safeStudyHoursData = studyHoursData.map(item => {
+    return {
+      date: item.date,
+      hours: item.hours
+    };
+  });
 
-  const filteredHoursData = studyHoursData.map(item => ({
-    ...item,
-    date: format(new Date(item.date), 'yyyy-MM-dd')
-  }));
-
-  const filteredScoreData = scoreProgressData.map(item => ({
-    ...item,
-    date: format(new Date(item.date), 'yyyy-MM-dd')
-  }));
+  const safeScoreData = scoreProgressData.map(item => {
+    return {
+      date: item.date,
+      score: item.score
+    };
+  });
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -92,7 +96,7 @@ const DashboardCharts = ({ studyHoursData, scoreProgressData }: DashboardChartsP
           </div>
         </CardHeader>
         <CardContent>
-          <StudyHoursChart data={filteredHoursData} className="h-[300px]" />
+          <StudyHoursChart data={safeStudyHoursData} className="h-[300px]" />
         </CardContent>
       </Card>
 
@@ -129,7 +133,7 @@ const DashboardCharts = ({ studyHoursData, scoreProgressData }: DashboardChartsP
           </div>
         </CardHeader>
         <CardContent>
-          <ScoreProgressChart data={filteredScoreData} className="h-[300px]" />
+          <ScoreProgressChart data={safeScoreData} className="h-[300px]" />
         </CardContent>
       </Card>
     </div>

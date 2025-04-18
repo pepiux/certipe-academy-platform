@@ -1,3 +1,4 @@
+
 import React from "react";
 import {
   ResponsiveContainer,
@@ -11,7 +12,7 @@ import {
   Label,
   Area,
 } from "recharts";
-import { format } from "date-fns";
+import { format, isValid } from "date-fns";
 import { es } from "date-fns/locale";
 
 interface ScoreProgressChartProps {
@@ -20,6 +21,34 @@ interface ScoreProgressChartProps {
 }
 
 const ScoreProgressChart = ({ data, className }: ScoreProgressChartProps) => {
+  // Function to safely format dates
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      if (isValid(date)) {
+        return format(date, "dd/MM", { locale: es });
+      }
+      return dateString;
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return dateString;
+    }
+  };
+
+  // Function to safely format tooltip labels
+  const formatTooltipLabel = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      if (isValid(date)) {
+        return format(date, "dd 'de' MMMM", { locale: es });
+      }
+      return dateString;
+    } catch (error) {
+      console.error("Error formatting tooltip date:", error);
+      return dateString;
+    }
+  };
+
   return (
     <ResponsiveContainer width="100%" height="100%" className={className}>
       <LineChart
@@ -29,7 +58,7 @@ const ScoreProgressChart = ({ data, className }: ScoreProgressChartProps) => {
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis
           dataKey="date"
-          tickFormatter={(value) => format(new Date(value), "dd/MM")}
+          tickFormatter={formatDate}
         />
         <YAxis 
           domain={[0, 100]}
@@ -42,7 +71,7 @@ const ScoreProgressChart = ({ data, className }: ScoreProgressChartProps) => {
         />
         <Tooltip
           formatter={(value) => [`${value}%`, 'Puntuación']}
-          labelFormatter={(value) => format(new Date(value), "dd 'de' MMMM", { locale: es })}
+          labelFormatter={formatTooltipLabel}
         />
         <ReferenceLine
           y={70}

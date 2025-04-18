@@ -3,10 +3,10 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useDashboardData } from "@/hooks/useDashboardData";
 
-// Importar datos mock de utilidades
+// Importar datos mock adaptados para el formato correcto
 import { 
-  studyHoursData, 
-  scoreProgressData
+  studyHoursData as mockStudyHoursData,
+  scoreProgressData as mockScoreProgressData 
 } from "@/utils/dashboardMockData";
 
 // Componentes
@@ -18,6 +18,17 @@ import DashboardQuizzesSection from "@/components/dashboard/DashboardQuizzesSect
 const Dashboard = () => {
   const navigate = useNavigate();
   const { courses, quizzes, stats, loading, error } = useDashboardData();
+
+  // Transform mock data to match the required interface
+  const studyHoursData = mockStudyHoursData.map(item => ({
+    date: new Date().toISOString().split('T')[0], // Use today's date as a fallback
+    hours: item.hours
+  }));
+
+  const scoreProgressData = mockScoreProgressData.map(item => ({
+    date: new Date().toISOString().split('T')[0], // Use today's date as a fallback
+    score: item.score
+  }));
 
   const handleStartQuiz = (quizId: number) => {
     navigate(`/dashboard/quizzes/${quizId}/take`);
