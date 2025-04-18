@@ -13,7 +13,6 @@ interface DashboardStatsProps {
 }
 
 const DashboardStats = ({ loading, stats }: DashboardStatsProps) => {
-  // Use empty stats object when data is not available
   const displayStats = stats || {
     study_hours: { total: 0, by_course: [], by_quiz: [] },
     completed_quizzes: { total: 0, quizzes: [] },
@@ -37,18 +36,22 @@ const DashboardStats = ({ loading, stats }: DashboardStatsProps) => {
         total={displayStats.study_hours.total} 
         byCourse={displayStats.study_hours.by_course}
         byQuiz={displayStats.study_hours.by_quiz}
+        infoTooltip="Este indicador se refiere al total de horas de estudio acumuladas de los cursos. Desplegando este widget accederá al detalle con los cursos que conforman este total."
       />
       <CompletedQuizzesWidget 
         total={displayStats.completed_quizzes.total} 
         quizzes={displayStats.completed_quizzes.quizzes}
+        infoTooltip="Este indicador se refiere al total de cuestionarios completados. Desplegando este widget accederá al detalle con los cuestionarios que conforman este total."
       />
       <AverageScoreWidget 
         overall={displayStats.average_scores.overall}
         quizzes={displayStats.average_scores.by_quiz}
+        infoTooltip="Este indicador muestra la puntuación media obtenida en todos los cuestionarios completados. Al desplegar el widget podrá ver el detalle de las puntuaciones por cada cuestionario."
       />
       <CoursesInProgressWidget 
         total={displayStats.courses_in_progress.total}
         courses={displayStats.courses_in_progress.courses}
+        infoTooltip="Este indicador muestra el total de cursos que se encuentran actualmente en progreso. Al desplegar el widget podrá ver el detalle del avance de cada curso."
       />
     </div>
   );

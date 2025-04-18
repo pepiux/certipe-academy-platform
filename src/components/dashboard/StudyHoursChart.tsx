@@ -1,34 +1,48 @@
 
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { 
+  LineChart, 
+  Line, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer,
+  ReferenceLine,
+  Area
+} from "recharts";
+import { format, subDays } from "date-fns";
+import { es } from "date-fns/locale";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Info } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip as UITooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const COURSES = [
-  { id: 1, name: "Gestión de Proyectos" },
-  { id: 2, name: "Metodologías Ágiles" },
-  { id: 3, name: "PRINCE2" }
+  { id: 1, name: "Gestión de Proyectos", minStudyHoursPerDay: 2.5 },
+  { id: 2, name: "Metodologías Ágiles", minStudyHoursPerDay: 2.0 },
+  { id: 3, name: "PRINCE2", minStudyHoursPerDay: 3.0 }
 ];
 
-const DAYS_FULL = {
-  'Lu': 'Lunes',
-  'Ma': 'Martes',
-  'Mi': 'Miércoles',
-  'Ju': 'Jueves',
-  'Vi': 'Viernes',
-  'Sa': 'Sábado',
-  'Do': 'Domingo'
-};
-
-// Función para generar datos semanales
-const generateWeekData = (weekOffset: number) => {
+const generateWeekData = (courseId: number) => {
   const days = ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa', 'Do'];
-  return days.map(day => ({
-    day,
-    dayFull: DAYS_FULL[day as keyof typeof DAYS_FULL],
-    hours: Number((Math.random() * 5 + 0.5).toFixed(1))
-  }));
+  const course = COURSES.find(c => c.id === courseId) || COURSES[0];
+  
+  return days.map((day, index) => {
+    const date = subDays(new Date(), 6 - index);
+    return {
+      day,
+      date: format(date, "EEEE d 'de' MMMM", { locale: es }),
+      hours: Number((Math.random() * 5 + 0.5).toFixed(1)),
+      threshold: course.minStudyHoursPerDay
+    };
+  });
 };
 
 interface StudyHoursChartProps {
@@ -37,26 +51,14 @@ interface StudyHoursChartProps {
 
 const StudyHoursChart = ({ data: initialData }: StudyHoursChartProps) => {
   const [selectedCourse, setSelectedCourse] = useState("1");
-  const [selectedWeeks, setSelectedWeeks] = useState<string[]>(["4"]);
-  const [weekData] = useState({
-    "1": generateWeekData(0),
-    "2": generateWeekData(1),
-    "3": generateWeekData(2),
-    "4": generateWeekData(3),
-  });
-
-  const lineColors = ["#3B82F6", "#8B5CF6", "#EC4899", "#10B981"];
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
-      const dayFull = DAYS_FULL[label as keyof typeof DAYS_FULL];
+      const data = payload[0].payload;
       return (
-        <div className="bg-white p-2 border rounded shadow">
-          {payload.map((item: any, index: number) => (
-            <div key={index} style={{ color: item.color }}>
-              {`${dayFull}: ${item.value.toFixed(1)} horas`}
-            </div>
-          ))}
+        <div className="bg-white p-3 border rounded-lg shadow-lg">
+          <div className="font-medium">{data.date}</div>
+          <div>{payload[0].value.toFixed(1)} horas</div>
         </div>
       );
     }
@@ -67,7 +69,21 @@ const StudyHoursChart = ({ data: initialData }: StudyHoursChartProps) => {
     <Card className="w-full">
       <CardContent className="p-4">
         <div className="flex flex-col gap-4">
-          <h3 className="text-lg font-medium">Horas de estudio diarias</h3>
+          <div className="flex justify-between items-start">
+            <h3 className="text-lg font-medium">Histórico horas estudio</h3>
+            <TooltipProvider>
+              <UITooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-6 w-6">
+                    <Info className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs text-sm">
+                  Este indicador muestra el numero de horas de estudios de la última semana para el curso seleccionado. La linea base representa el umbral minimo esperado.
+                </TooltipContent>
+              </UITooltip>
+            </TooltipProvider>
+          </div>
           
           <Select value={selectedCourse} onValueChange={setSelectedCourse}>
             <SelectTrigger className="w-full">
@@ -75,31 +91,12 @@ const StudyHoursChart = ({ data: initialData }: StudyHoursChartProps) => {
             </SelectTrigger>
             <SelectContent>
               {COURSES.map(course => (
-                <SelectItem key={course.id} value={course.id.toString()}>{course.name}</SelectItem>
+                <SelectItem key={course.id} value={course.id.toString()}>
+                  {course.name}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
-
-          <ToggleGroup 
-            type="multiple" 
-            value={selectedWeeks}
-            onValueChange={(value) => {
-              if (value.length > 0) {
-                setSelectedWeeks(value);
-              }
-            }}
-            className="justify-start"
-          >
-            {[4, 3, 2, 1].map((week) => (
-              <ToggleGroupItem 
-                key={week} 
-                value={week.toString()}
-                className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
-              >
-                Semana {week}
-              </ToggleGroupItem>
-            ))}
-          </ToggleGroup>
         </div>
         
         <div className="h-64 mt-4">
@@ -109,27 +106,34 @@ const StudyHoursChart = ({ data: initialData }: StudyHoursChartProps) => {
               <XAxis 
                 dataKey="day"
                 allowDuplicatedCategory={false}
-                padding={{ left: 0, right: 0 }}
               />
               <YAxis 
                 label={{ value: 'Horas', angle: -90, position: 'insideLeft' }}
               />
               <Tooltip content={<CustomTooltip />} />
               
-              {selectedWeeks.map((week) => (
-                <Line 
-                  key={week}
-                  name={`Semana ${week}`}
-                  data={weekData[week]}
-                  type="monotone"
-                  dataKey="hours"
-                  stroke={lineColors[parseInt(week) - 1]}
-                  strokeWidth={2}
-                  dot={{ r: 4 }}
-                  activeDot={{ r: 6 }}
-                  connectNulls
-                />
-              ))}
+              <Area
+                type="monotone"
+                dataKey="threshold"
+                stroke="none"
+                fill="#f0f0f0"
+                data={generateWeekData(parseInt(selectedCourse))}
+              />
+              
+              <ReferenceLine
+                y={COURSES.find(c => c.id === parseInt(selectedCourse))?.minStudyHoursPerDay || 2.0}
+                stroke="#000000"
+                strokeWidth={1}
+              />
+              
+              <Line 
+                type="monotone"
+                dataKey="hours"
+                data={generateWeekData(parseInt(selectedCourse))}
+                stroke="#8B5CF6"
+                strokeWidth={2}
+                dot={{ r: 6, fill: "#8B5CF6" }}
+              />
             </LineChart>
           </ResponsiveContainer>
         </div>

@@ -15,6 +15,14 @@ import {
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Info } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip as UITooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 // Datos de ejemplo para cuestionarios
 const QUIZZES = [
@@ -48,7 +56,21 @@ const ScoreProgressChart = ({ data: initialData }: ScoreProgressChartProps) => {
     <Card className="w-full">
       <CardContent className="p-4">
         <div className="flex flex-col gap-4">
-          <h3 className="text-lg font-medium">Progreso de puntuación</h3>
+          <div className="flex justify-between items-start">
+            <h3 className="text-lg font-medium">Progreso de puntuación</h3>
+            <TooltipProvider>
+              <UITooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-6 w-6">
+                    <Info className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs text-sm">
+                  Este indicador muestra los puntajes porcentuales de los últimos intentos obtenidos en el cuestionario seleccionado. La linea base representa el umbral minimo esperado.
+                </TooltipContent>
+              </UITooltip>
+            </TooltipProvider>
+          </div>
           
           <Select value={selectedQuiz} onValueChange={setSelectedQuiz}>
             <SelectTrigger className="w-full">
@@ -88,7 +110,6 @@ const ScoreProgressChart = ({ data: initialData }: ScoreProgressChartProps) => {
                 y={quizData[parseInt(selectedQuiz)].minScore}
                 stroke="#000000"
                 strokeWidth={1}
-                strokeDasharray="0"
               />
               
               <Line 
