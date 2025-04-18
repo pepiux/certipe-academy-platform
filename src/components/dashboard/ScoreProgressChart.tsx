@@ -9,7 +9,8 @@ import {
   CartesianGrid, 
   Tooltip, 
   ResponsiveContainer,
-  ReferenceLine
+  ReferenceLine,
+  Area
 } from "recharts";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -33,9 +34,6 @@ interface ScoreProgressChartProps {
   data: Array<{ name: string; score: number }>;
 }
 
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
-
 const ScoreProgressChart = ({ data: initialData }: ScoreProgressChartProps) => {
   const [selectedQuiz, setSelectedQuiz] = useState("1");
   const [quizData] = useState({
@@ -47,10 +45,11 @@ const ScoreProgressChart = ({ data: initialData }: ScoreProgressChartProps) => {
   return (
     <Card className="w-full">
       <CardContent className="p-4">
-        <div className="flex flex-col md:flex-row justify-between items-start mb-4 gap-2">
+        <div className="flex flex-col gap-4">
           <h3 className="text-lg font-medium">Progreso de puntuación</h3>
+          
           <Select value={selectedQuiz} onValueChange={setSelectedQuiz}>
-            <SelectTrigger className="w-full md:w-[400px]">
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="Seleccionar cuestionario" />
             </SelectTrigger>
             <SelectContent>
@@ -61,7 +60,7 @@ const ScoreProgressChart = ({ data: initialData }: ScoreProgressChartProps) => {
           </Select>
         </div>
         
-        <div className="h-64">
+        <div className="h-64 mt-4">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart margin={{ left: 0, right: 20, top: 8, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -75,18 +74,25 @@ const ScoreProgressChart = ({ data: initialData }: ScoreProgressChartProps) => {
                 labelFormatter={(name) => `Intento ${name}`}
               />
               
-              {/* Línea base del puntaje mínimo */}
+              <Area
+                type="monotone"
+                dataKey={() => quizData[parseInt(selectedQuiz)].minScore}
+                stroke="none"
+                fill="#f0f0f0"
+                data={quizData[parseInt(selectedQuiz)].attempts}
+              />
+              
               <ReferenceLine
                 y={quizData[parseInt(selectedQuiz)].minScore}
                 stroke="#000000"
                 strokeWidth={1}
-                label={{ value: 'Puntaje mínimo', position: 'right' }}
+                strokeDasharray="0"
               />
               
               <Line 
                 type="monotone"
                 dataKey="score"
-                data={quizData[parseInt(selectedQuiz)].attempts}
+                data={quizData[parseInt(selectedQuiz)].attempts.slice(0, 7)}
                 stroke="#8B5CF6"
                 strokeWidth={2}
                 dot={{ r: 6, fill: "#8B5CF6" }}
