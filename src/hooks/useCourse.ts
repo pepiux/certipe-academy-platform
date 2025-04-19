@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import courseService, { Course, CourseModule } from '@/services/courseService';
+import { toast } from 'sonner';
 
 export interface UseCourseResult {
   course: Course | null;
@@ -19,26 +20,21 @@ export const useCourse = (courseId: number): UseCourseResult => {
       try {
         const data = await courseService.getCourse(courseId);
         
-        // Mock data de los módulos para desarrollo (esto será reemplazado por datos reales de la API)
+        // Si no hay módulos, creamos una estructura por defecto
         const courseData = { ...data };
-        if (!courseData.modules) {
+        if (!courseData.modules || courseData.modules.length === 0) {
           courseData.modules = [
             {
               id: 1,
-              title: "Introducción a la Gestión de Proyectos",
+              title: "Introducción",
               lessons: [
-                { id: 1, title: "¿Qué es un proyecto?", duration: "15:30", completed: true, type: "video" },
-                { id: 2, title: "Roles en la gestión de proyectos", duration: "22:45", completed: true, type: "video" },
-                { id: 3, title: "Ciclo de vida del proyecto", duration: "18:20", completed: false, type: "reading" }
-              ]
-            } as CourseModule,
-            {
-              id: 2,
-              title: "Planificación de Proyectos",
-              lessons: [
-                { id: 4, title: "Definición de objetivos y alcance", duration: "25:10", completed: false, type: "audio" },
-                { id: 5, title: "Estimación de tiempos y recursos", duration: "30:15", completed: false, type: "video" },
-                { id: 6, title: "Creación de cronogramas", duration: "28:40", completed: false, type: "reading" }
+                { 
+                  id: 1, 
+                  title: "¿Qué es este curso?", 
+                  duration: "15:30", 
+                  completed: courseData.progress ? courseData.progress > 0 : false, 
+                  type: "video" 
+                }
               ]
             } as CourseModule
           ];
@@ -46,7 +42,9 @@ export const useCourse = (courseId: number): UseCourseResult => {
 
         setCourse(courseData);
       } catch (err) {
+        console.error("Error al obtener el curso:", err);
         setError(err instanceof Error ? err : new Error(String(err)));
+        toast.error("No se pudo cargar el curso. Por favor, inténtelo de nuevo más tarde.");
       } finally {
         setLoading(false);
       }

@@ -25,10 +25,12 @@ $conn = connect_db();
 $stmt = $conn->prepare("
     SELECT c.*, 
     i.id as instructor_id, i.name as instructor_name,
+    cc.name as category_name,
     COUNT(l.id) as lessons_count,
     SUM(l.duration_minutes) as total_duration
     FROM courses c
-    LEFT JOIN users i ON c.instructor_id = i.id
+    LEFT JOIN instructors i ON c.instructor_id = i.id
+    LEFT JOIN course_categories cc ON c.category_id = cc.id
     LEFT JOIN lessons l ON c.id = l.course_id
     WHERE c.id = ?
     GROUP BY c.id
@@ -95,6 +97,22 @@ $completed_lessons = $progress_row['completed_lessons'];
 // Calcular porcentaje de progreso
 $progress = $row['lessons_count'] > 0 ? round(($completed_lessons / $row['lessons_count']) * 100) : 0;
 
+// Organizar lecciones en módulos
+$modules = [];
+if (count($lessons) > 0) {
+    // Para simplificar, creamos módulos según el orden de las lecciones
+    $module_size = 3; // 3 lecciones por módulo
+    $chunks = array_chunk($lessons, $module_size);
+    
+    foreach ($chunks as $index => $module_lessons) {
+        $modules[] = [
+            'id' => $index + 1,
+            'title' => 'Módulo ' . ($index + 1),
+            'lessons' => $module_lessons
+        ];
+    }
+}
+
 // Preparar respuesta
 $course = [
     'id' => $row['id'],
@@ -108,8 +126,8 @@ $course = [
         'id' => $row['instructor_id'],
         'name' => $row['instructor_name']
     ],
-    'category' => $row['category'],
-    'lessons' => $lessons,
+    'category' => $row['category_name'] ?? 'Sin categoría',
+    'modules' => $modules,
     'progress' => $progress,
     'completed_lessons' => $completed_lessons,
     'total_lessons' => $row['lessons_count'] ?? 0,

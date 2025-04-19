@@ -55,4 +55,3 @@ const StudyHoursWidget = ({ total, byCourse, byQuiz, infoTooltip }: StudyHoursWi
 };
 
 export default StudyHoursWidget;
-
