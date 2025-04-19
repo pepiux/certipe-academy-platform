@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Clock, BookOpen } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface Course {
   id: number;
@@ -22,13 +23,19 @@ interface Course {
 
 interface CourseCardProps {
   course: Course;
-  onStart: (courseId: number) => void;
-  onContinue: (courseId: number) => void;
+  onStart?: (courseId: number) => void;
+  onContinue?: (courseId: number) => void;
 }
 
 const CourseCard = ({ course, onStart, onContinue }: CourseCardProps) => {
+  const navigate = useNavigate();
+  
   const getLevelColor = (level: string) => {
     return "bg-primary/10 text-primary border-primary/20";
+  };
+  
+  const handleMoreDetails = () => {
+    navigate(`/dashboard/courses/${course.id}`);
   };
 
   return (
@@ -76,7 +83,7 @@ const CourseCard = ({ course, onStart, onContinue }: CourseCardProps) => {
         
         <Button 
           className="w-full mt-3 bg-primary hover:bg-primary/90 text-white"
-          onClick={() => onStart(course.id)}
+          onClick={handleMoreDetails}
         >
           Más detalles
         </Button>
