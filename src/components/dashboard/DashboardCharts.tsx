@@ -120,7 +120,7 @@ const DashboardCharts = ({ studyHoursData, scoreProgressData }: DashboardChartsP
           </div>
         </CardHeader>
         <CardContent className="p-4">
-          <div className="h-[250px]">
+          <div className="h-[250px] mt-4">
             <ScoreProgressChart data={scoreProgressData} className="h-full" />
           </div>
         </CardContent>

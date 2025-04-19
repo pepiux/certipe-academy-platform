@@ -14,7 +14,7 @@ import CourseActions from "@/components/courses/CourseActions";
 const CourseDetail = () => {
   const { courseId } = useParams();
   const navigate = useNavigate();
-  const { course, loading, error } = useCourse(parseInt(courseId || "0"));
+  const { course, loading, error } = useCourse(parseInt(courseId || "0", 10));
   const [activeTab, setActiveTab] = useState("overview");
 
   useEffect(() => {
@@ -54,6 +54,13 @@ const CourseDetail = () => {
     );
   }
 
+  // Asegurarnos de que course.modules es un array para no tener errores
+  const modules = course.modules || [];
+
+  // Valores seguros para progress y total_lessons
+  const progress = course.progress || 0;
+  const totalLessons = course.total_lessons || course.lessons_count || 0;
+
   return (
     <div className="space-y-6">
       <div className="flex items-center mb-6">
@@ -75,8 +82,8 @@ const CourseDetail = () => {
       />
       
       <CourseActions
-        progress={course.progress}
-        lessons={course.total_lessons}
+        progress={progress}
+        lessons={totalLessons}
         onStartCourse={() => navigate(`/dashboard/courses/${course.id}/lesson/1/video`)}
       />
       
@@ -96,7 +103,7 @@ const CourseDetail = () => {
         </TabsContent>
         
         <TabsContent value="content" className="space-y-4">
-          <CourseContent modules={course.modules || []} />
+          <CourseContent modules={modules} />
         </TabsContent>
       </Tabs>
     </div>

@@ -23,7 +23,7 @@ const ScoreProgressChart = ({ data, className }: ScoreProgressChartProps) => {
   const MIN_PASSING_SCORE = 70;
   
   // Procesar datos para el gráfico
-  const chartData = data.map(item => {
+  const chartData = data.map((item, index) => {
     let date;
     try {
       date = parseISO(item.date);
@@ -34,6 +34,7 @@ const ScoreProgressChart = ({ data, className }: ScoreProgressChartProps) => {
 
     return {
       ...item,
+      intento: index + 1, // Usar número de intento como etiqueta en el eje X
       formattedDate: isValid(date) ? format(date, 'dd/MM', { locale: es }) : '??/??'
     };
   });
@@ -43,7 +44,7 @@ const ScoreProgressChart = ({ data, className }: ScoreProgressChartProps) => {
       const data = payload[0].payload;
       return (
         <div className="bg-white p-3 border rounded-lg shadow-lg">
-          <div className="font-medium">{format(parseISO(data.date), "d 'de' MMMM", { locale: es })}</div>
+          <div className="font-medium">Intento {data.intento}</div>
           <div>{payload[0].value}% puntuación</div>
         </div>
       );
@@ -57,13 +58,19 @@ const ScoreProgressChart = ({ data, className }: ScoreProgressChartProps) => {
         data={chartData}
         margin={{ top: 10, right: 20, left: 0, bottom: 5 }}
       >
-        <CartesianGrid strokeDasharray="3 3" />
+        <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
         <XAxis 
-          dataKey="formattedDate" 
+          dataKey="intento" 
+          axisLine={{stroke: '#e5e7eb'}}
+          tickLine={false}
+          label={{ value: 'Intentos', position: 'insideBottom', offset: -5 }}
         />
         <YAxis 
           domain={[0, 100]} 
           ticks={[0, 25, 50, 75, 100]}
+          axisLine={{stroke: '#e5e7eb'}}
+          tickLine={false}
+          label={{ value: 'Puntaje %', angle: -90, position: 'insideLeft' }}
         />
         <Tooltip content={<CustomTooltip />} />
         
@@ -71,6 +78,7 @@ const ScoreProgressChart = ({ data, className }: ScoreProgressChartProps) => {
           y={MIN_PASSING_SCORE} 
           stroke="#000000" 
           strokeWidth={1} 
+          strokeDasharray="3 3"
         />
         
         <Line 
@@ -78,7 +86,8 @@ const ScoreProgressChart = ({ data, className }: ScoreProgressChartProps) => {
           dataKey="score" 
           stroke="#10B981" 
           strokeWidth={2}
-          dot={{ r: 6, fill: "#10B981" }}
+          dot={{ r: 6, fill: "#10B981", strokeWidth: 2, stroke: "#ffffff" }}
+          activeDot={{ r: 8, fill: "#10B981", strokeWidth: 2, stroke: "#ffffff" }}
         />
       </LineChart>
     </ResponsiveContainer>

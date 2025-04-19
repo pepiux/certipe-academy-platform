@@ -44,7 +44,9 @@ const ExpandableWidget = ({
       
       {expanded && (
         <>
-          <Separator className="mx-6" />
+          <div className="px-6">
+            <Separator />
+          </div>
           <CardContent className="pb-10 pt-4">
             {children}
           </CardContent>
