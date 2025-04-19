@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useCourse } from '@/hooks/useCourse';
@@ -13,14 +12,12 @@ import CourseActions from "@/components/courses/CourseActions";
 import { toast } from 'sonner';
 
 const CourseDetail = () => {
-  // Importante: Aquí estamos usando la sintaxis correcta para extraer el parámetro
-  const params = useParams<{ courseId: string }>();
-  const courseId = params.courseId;
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   
-  console.log("CourseDetail renderizándose con courseId de params:", courseId);
+  console.log("CourseDetail renderizándose con ID del curso:", id);
   
-  const { course, loading, error } = useCourse(courseId);
+  const { course, loading, error } = useCourse(id);
   const [activeTab, setActiveTab] = useState("overview");
 
   useEffect(() => {
@@ -30,7 +27,7 @@ const CourseDetail = () => {
     }
   }, [error]);
 
-  console.log("Renderizando CourseDetail para el curso ID:", courseId);
+  console.log("Renderizando CourseDetail para el curso ID:", id);
   console.log("Datos del curso:", course);
   console.log("Estado de carga:", loading);
   console.log("Error:", error);
@@ -77,10 +74,8 @@ const CourseDetail = () => {
     );
   }
 
-  // Asegurarnos de que course.modules es un array para no tener errores
   const modules = Array.isArray(course.modules) ? course.modules : [];
 
-  // Valores seguros para progress y total_lessons
   const progress = course.progress || 0;
   const totalLessons = course.total_lessons || course.lessons_count || 0;
 

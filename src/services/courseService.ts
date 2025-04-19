@@ -100,6 +100,12 @@ const courseService = {
       if (useMock()) {
         console.log(`Consultando endpoint mock: /courses/${courseId}`);
         response = await apiClient.get<Course>(`/courses/${courseId}`);
+        
+        // Verificación adicional para el modo mock
+        if (!response || response.error) {
+          console.error("Error en respuesta mock:", response);
+          throw new Error(response?.error || "No se pudo obtener el curso");
+        }
       } else {
         console.log(`Consultando endpoint backend: /course.php?id=${courseId}`);
         response = await apiClient.get<Course>(`/course.php?id=${courseId}`);
