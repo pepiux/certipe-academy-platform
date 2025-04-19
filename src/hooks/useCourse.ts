@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import courseService, { Course, CourseModule } from '@/services/courseService';
+import courseService, { Course } from '@/services/courseService';
 import { toast } from 'sonner';
 
 export interface UseCourseResult {
@@ -51,29 +51,8 @@ export const useCourse = (courseId: string | number | undefined): UseCourseResul
           throw new Error("Los datos del curso recibidos no son válidos");
         }
         
-        // Si no hay módulos, creamos una estructura por defecto
-        const courseData = { ...data };
-        if (!courseData.modules || !Array.isArray(courseData.modules) || courseData.modules.length === 0) {
-          console.log("Creando estructura de módulos por defecto para el curso");
-          courseData.modules = [
-            {
-              id: 1,
-              title: "Introducción",
-              lessons: [
-                { 
-                  id: 1, 
-                  title: "¿Qué es este curso?", 
-                  duration: "15:30", 
-                  completed: courseData.progress ? courseData.progress > 0 : false, 
-                  type: "video" 
-                }
-              ]
-            } as CourseModule
-          ];
-        }
-
-        console.log("Curso procesado con éxito:", courseData);
-        setCourse(courseData);
+        console.log("Curso procesado con éxito:", data);
+        setCourse(data);
       } catch (err) {
         console.error("Error al obtener el curso:", err);
         setError(err instanceof Error ? err : new Error(String(err)));

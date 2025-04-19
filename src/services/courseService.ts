@@ -6,6 +6,8 @@ import { useMock } from '@/services/serviceAdapter';
 export interface CourseModule {
   id: number;
   title: string;
+  description?: string;
+  order?: number;
   lessons: Lesson[];
 }
 
@@ -14,8 +16,12 @@ export interface Lesson {
   title: string;
   duration: string;
   completed?: boolean;
-  type?: 'video' | 'reading' | 'audio' | 'test';
+  type: 'video' | 'reading' | 'audio' | 'test';
   description?: string;
+  content_url?: string;
+  resource_url?: string;
+  thumbnail?: string;
+  order?: number;
 }
 
 export interface Course {
@@ -35,6 +41,9 @@ export interface Course {
   created_at?: string;
   updated_at?: string;
   favorite?: boolean;
+  requirements?: string[];
+  what_you_will_learn?: string[];
+  certification?: boolean;
 }
 
 export interface CourseFilters {
@@ -44,6 +53,210 @@ export interface CourseFilters {
   page?: number;
   per_page?: number;
 }
+
+// Datos mock para uso local
+const mockCourses = [
+  {
+    id: 1,
+    title: "Fundamentos de Gestión de Proyectos",
+    description: "Aprende los conceptos fundamentales de la gestión de proyectos y prepárate para certificaciones profesionales.",
+    image: "https://placehold.co/300x200?text=Gestion+de+Proyectos",
+    lessons_count: 24,
+    duration: "12 horas",
+    level: "Intermedio",
+    category: "Gestión de Proyectos",
+    instructor: { id: 1, name: "Dr. Juan Pérez" },
+    progress: 65,
+    completed_lessons: 15,
+    total_lessons: 24,
+    favorite: true,
+    requirements: ["Conocimientos básicos de administración", "Comprensión de procesos organizacionales"],
+    what_you_will_learn: ["Definir objetivos y alcances de proyectos", "Crear cronogramas efectivos", "Gestionar equipos multidisciplinarios"],
+    certification: true,
+    modules: [
+      {
+        id: 1,
+        title: "Introducción a la Gestión de Proyectos",
+        description: "Conceptos básicos y terminología para comenzar",
+        order: 1,
+        lessons: [
+          { 
+            id: 101, 
+            title: "¿Qué es la gestión de proyectos?", 
+            duration: "15:30", 
+            completed: true, 
+            type: "video",
+            description: "Introducción a los conceptos básicos",
+            content_url: "/videos/intro-pm.mp4",
+            thumbnail: "https://placehold.co/120x68?text=Video:Intro",
+            order: 1
+          },
+          { 
+            id: 102, 
+            title: "Historia y evolución", 
+            duration: "25:45", 
+            completed: true, 
+            type: "reading",
+            description: "Desarrollo histórico de las metodologías",
+            content_url: "/docs/history-pm.pdf",
+            order: 2
+          },
+          { 
+            id: 103, 
+            title: "Roles en la gestión de proyectos", 
+            duration: "20:15", 
+            completed: false, 
+            type: "audio",
+            description: "Podcast sobre los diferentes roles",
+            content_url: "/audio/roles-podcast.mp3",
+            order: 3
+          }
+        ]
+      },
+      {
+        id: 2,
+        title: "Planificación de Proyectos",
+        description: "Herramientas y técnicas para planificar proyectos exitosos",
+        order: 2,
+        lessons: [
+          { 
+            id: 201, 
+            title: "Definición de alcance", 
+            duration: "18:20", 
+            completed: false, 
+            type: "video",
+            description: "Cómo definir correctamente el alcance",
+            content_url: "/videos/scope-definition.mp4",
+            thumbnail: "https://placehold.co/120x68?text=Video:Scope",
+            order: 1
+          },
+          { 
+            id: 202, 
+            title: "Estructura de desglose del trabajo (WBS)", 
+            duration: "22:10", 
+            completed: false, 
+            type: "reading",
+            description: "Guía para crear un WBS efectivo",
+            content_url: "/docs/wbs-guide.pdf",
+            order: 2
+          },
+          { 
+            id: 203, 
+            title: "Evaluación de conocimientos - Planificación", 
+            duration: "15 min", 
+            completed: false, 
+            type: "test",
+            description: "Prueba tus conocimientos sobre planificación",
+            order: 3
+          }
+        ]
+      },
+      {
+        id: 3,
+        title: "Ejecución y Control",
+        description: "Implementación y seguimiento de proyectos",
+        order: 3,
+        lessons: [
+          { 
+            id: 301, 
+            title: "Gestión de recursos", 
+            duration: "24:15", 
+            completed: false, 
+            type: "video",
+            description: "Estrategias para gestionar recursos humanos y materiales",
+            content_url: "/videos/resource-management.mp4",
+            order: 1
+          },
+          { 
+            id: 302, 
+            title: "Control de cambios", 
+            duration: "19:40", 
+            completed: false, 
+            type: "video",
+            description: "Procesos para gestionar cambios en el proyecto",
+            content_url: "/videos/change-control.mp4",
+            order: 2
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 2,
+    title: "Metodologías Ágiles",
+    description: "Domina las metodologías ágiles para equipos de alto rendimiento.",
+    image: "https://placehold.co/300x200?text=Metodologias+Agiles",
+    lessons_count: 18,
+    duration: "9 horas",
+    level: "Avanzado",
+    category: "Metodologías Ágiles",
+    instructor: { id: 2, name: "María Rodríguez" },
+    progress: 30,
+    completed_lessons: 5,
+    total_lessons: 18,
+    favorite: false,
+    modules: [
+      {
+        id: 4,
+        title: "Scrum Framework",
+        description: "Principios y prácticas de Scrum",
+        order: 1,
+        lessons: [
+          { 
+            id: 401, 
+            title: "Principios de Scrum", 
+            duration: "22:30", 
+            completed: true, 
+            type: "video",
+            description: "Introducción a los principios de Scrum",
+            order: 1
+          },
+          { 
+            id: 402, 
+            title: "Roles en Scrum", 
+            duration: "18:45", 
+            completed: true, 
+            type: "reading",
+            description: "Descripción detallada de los roles",
+            order: 2
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 3,
+    title: "PRINCE2 Framework",
+    description: "Aprende el framework PRINCE2 para gestión de proyectos estructurados.",
+    image: "https://placehold.co/300x200?text=PRINCE2",
+    lessons_count: 20,
+    duration: "15 horas",
+    level: "Avanzado",
+    category: "Gestión de Proyectos",
+    instructor: { id: 3, name: "Antonio García" },
+    progress: 15,
+    completed_lessons: 3,
+    total_lessons: 20,
+    favorite: true,
+    modules: [
+      {
+        id: 5,
+        title: "Introducción a PRINCE2",
+        order: 1,
+        lessons: [
+          { 
+            id: 501, 
+            title: "Fundamentos de PRINCE2", 
+            duration: "20:15", 
+            completed: true, 
+            type: "video",
+            order: 1
+          }
+        ]
+      }
+    ]
+  }
+];
 
 // Servicio para gestionar cursos
 const courseService = {
@@ -56,17 +269,47 @@ const courseService = {
     
     try {
       if (useMock()) {
-        // Convertir los filtros a query string
-        const queryParams = new URLSearchParams();
+        // Simulación de filtrado para modo mock
+        let filteredCourses = [...mockCourses];
         
-        for (const [key, value] of Object.entries(filters)) {
-          if (value !== undefined && value !== null) {
-            queryParams.append(key, value.toString());
-          }
+        // Aplicar filtros si existen
+        if (filters.search) {
+          const searchTerm = filters.search.toLowerCase();
+          filteredCourses = filteredCourses.filter(course => 
+            course.title.toLowerCase().includes(searchTerm) || 
+            course.description.toLowerCase().includes(searchTerm)
+          );
         }
         
-        const query = queryParams.toString() ? `?${queryParams.toString()}` : '';
-        return await apiClient.get<{data: Course[], meta: any}>(`/courses${query}`);
+        if (filters.level) {
+          filteredCourses = filteredCourses.filter(course => 
+            course.level && course.level.toLowerCase() === filters.level?.toLowerCase()
+          );
+        }
+        
+        if (filters.category_id) {
+          // Asumiendo que category_id corresponde a una categoría específica
+          filteredCourses = filteredCourses.filter(course => 
+            course.category && course.category.includes(String(filters.category_id))
+          );
+        }
+        
+        // Simulación de paginación
+        const page = filters.page || 1;
+        const perPage = filters.per_page || 10;
+        const start = (page - 1) * perPage;
+        const end = start + perPage;
+        const paginatedCourses = filteredCourses.slice(start, end);
+        
+        return {
+          data: paginatedCourses,
+          meta: {
+            current_page: page,
+            per_page: perPage,
+            total: filteredCourses.length,
+            total_pages: Math.ceil(filteredCourses.length / perPage)
+          }
+        };
       } else {
         // Si estamos usando backend PHP
         let endpoint = '/courses.php';
@@ -99,13 +342,16 @@ const courseService = {
       let response;
       if (useMock()) {
         console.log(`Consultando endpoint mock: /courses/${courseId}`);
-        response = await apiClient.get<Course>(`/courses/${courseId}`);
         
-        // Verificación adicional para el modo mock
-        if (!response || response.error) {
-          console.error("Error en respuesta mock:", response);
-          throw new Error(response?.error || "No se pudo obtener el curso");
+        // Para modo mock, buscar directamente en los datos locales
+        const course = mockCourses.find(c => c.id === courseId);
+        
+        if (!course) {
+          console.error(`Curso con ID ${courseId} no encontrado en datos mock`);
+          throw new Error(`Curso con ID ${courseId} no encontrado`);
         }
+        
+        response = course;
       } else {
         console.log(`Consultando endpoint backend: /course.php?id=${courseId}`);
         response = await apiClient.get<Course>(`/course.php?id=${courseId}`);
@@ -129,7 +375,17 @@ const courseService = {
    */
   async createCourse(courseData: Partial<Course>): Promise<Course> {
     if (useMock()) {
-      return await apiClient.post<Course>('/courses', courseData);
+      // Simulación de creación en modo mock
+      const newId = Math.max(...mockCourses.map(c => c.id)) + 1;
+      const newCourse = {
+        id: newId,
+        ...courseData,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      } as Course;
+      
+      mockCourses.push(newCourse);
+      return newCourse;
     } else {
       return await apiClient.post<Course>('/course_create.php', courseData);
     }
@@ -140,7 +396,20 @@ const courseService = {
    */
   async updateCourse(id: number, courseData: Partial<Course>): Promise<Course> {
     if (useMock()) {
-      return await apiClient.put<Course>(`/courses/${id}`, courseData);
+      // Simulación de actualización en modo mock
+      const index = mockCourses.findIndex(c => c.id === id);
+      if (index === -1) {
+        throw new Error(`Curso con ID ${id} no encontrado`);
+      }
+      
+      const updatedCourse = {
+        ...mockCourses[index],
+        ...courseData,
+        updated_at: new Date().toISOString()
+      };
+      
+      mockCourses[index] = updatedCourse;
+      return updatedCourse;
     } else {
       return await apiClient.post<Course>(`/course_update.php`, { id, ...courseData });
     }
@@ -151,7 +420,13 @@ const courseService = {
    */
   async deleteCourse(id: number): Promise<void> {
     if (useMock()) {
-      await apiClient.delete(`/courses/${id}`);
+      // Simulación de eliminación en modo mock
+      const index = mockCourses.findIndex(c => c.id === id);
+      if (index === -1) {
+        throw new Error(`Curso con ID ${id} no encontrado`);
+      }
+      
+      mockCourses.splice(index, 1);
     } else {
       await apiClient.post('/course_delete.php', { id });
     }
