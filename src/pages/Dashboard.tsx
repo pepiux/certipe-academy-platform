@@ -41,8 +41,10 @@ const Dashboard = () => {
     navigate(`/dashboard/courses/${courseId}`);
   };
 
-  // Convertir error a objeto Error para mantener la consistencia
-  const errorObj = error ? (typeof error === 'string' ? new Error(error) : error) : null;
+  // Convertir error a string para evitar renderizar objetos Error directamente
+  const errorMessage = error ? 
+    (typeof error === 'string' ? error : error.message || 'Error desconocido') 
+    : null;
 
   return (
     <div className="space-y-6">
@@ -57,14 +59,14 @@ const Dashboard = () => {
       
       <DashboardCoursesSection
         loading={loading.courses}
-        error={errorObj}
+        error={errorMessage}
         courses={enhancedCourses}
         onContinueCourse={handleContinueCourse}
       />
       
       <DashboardQuizzesSection
         loading={loading.quizzes}
-        error={errorObj}
+        error={errorMessage}
         quizzes={quizzes}
         onStartQuiz={handleStartQuiz}
       />

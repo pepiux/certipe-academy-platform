@@ -12,7 +12,7 @@ import DashboardCourses from "./DashboardCourses";
 
 interface DashboardCoursesSectionProps {
   loading: boolean;
-  error: Error | null;
+  error: string | null;
   courses: Course[];
   onContinueCourse: (courseId: number) => void;
 }
@@ -44,10 +44,10 @@ const DashboardCoursesSection = ({
       {loading ? (
         <div className="text-center py-8">Cargando cursos...</div>
       ) : error ? (
-        <div className="text-center py-8 text-red-500">{error.message}</div>
+        <div className="text-center py-8 text-red-500">{error}</div>
       ) : courses.length > 0 ? (
         <DashboardCourses 
-          courses={courses as any[]}  // Use type assertion to avoid the type mismatch
+          courses={courses}
           onContinueCourse={onContinueCourse}
         />
       ) : (

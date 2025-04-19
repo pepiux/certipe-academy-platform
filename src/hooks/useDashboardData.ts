@@ -14,7 +14,7 @@ interface DashboardData {
     quizzes: boolean;
     stats: boolean;
   };
-  error: string | null;
+  error: string | Error | null;
 }
 
 export const useDashboardData = () => {
@@ -26,7 +26,7 @@ export const useDashboardData = () => {
   const [courses, setCourses] = useState<any[]>([]);
   const [quizzes, setQuizzes] = useState<any[]>([]);
   const [stats, setStats] = useState<DashboardStatsType | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | Error | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -67,7 +67,7 @@ export const useDashboardData = () => {
         setCourses(formattedCourses);
       } catch (err: any) {
         console.error("Error al obtener los cursos:", err);
-        setError(`Error al cargar los cursos: ${err.message}`);
+        setError(err instanceof Error ? err : new Error(String(err)));
         toast.error("Error al cargar los cursos");
       } finally {
         setLoading(prev => ({ ...prev, courses: false }));
@@ -97,7 +97,7 @@ export const useDashboardData = () => {
         setQuizzes(formattedQuizzes);
       } catch (err: any) {
         console.error("Error al obtener los cuestionarios:", err);
-        setError(`Error al cargar los cuestionarios: ${err.message}`);
+        setError(err instanceof Error ? err : new Error(String(err)));
         toast.error("Error al cargar los cuestionarios");
       } finally {
         setLoading(prev => ({ ...prev, quizzes: false }));
