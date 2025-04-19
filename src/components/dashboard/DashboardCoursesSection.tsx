@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CourseCard from "@/components/courses/CourseCard";
@@ -47,7 +47,7 @@ const DashboardCoursesSection = ({
         <div className="text-center py-8 text-red-500">{error.message}</div>
       ) : courses.length > 0 ? (
         <DashboardCourses 
-          courses={courses}
+          courses={courses as any[]}  // Use type assertion to avoid the type mismatch
           onContinueCourse={onContinueCourse}
         />
       ) : (

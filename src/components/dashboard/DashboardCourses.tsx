@@ -6,14 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "react-router-dom";
-
-interface Course {
-  id: number;
-  title: string;
-  progress: number;
-  image?: string;
-  favorite?: boolean;
-}
+import { Course } from "@/services/courseService";
 
 interface DashboardCoursesProps {
   courses: Course[];
@@ -56,7 +49,7 @@ const DashboardCourses = ({ courses, loading = false, onContinueCourse }: Dashbo
               
               {course.favorite && (
                 <div className="absolute top-2 right-2 bg-white/80 p-1.5 rounded-full">
-                  <Heart className="h-4 w-4 text-red-500 fill-red-500" />
+                  <Heart className="h-4 w-4 text-[#0EA5E9] fill-[#0EA5E9]" />
                 </div>
               )}
               
@@ -69,9 +62,9 @@ const DashboardCourses = ({ courses, loading = false, onContinueCourse }: Dashbo
           <CardContent className="p-4">
             <div className="mb-1">
               <div className="flex justify-between items-center text-sm text-muted-foreground mb-1">
-                <span>Progreso: {course.progress}%</span>
+                <span>Progreso: {course.progress || 0}%</span>
               </div>
-              <Progress value={course.progress} className="h-1" />
+              <Progress value={course.progress || 0} className="h-1" />
             </div>
             
             <div className="flex justify-between items-center mt-4">

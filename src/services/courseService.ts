@@ -34,6 +34,7 @@ export interface Course {
   total_lessons?: number;
   created_at?: string;
   updated_at?: string;
+  favorite?: boolean;
 }
 
 export interface CourseFilters {

@@ -41,6 +41,9 @@ const Dashboard = () => {
     navigate(`/dashboard/courses/${courseId}`);
   };
 
+  // Convertir error a objeto Error para mantener la consistencia
+  const errorObj = error ? (typeof error === 'string' ? new Error(error) : error) : null;
+
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">Panel de control</h1>
@@ -54,14 +57,14 @@ const Dashboard = () => {
       
       <DashboardCoursesSection
         loading={loading.courses}
-        error={error instanceof Error ? error : new Error(error || "")}
+        error={errorObj}
         courses={enhancedCourses}
         onContinueCourse={handleContinueCourse}
       />
       
       <DashboardQuizzesSection
         loading={loading.quizzes}
-        error={error instanceof Error ? error : new Error(error || "")}
+        error={errorObj}
         quizzes={quizzes}
         onStartQuiz={handleStartQuiz}
       />

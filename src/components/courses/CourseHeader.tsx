@@ -8,7 +8,7 @@ interface CourseHeaderProps {
   image?: string;
   level?: string;
   category?: string;
-  instructor?: string;
+  instructor?: string | { id: number; name: string };
   lessons?: number;
   duration?: string;
 }
@@ -23,6 +23,9 @@ const CourseHeader = ({
   lessons = 0, 
   duration = "0h" 
 }: CourseHeaderProps) => {
+  // Convertir el instructor a string si es un objeto
+  const instructorName = typeof instructor === 'object' ? instructor.name : instructor;
+
   return (
     <div className="relative rounded-xl overflow-hidden">
       <img 
@@ -42,7 +45,7 @@ const CourseHeader = ({
           </div>
           <h1 className="text-2xl md:text-3xl font-bold mb-2">{title}</h1>
           <div className="flex items-center gap-4 text-sm">
-            <span>Por {instructor}</span>
+            <span>Por {instructorName}</span>
             <div className="flex items-center gap-1">
               <BookOpen size={16} />
               <span>{lessons} lecciones</span>
