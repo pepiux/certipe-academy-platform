@@ -18,6 +18,11 @@ if (!isset($_GET['id'])) {
 
 $course_id = intval($_GET['id']);
 
+// Verificar que el ID del curso es un número válido
+if ($course_id <= 0) {
+    json_response(['error' => 'ID del curso inválido'], 400);
+}
+
 // Conectar a la base de datos
 $conn = connect_db();
 

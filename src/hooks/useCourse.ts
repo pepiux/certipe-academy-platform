@@ -16,9 +16,17 @@ export const useCourse = (courseId: number): UseCourseResult => {
 
   useEffect(() => {
     const fetchCourse = async () => {
+      if (!courseId || isNaN(courseId)) {
+        console.error("ID del curso inválido:", courseId);
+        setError(new Error("ID del curso inválido"));
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
       try {
         const data = await courseService.getCourse(courseId);
+        console.log("Datos del curso recibidos:", data);
         
         // Si no hay módulos, creamos una estructura por defecto
         const courseData = { ...data };
