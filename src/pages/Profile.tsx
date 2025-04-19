@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,8 +16,7 @@ import {
   BookOpen,
   FileText,
   Clock,
-  Lock,
-  UserCircle
+  Lock
 } from "lucide-react";
 
 const Profile = () => {
@@ -30,7 +28,6 @@ const Profile = () => {
     location: "Madrid, España",
     company: "Tech Innovations SL",
     position: "Project Manager",
-    role: "Estudiante", // Added user role
     bio: "Project Manager con 8 años de experiencia en el sector tecnológico. Especialista en metodologías ágiles y certificado PMP.",
     avatar: "https://placehold.co/400x400?text=JP",
     joinedDate: "Enero 2023",
@@ -46,9 +43,35 @@ const Profile = () => {
       "Team Leadership", 
       "Risk Management"
     ],
-    education: [
+    certifications: [
       { 
         id: 1, 
+        name: "Project Management Professional (PMP)", 
+        issuer: "PMI", 
+        date: "Julio 2021", 
+        expires: "Julio 2024",
+        verified: true
+      },
+      { 
+        id: 2, 
+        name: "Certified ScrumMaster (CSM)", 
+        issuer: "Scrum Alliance", 
+        date: "Marzo 2022", 
+        expires: null,
+        verified: true
+      },
+      { 
+        id: 3, 
+        name: "PRINCE2 Foundation", 
+        issuer: "Axelos", 
+        date: "Octubre 2020", 
+        expires: null,
+        verified: false
+      }
+    ],
+    education: [
+      {
+        id: 1,
         institution: "Universidad Complutense de Madrid",
         degree: "Máster en Dirección de Proyectos",
         field: "Gestión de Proyectos",
@@ -106,6 +129,7 @@ const Profile = () => {
       <Tabs defaultValue="profile" className="w-full">
         <TabsList>
           <TabsTrigger value="profile">Perfil</TabsTrigger>
+          <TabsTrigger value="certificates">Certificados</TabsTrigger>
           <TabsTrigger value="security">Seguridad</TabsTrigger>
         </TabsList>
         
@@ -123,10 +147,6 @@ const Profile = () => {
                     
                     <div className="text-center md:text-left">
                       <h2 className="text-xl font-bold">{user.name}</h2>
-                      <div className="flex items-center gap-2">
-                        <UserCircle size={16} className="text-muted-foreground" />
-                        <span className="text-muted-foreground">{user.role}</span>
-                      </div>
                       <p className="text-muted-foreground">{user.position}</p>
                       <p className="text-sm text-muted-foreground">Miembro desde {user.joinedDate}</p>
                     </div>
@@ -185,6 +205,45 @@ const Profile = () => {
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+        
+        {/* Certificates Tab */}
+        <TabsContent value="certificates" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Mis certificados</CardTitle>
+              <CardDescription>
+                Certificados obtenidos y credenciales verificables
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                {user.certifications.map((cert) => (
+                  <div key={cert.id} className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-4 last:border-b-0 last:pb-0">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-medium">{cert.name}</h3>
+                        {cert.verified && (
+                          <Badge variant="outline" className="text-blue-500 bg-blue-50">
+                            Verificado
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="text-sm text-muted-foreground">{cert.issuer}</p>
+                      <p className="text-xs text-muted-foreground">
+                        Expedido: {cert.date}
+                        {cert.expires && ` • Expira: ${cert.expires}`}
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm">Ver</Button>
+                      <Button variant="outline" size="sm">Descargar</Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
         
         {/* Security Tab */}

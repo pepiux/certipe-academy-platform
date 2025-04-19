@@ -1,36 +1,27 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Heart, Clock, Award } from "lucide-react";
 
 interface CourseActionsProps {
-  progress?: number;
-  lessons?: number;
-  isFavorite?: boolean;
-  onToggleFavorite?: () => void;
-  onContinue?: () => void;
-  onStartCourse: () => void;
-  courseId?: number;
+  progress: number;
+  lessons: number;
+  isFavorite: boolean;
+  onToggleFavorite: () => void;
+  onContinue: () => void;
+  onStart: () => void;
 }
 
 const CourseActions = ({
-  progress = 0,
-  lessons = 0,
-  isFavorite = false,
-  onToggleFavorite = () => {},
-  onContinue = () => {},
-  onStartCourse,
-  courseId
+  progress,
+  lessons,
+  isFavorite,
+  onToggleFavorite,
+  onContinue,
+  onStart,
 }: CourseActionsProps) => {
-  const [favorite, setFavorite] = useState(isFavorite);
-
-  const handleToggleFavorite = () => {
-    setFavorite(!favorite);
-    onToggleFavorite();
-  };
-
   return (
     <Card className="sticky top-6">
       <CardContent className="p-6">
@@ -61,7 +52,7 @@ const CourseActions = ({
                 <span className="text-sm">Certificado de finalización</span>
               </div>
             </div>
-            <Button className="w-full mb-3" onClick={onStartCourse}>
+            <Button className="w-full mb-3" onClick={onStart}>
               Comenzar ahora
             </Button>
           </>
@@ -69,10 +60,10 @@ const CourseActions = ({
         <Button 
           variant="outline" 
           className="w-full flex items-center justify-center gap-2"
-          onClick={handleToggleFavorite}
+          onClick={onToggleFavorite}
         >
-          <Heart className={`h-4 w-4 ${favorite ? 'fill-[#0EA5E9] text-[#0EA5E9]' : ''}`} />
-          {favorite ? "Quitar de favoritos" : "Añadir a favoritos"}
+          <Heart className={`h-4 w-4 ${isFavorite ? 'fill-red-500 text-red-500' : ''}`} />
+          {isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
         </Button>
       </CardContent>
     </Card>

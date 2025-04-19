@@ -15,44 +15,59 @@ interface StudyHoursWidgetProps {
   total: number;
   byCourse: StudyHour[];
   byQuiz: StudyHour[];
-  infoTooltip?: string;
 }
 
-const StudyHoursWidget = ({ total, byCourse, byQuiz, infoTooltip }: StudyHoursWidgetProps) => {
-  // Limitar a 4 cursos
-  const limitedCourses = byCourse.slice(0, 4);
-
+const StudyHoursWidget = ({ total, byCourse, byQuiz }: StudyHoursWidgetProps) => {
   return (
     <ExpandableWidget
       title="Horas de estudio"
       value={total.toFixed(1)}
+      subtitle="Horas totales"
       icon={Clock}
       iconColor="text-blue-600"
       iconBgColor="bg-blue-100"
     >
-      <div>
-        <h4 className="text-sm font-medium mb-2">Cursos</h4>
-        <ul className="space-y-2">
-          {limitedCourses.map((course) => (
-            <li key={course.id} className="grid grid-cols-12 gap-2 text-sm">
-              <div className="col-span-8">
-                <p>{course.title}</p>
-                <p className="text-xs text-muted-foreground">
-                  {course.completed_date ? 
-                    format(new Date(course.completed_date), 'dd/MM/yyyy', { locale: es }) : 
-                    'En progreso'}
-                </p>
-              </div>
-              <div className="col-span-4 flex justify-end items-center">
-                <span className="font-medium">{course.hours}h</span>
-              </div>
-            </li>
-          ))}
-        </ul>
+      <div className="space-y-4">
+        <div>
+          <h4 className="text-sm font-medium mb-2">Cursos</h4>
+          <ul className="space-y-2">
+            {byCourse.map((course) => (
+              <li key={course.id} className="flex justify-between text-sm">
+                <span className="text-muted-foreground">{course.title}</span>
+                <div className="flex items-center gap-4">
+                  {course.completed_date && (
+                    <span className="text-xs text-muted-foreground">
+                      {format(new Date(course.completed_date), 'dd/MM/yyyy', { locale: es })}
+                    </span>
+                  )}
+                  <span className="font-medium">{course.hours}h</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+        
+        <div>
+          <h4 className="text-sm font-medium mb-2">Cuestionarios</h4>
+          <ul className="space-y-2">
+            {byQuiz.map((quiz) => (
+              <li key={quiz.id} className="flex justify-between text-sm">
+                <span className="text-muted-foreground">{quiz.title}</span>
+                <div className="flex items-center gap-4">
+                  {quiz.completed_date && (
+                    <span className="text-xs text-muted-foreground">
+                      {format(new Date(quiz.completed_date), 'dd/MM/yyyy', { locale: es })}
+                    </span>
+                  )}
+                  <span className="font-medium">{quiz.hours.toFixed(2)}h</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </ExpandableWidget>
   );
 };
 
 export default StudyHoursWidget;
-

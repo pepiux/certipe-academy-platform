@@ -1,55 +1,70 @@
 
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, BookOpen, BarChart } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Star } from "lucide-react";
 
 interface CourseOverviewProps {
   description: string;
-  instructor?: string | { id: number; name: string };
-  level?: string;
-  duration?: string;
+  objectives: string[];
+  instructor: string;
+  rating: number;
+  totalReviews: number;
 }
 
-const CourseOverview = ({ description, instructor = "Instructor", level = "Intermedio", duration = "0h" }: CourseOverviewProps) => {
-  // Convertir el instructor a string si es un objeto
-  const instructorName = typeof instructor === 'object' ? instructor.name : instructor;
-  
+const CourseOverview = ({ 
+  description, 
+  objectives, 
+  instructor, 
+  rating, 
+  totalReviews 
+}: CourseOverviewProps) => {
   return (
-    <div className="space-y-4">
-      <Card>
-        <CardHeader>
-          <CardTitle>Sobre este curso</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+    <Card>
+      <CardContent className="pt-6">
+        <h3 className="font-semibold mb-2">Descripción del curso</h3>
+        <p className="text-muted-foreground mb-6">{description}</p>
+        
+        <h3 className="font-semibold mb-2">Lo que aprenderás</h3>
+        <ul className="space-y-2 mb-6">
+          {objectives.map((objective, index) => (
+            <li key={index} className="flex items-start gap-2 text-sm">
+              <span className="text-primary mt-0.5">✓</span>
+              <span>{objective}</span>
+            </li>
+          ))}
+        </ul>
+        
+        <h3 className="font-semibold mb-2">Instructor</h3>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
+            {instructor.charAt(0)}
+          </div>
           <div>
-            <p className="text-muted-foreground">{description}</p>
+            <p className="font-medium">{instructor}</p>
+            <p className="text-sm text-muted-foreground">Instructor Senior</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="flex items-center gap-2">
-              <User className="text-primary h-5 w-5" />
-              <div>
-                <p className="text-xs text-muted-foreground">Instructor</p>
-                <p className="font-medium">{instructorName}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <BarChart className="text-primary h-5 w-5" />
-              <div>
-                <p className="text-xs text-muted-foreground">Nivel</p>
-                <p className="font-medium">{level}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <BookOpen className="text-primary h-5 w-5" />
-              <div>
-                <p className="text-xs text-muted-foreground">Duración</p>
-                <p className="font-medium">{duration}</p>
-              </div>
-            </div>
+        </div>
+
+        <h3 className="font-semibold mb-2">Valoraciones</h3>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center">
+            {[...Array(5)].map((_, i) => (
+              <Star
+                key={i}
+                className={`w-4 h-4 ${
+                  i < Math.floor(rating)
+                    ? "fill-yellow-400 text-yellow-400"
+                    : "text-gray-300"
+                }`}
+              />
+            ))}
           </div>
-        </CardContent>
-      </Card>
-    </div>
+          <span className="text-sm">
+            {rating} ({totalReviews} reseñas)
+          </span>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

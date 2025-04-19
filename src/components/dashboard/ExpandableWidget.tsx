@@ -1,70 +1,66 @@
 
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { useState, ReactNode } from 'react';
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChevronDown } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import { LucideIcon } from "lucide-react";
 
-interface ExpandableWidgetProps { 
-  title: string; 
-  value: string;
-  icon: React.ElementType;
-  iconColor?: string;
-  iconBgColor?: string;
-  children: React.ReactNode;
+interface ExpandableWidgetProps {
+  title: string;
+  value: string | number;
+  subtitle: string;
+  icon: LucideIcon;
+  iconColor: string;
+  iconBgColor: string;
+  children: ReactNode;
 }
 
 const ExpandableWidget = ({ 
   title, 
   value, 
-  icon: Icon,
-  iconColor = "text-primary",
-  iconBgColor = "bg-primary/10",
-  children,
+  subtitle, 
+  icon: Icon, 
+  iconColor, 
+  iconBgColor, 
+  children 
 }: ExpandableWidgetProps) => {
   const [expanded, setExpanded] = useState(false);
-  
+
+  const toggleExpanded = () => {
+    setExpanded(!expanded);
+  };
+
   return (
-    <Card className={`relative ${expanded ? 'min-h-[146px]' : 'h-[146px]'}`}>
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-start">
-          <div className="flex items-start space-x-4">
-            <div>
-              <h3 className="text-sm text-muted-foreground">{title}</h3>
-              <div className="flex items-baseline">
-                <span className="text-2xl font-bold mt-1">{value}</span>
-              </div>
-            </div>
+    <Card className={`transition-all duration-300 ${expanded ? 'h-auto' : ''}`}>
+      <CardContent className="p-4">
+        <div className="flex justify-between items-start mb-2">
+          <div className={`transition-all ${expanded ? 'scale-90 opacity-80' : ''}`}>
+            <p className="text-sm text-muted-foreground">{title}</p>
+            <h3 className="text-2xl font-bold mt-1">{value}</h3>
+            <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>
           </div>
-          <div className={`p-2 rounded-md ${iconBgColor}`}>
-            <Icon className={`h-5 w-5 ${iconColor}`} />
+          <div className="flex flex-col items-end">
+            <div className={`${iconBgColor} p-2 rounded-lg transition-all ${expanded ? 'scale-90 opacity-80' : ''}`}>
+              <Icon className={`h-6 w-6 ${iconColor}`} />
+            </div>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="p-0 h-6 mt-2" 
+              onClick={toggleExpanded} 
+              aria-label={expanded ? 'Colapsar detalles' : 'Expandir detalles'}
+            >
+              {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            </Button>
           </div>
         </div>
-      </CardHeader>
-      
-      {expanded && (
-        <>
-          <div className="px-6">
-            <Separator />
-          </div>
-          <CardContent className="pb-10 pt-4">
+        
+        {expanded && (
+          <div className="pt-2 mt-2 border-t border-border animate-fade-in">
             {children}
-          </CardContent>
-        </>
-      )}
-      
-      <div className="absolute bottom-4 right-4">
-        <Button 
-          variant="ghost" 
-          size="sm"
-          className="p-0 h-8 w-8"
-          onClick={() => setExpanded(!expanded)}
-        >
-          <ChevronDown 
-            className={`h-5 w-5 transition-transform ${expanded ? 'rotate-180' : ''}`}
-          />
-        </Button>
-      </div>
+          </div>
+        )}
+      </CardContent>
     </Card>
   );
 };

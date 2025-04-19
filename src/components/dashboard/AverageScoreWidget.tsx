@@ -21,10 +21,9 @@ interface QuizScore {
 interface AverageScoreWidgetProps {
   overall: number;
   quizzes: QuizScore[];
-  infoTooltip?: string;
 }
 
-const AverageScoreWidget = ({ overall, quizzes, infoTooltip }: AverageScoreWidgetProps) => {
+const AverageScoreWidget = ({ overall, quizzes }: AverageScoreWidgetProps) => {
   const [selectedQuizId, setSelectedQuizId] = useState<string>(quizzes.length > 0 ? quizzes[0].id.toString() : "");
   
   const selectedQuiz = quizzes.find(quiz => quiz.id.toString() === selectedQuizId);
@@ -33,6 +32,7 @@ const AverageScoreWidget = ({ overall, quizzes, infoTooltip }: AverageScoreWidge
     <ExpandableWidget
       title="Puntuación media"
       value={`${overall}%`}
+      subtitle="Puntuación media"
       icon={Award}
       iconColor="text-green-600"
       iconBgColor="bg-green-100"
@@ -61,16 +61,23 @@ const AverageScoreWidget = ({ overall, quizzes, infoTooltip }: AverageScoreWidge
           </div>
           
           {selectedQuiz && (
-            <div className="mt-3">              
+            <div className="mt-3">
+              <div className="flex justify-between mb-2">
+                <span className="text-sm font-medium">Media del cuestionario:</span>
+                <span className="text-sm font-medium">
+                  {selectedQuiz.avg_score.toFixed(1)}%
+                </span>
+              </div>
+              
               <div>
                 <h4 className="text-sm font-medium mb-1">Historial de intentos:</h4>
                 <ul className="space-y-1">
                   {selectedQuiz.attempts.map((attempt, index) => (
-                    <li key={index} className="flex justify-between items-center text-sm">
+                    <li key={index} className="flex justify-between text-sm">
                       <span className="text-xs text-muted-foreground">
                         {format(new Date(attempt.date), 'dd/MM/yyyy', { locale: es })}
                       </span>
-                      <span className={`${attempt.score >= 70 ? 'text-green-600' : 'text-amber-600'} font-medium`}>
+                      <span className={`${attempt.score >= 70 ? 'text-green-600' : 'text-amber-600'}`}>
                         {attempt.score}%
                       </span>
                     </li>

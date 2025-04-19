@@ -17,7 +17,6 @@ interface Course {
   image: string;
   progress: number;
   enrolled: boolean;
-  favorite?: boolean;
 }
 
 interface CourseCardProps {
@@ -86,3 +85,4 @@ const CourseCard = ({ course, onStart, onContinue }: CourseCardProps) => {
 };
 
 export default CourseCard;
+

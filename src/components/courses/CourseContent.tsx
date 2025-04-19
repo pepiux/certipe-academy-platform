@@ -1,22 +1,22 @@
 
-// Update the course content component to align text left and improve the active item highlighting
-
-import React from 'react';
-import { 
-  Accordion, 
-  AccordionContent, 
-  AccordionItem, 
-  AccordionTrigger 
-} from "@/components/ui/accordion";
-import { cn } from "@/lib/utils";
-import { FileText, Video, FileAudio, GraduationCap, Check } from "lucide-react";
+import React from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ChevronDown, Check, Eye, Play, RotateCw, FileText, FileAudio, FileVideo, ClipboardCheck } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface Lesson {
   id: number;
   title: string;
   duration: string;
-  completed?: boolean;
-  type?: 'video' | 'reading' | 'audio' | 'test';
+  completed: boolean;
+  type: string;
+  description?: string;
 }
 
 interface Module {
@@ -27,82 +27,145 @@ interface Module {
 
 interface CourseContentProps {
   modules: Module[];
-  currentLessonId?: number;
-  onLessonClick?: (lessonId: number) => void;
+  currentLessonId: number;
+  onLessonClick: (lessonId: number) => void;
 }
 
-const LessonIcon = ({ type, completed }: { type?: string; completed?: boolean }) => {
-  if (completed) {
-    return <Check className="h-4 w-4 text-green-600" />;
-  }
-  
-  switch (type) {
-    case 'video':
-      return <Video className="h-4 w-4 text-blue-600" />;
-    case 'reading':
-      return <FileText className="h-4 w-4 text-amber-600" />;
-    case 'audio':
-      return <FileAudio className="h-4 w-4 text-purple-600" />;
-    case 'test':
-      return <GraduationCap className="h-4 w-4 text-green-600" />;
-    default:
-      return <FileText className="h-4 w-4 text-muted-foreground" />;
-  }
-};
-
 const CourseContent = ({ modules, currentLessonId, onLessonClick }: CourseContentProps) => {
-  // Find the module containing the current lesson
-  const currentModuleId = currentLessonId ? 
-    modules.find(m => m.lessons.some(l => l.id === currentLessonId))?.id : 
-    undefined;
-  
+  const [expandedModule, setExpandedModule] = React.useState<number | null>(1);
+
+  const toggleModule = (moduleId: number) => {
+    setExpandedModule(expandedModule === moduleId ? null : moduleId);
+  };
+
+  const getLessonIcon = (type: string) => {
+    switch (type) {
+      case 'reading':
+        return <FileText className="h-4 w-4 text-muted-foreground" />;
+      case 'audio':
+        return <FileAudio className="h-4 w-4 text-muted-foreground" />;
+      case 'video':
+        return <FileVideo className="h-4 w-4 text-muted-foreground" />;
+      case 'test':
+        return <ClipboardCheck className="h-4 w-4 text-muted-foreground" />;
+      default:
+        return <FileText className="h-4 w-4 text-muted-foreground" />;
+    }
+  };
+
+  const getLessonAction = (lesson: Lesson) => {
+    if (lesson.completed) {
+      return (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="sm" className="w-10 h-10" onClick={() => onLessonClick(lesson.id)}>
+                <RotateCw className="h-4 w-4 text-muted-foreground" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Repasar</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      );
+    }
+    
+    if (lesson.id === currentLessonId) {
+      return (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="sm" className="w-10 h-10" onClick={() => onLessonClick(lesson.id)}>
+                <Play className="h-4 w-4 text-[#0EA5E9]" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Continuar</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      );
+    }
+    
+    return (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant="ghost" size="sm" className="w-10 h-10" onClick={() => onLessonClick(lesson.id)}>
+              <Eye className="h-4 w-4 text-muted-foreground" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Previsualizar</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+  };
+
   return (
-    <Accordion 
-      type="multiple" 
-      defaultValue={currentModuleId ? [`module-${currentModuleId}`] : []}
-      className="w-full text-left"
-    >
-      {modules.map((module) => (
-        <AccordionItem key={module.id} value={`module-${module.id}`} className="border-b">
-          <AccordionTrigger className="py-3 text-left">
-            <div className="flex flex-col items-start">
-              <span className="text-sm font-medium">{module.title}</span>
-              <span className="text-xs text-muted-foreground mt-1">
-                {module.lessons.length} {module.lessons.length === 1 ? 'lección' : 'lecciones'}
-              </span>
-            </div>
-          </AccordionTrigger>
-          <AccordionContent>
-            <ul className="space-y-1 pb-2">
-              {module.lessons.map((lesson) => {
-                const isActive = lesson.id === currentLessonId;
-                return (
-                  <li 
-                    key={lesson.id}
-                    className={cn(
-                      "text-sm p-2 rounded-md flex items-start justify-between gap-2 cursor-pointer",
-                      isActive ? "bg-accent/50 shadow-sm" : "hover:bg-accent/30",
-                      lesson.completed && !isActive ? "text-muted-foreground" : ""
-                    )}
-                    onClick={() => onLessonClick?.(lesson.id)}
+    <Card>
+      <CardContent className="p-0">
+        {modules.map((module) => (
+          <div key={module.id} className="border-b last:border-b-0">
+            <button
+              className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50"
+              onClick={() => toggleModule(module.id)}
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-medium">{module.title}</span>
+                <span className="text-xs text-muted-foreground">
+                  {module.lessons.length} lecciones
+                </span>
+              </div>
+              <ChevronDown 
+                className={`h-4 w-4 transition-transform ${
+                  expandedModule === module.id ? 'rotate-180' : ''
+                }`} 
+              />
+            </button>
+            <div className={`px-4 ${expandedModule === module.id ? 'block' : 'hidden'}`}>
+              {module.lessons.map((lesson) => (
+                <React.Fragment key={lesson.id}>
+                  <div
+                    className={`grid grid-cols-12 gap-2 items-center py-3 border-t cursor-pointer hover:bg-slate-50 ${
+                      lesson.id === currentLessonId ? 'bg-slate-50' : ''
+                    }`}
+                    onClick={() => onLessonClick(lesson.id)}
                   >
-                    <div className="flex items-start gap-2">
-                      <div className="mt-0.5">
-                        <LessonIcon type={lesson.type} completed={lesson.completed} />
+                    <div className="col-span-7 flex items-center gap-3">
+                      <div className="flex-shrink-0">
+                        {getLessonIcon(lesson.type)}
                       </div>
-                      <span className="text-left">{lesson.title}</span>
+                      <span className="text-sm font-medium truncate">{lesson.title}</span>
                     </div>
-                    <span className="text-xs text-muted-foreground whitespace-nowrap">
+                    <div className="col-span-2 text-right text-sm text-muted-foreground pr-2">
                       {lesson.duration}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-          </AccordionContent>
-        </AccordionItem>
-      ))}
-    </Accordion>
+                    </div>
+                    <div className="col-span-2 flex justify-end">
+                      {getLessonAction(lesson)}
+                    </div>
+                    <div className="col-span-1 flex justify-center">
+                      {lesson.completed && (
+                        <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
+                          <Check className="h-3 w-3 text-primary" />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  {lesson.id === currentLessonId && lesson.description && (
+                    <div className="p-3 bg-slate-50 text-sm border-t mb-2">
+                      <p>{lesson.description}</p>
+                    </div>
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
   );
 };
 

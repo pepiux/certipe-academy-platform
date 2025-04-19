@@ -13,38 +13,32 @@ interface CourseProgress {
 interface CoursesInProgressWidgetProps {
   total: number;
   courses: CourseProgress[];
-  infoTooltip?: string;
 }
 
-const CoursesInProgressWidget = ({ total, courses, infoTooltip }: CoursesInProgressWidgetProps) => {
+const CoursesInProgressWidget = ({ total, courses }: CoursesInProgressWidgetProps) => {
   return (
     <ExpandableWidget
       title="Cursos en progreso"
-      value={total.toString()}
+      value={total}
+      subtitle="Cursos activos"
       icon={BookOpen}
       iconColor="text-amber-600"
       iconBgColor="bg-amber-100"
     >
-      {courses && courses.length > 0 ? (
-        <ul className="space-y-3">
-          {courses.map((course) => (
-            <li key={course.id} className="space-y-1">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">{course.title}</span>
-                <span className="font-medium">{course.progress}%</span>
-              </div>
-              <Progress value={course.progress} className="h-1.5" />
-              <div className="text-xs text-right text-muted-foreground">
-                {course.duration_hours} horas
-              </div>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <div className="text-center py-2 text-sm text-muted-foreground">
-          No hay cursos en progreso
-        </div>
-      )}
+      <ul className="space-y-3">
+        {courses.map((course) => (
+          <li key={course.id} className="space-y-1">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">{course.title}</span>
+              <span className="font-medium">{course.progress}%</span>
+            </div>
+            <Progress value={course.progress} className="h-1.5" />
+            <div className="text-xs text-right text-muted-foreground">
+              {course.duration_hours} horas
+            </div>
+          </li>
+        ))}
+      </ul>
     </ExpandableWidget>
   );
 };

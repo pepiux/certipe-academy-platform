@@ -3,29 +3,24 @@ import React from "react";
 import { BookOpen, Clock } from "lucide-react";
 
 interface CourseHeaderProps {
+  image: string;
   title: string;
-  description: string;
-  image?: string;
-  level?: string;
-  category?: string;
-  instructor?: string | { id: number; name: string };
-  lessons?: number;
-  duration?: string;
+  level: string;
+  category: string;
+  instructor: string;
+  lessons: number;
+  duration: string;
 }
 
 const CourseHeader = ({ 
+  image, 
   title, 
-  description, 
-  image = "https://placehold.co/800x450?text=Course+Banner", 
-  level = "Intermedio", 
-  category = "Gestión", 
-  instructor = "Instructor",
-  lessons = 0, 
-  duration = "0h" 
+  level, 
+  category, 
+  instructor, 
+  lessons, 
+  duration 
 }: CourseHeaderProps) => {
-  // Convertir el instructor a string si es un objeto
-  const instructorName = typeof instructor === 'object' ? instructor.name : instructor;
-
   return (
     <div className="relative rounded-xl overflow-hidden">
       <img 
@@ -45,7 +40,7 @@ const CourseHeader = ({
           </div>
           <h1 className="text-2xl md:text-3xl font-bold mb-2">{title}</h1>
           <div className="flex items-center gap-4 text-sm">
-            <span>Por {instructorName}</span>
+            <span>Por {instructor}</span>
             <div className="flex items-center gap-1">
               <BookOpen size={16} />
               <span>{lessons} lecciones</span>
