@@ -241,9 +241,9 @@ const Courses = () => {
     
     if (searchQuery && !course.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     
-    if (selectedCategories.length > 0 && !selectedCategories.includes(course.category)) return false;
+    if (selectedCategories.length > 0 && !selectedCategories.includes(course.category || '')) return false;
     
-    if (selectedLevels.length > 0 && !selectedLevels.includes(course.level)) return false;
+    if (selectedLevels.length > 0 && !selectedLevels.includes(course.level || '')) return false;
     
     return true;
   });

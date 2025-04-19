@@ -71,14 +71,19 @@ export const useCourse = (courseId: string | number | undefined): UseCourseResul
           ];
         }
         
-        // Asegurar que todas las lecciones tienen un tipo válido
+        // Asegurarse de que todas las lecciones tienen un tipo válido
         courseData.modules.forEach(module => {
-          module.lessons.forEach(lesson => {
-            if (!lesson.type || !['video', 'reading', 'audio', 'test'].includes(lesson.type)) {
-              lesson.type = 'video';
-            }
-          });
+          if (module.lessons && Array.isArray(module.lessons)) {
+            module.lessons.forEach(lesson => {
+              if (!lesson.type || !['video', 'reading', 'audio', 'test'].includes(lesson.type)) {
+                lesson.type = 'video';
+              }
+            });
+          }
         });
+
+        // Asegurarse de que el estado enrolled está definido
+        courseData.enrolled = courseData.enrolled !== undefined ? courseData.enrolled : false;
         
         console.log("Curso procesado con éxito:", courseData);
         setCourse(courseData);

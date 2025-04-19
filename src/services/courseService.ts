@@ -44,6 +44,7 @@ export interface Course {
   requirements?: string[];
   what_you_will_learn?: string[];
   certification?: boolean;
+  enrolled?: boolean;  // Añadimos la propiedad enrolled que faltaba
 }
 
 export interface CourseFilters {
@@ -70,6 +71,7 @@ const mockCourses: Course[] = [
     completed_lessons: 15,
     total_lessons: 24,
     favorite: true,
+    enrolled: true,  // Añadimos el valor para enrolled
     requirements: ["Conocimientos básicos de administración", "Comprensión de procesos organizacionales"],
     what_you_will_learn: ["Definir objetivos y alcances de proyectos", "Crear cronogramas efectivos", "Gestionar equipos multidisciplinarios"],
     certification: true,
@@ -195,6 +197,7 @@ const mockCourses: Course[] = [
     completed_lessons: 5,
     total_lessons: 18,
     favorite: false,
+    enrolled: true,  // Añadimos el valor para enrolled
     modules: [
       {
         id: 4,
@@ -238,6 +241,7 @@ const mockCourses: Course[] = [
     completed_lessons: 3,
     total_lessons: 20,
     favorite: true,
+    enrolled: true,  // Añadimos el valor para enrolled
     modules: [
       {
         id: 5,
