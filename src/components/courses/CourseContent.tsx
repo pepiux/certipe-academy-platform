@@ -9,7 +9,7 @@ import {
   AccordionTrigger 
 } from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
-import { Check, FileText, Video, FileAudio, GraduationCap } from "lucide-react";
+import { FileText, Video, FileAudio, GraduationCap, Check } from "lucide-react";
 
 interface Lesson {
   id: number;

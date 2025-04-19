@@ -3,23 +3,25 @@ import React from "react";
 import { BookOpen, Clock } from "lucide-react";
 
 interface CourseHeaderProps {
-  image: string;
   title: string;
-  level: string;
-  category: string;
-  instructor: string;
-  lessons: number;
-  duration: string;
+  description: string;
+  image?: string;
+  level?: string;
+  category?: string;
+  instructor?: string;
+  lessons?: number;
+  duration?: string;
 }
 
 const CourseHeader = ({ 
-  image, 
   title, 
-  level, 
-  category, 
-  instructor, 
-  lessons, 
-  duration 
+  description, 
+  image = "https://placehold.co/800x450?text=Course+Banner", 
+  level = "Intermedio", 
+  category = "Gestión", 
+  instructor = "Instructor",
+  lessons = 0, 
+  duration = "0h" 
 }: CourseHeaderProps) => {
   return (
     <div className="relative rounded-xl overflow-hidden">

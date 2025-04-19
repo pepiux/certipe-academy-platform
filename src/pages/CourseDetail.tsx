@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useCourse } from '@/hooks/useCourse';
@@ -9,7 +10,6 @@ import CourseHeader from "@/components/courses/CourseHeader";
 import CourseOverview from "@/components/courses/CourseOverview";
 import CourseContent from "@/components/courses/CourseContent";
 import CourseActions from "@/components/courses/CourseActions";
-import CourseStats from "@/components/courses/CourseStats";
 
 const CourseDetail = () => {
   const { courseId } = useParams();
@@ -66,31 +66,37 @@ const CourseDetail = () => {
       <CourseHeader
         title={course.title}
         description={course.description}
+        image={course.image}
+        level={course.level}
+        category={course.category}
+        instructor={course.instructor}
+        lessons={course.lessons_count}
+        duration={course.duration}
       />
       
       <CourseActions
-        courseId={course.id}
+        progress={course.progress}
+        lessons={course.total_lessons}
         onStartCourse={() => navigate(`/dashboard/courses/${course.id}/lesson/1/video`)}
       />
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-2 mb-8"> {/* Changed from grid-cols-3 to grid-cols-2 */}
+        <TabsList className="grid grid-cols-2 mb-8">
           <TabsTrigger value="overview">Descripción general</TabsTrigger>
           <TabsTrigger value="content">Contenido</TabsTrigger>
-          {/* Removed the Statistics tab */}
         </TabsList>
         
         <TabsContent value="overview" className="space-y-4">
           <CourseOverview
             description={course.description}
             instructor={course.instructor}
-            duration={course.duration}
             level={course.level}
+            duration={course.duration}
           />
         </TabsContent>
         
         <TabsContent value="content" className="space-y-4">
-          <CourseContent modules={course.modules} />
+          <CourseContent modules={course.modules || []} />
         </TabsContent>
       </Tabs>
     </div>

@@ -5,18 +5,27 @@ import { Star } from "lucide-react";
 
 interface CourseOverviewProps {
   description: string;
-  objectives: string[];
-  instructor: string;
-  rating: number;
-  totalReviews: number;
+  objectives?: string[];
+  instructor?: string;
+  rating?: number;
+  totalReviews?: number;
+  level?: string;
+  duration?: string;
 }
 
 const CourseOverview = ({ 
   description, 
-  objectives, 
-  instructor, 
-  rating, 
-  totalReviews 
+  objectives = [
+    "Comprender los conceptos básicos de gestión de proyectos",
+    "Desarrollar habilidades para liderar equipos de proyecto",
+    "Aprender técnicas efectivas de planificación",
+    "Implementar metodologías ágiles en la gestión de proyectos"
+  ],
+  instructor = "Instructor", 
+  rating = 4.5, 
+  totalReviews = 120,
+  level = "Intermedio",
+  duration = "5h 30m"
 }: CourseOverviewProps) => {
   return (
     <Card>
@@ -33,6 +42,18 @@ const CourseOverview = ({
             </li>
           ))}
         </ul>
+        
+        <h3 className="font-semibold mb-2">Detalles del curso</h3>
+        <div className="grid grid-cols-2 gap-4 mb-6 text-sm">
+          <div>
+            <p className="text-muted-foreground">Nivel</p>
+            <p className="font-medium">{level}</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground">Duración</p>
+            <p className="font-medium">{duration}</p>
+          </div>
+        </div>
         
         <h3 className="font-semibold mb-2">Instructor</h3>
         <div className="flex items-center gap-3 mb-6">
