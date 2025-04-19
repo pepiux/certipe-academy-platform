@@ -54,25 +54,30 @@ const courseService = {
     // Si estamos en modo mock, seguimos el flujo original para mock
     console.log("Consultando cursos en modo: ", useMock() ? "Mock" : "Backend");
     
-    if (useMock()) {
-      // Convertir los filtros a query string
-      const queryParams = new URLSearchParams();
-      
-      for (const [key, value] of Object.entries(filters)) {
-        if (value !== undefined && value !== null) {
-          queryParams.append(key, value.toString());
+    try {
+      if (useMock()) {
+        // Convertir los filtros a query string
+        const queryParams = new URLSearchParams();
+        
+        for (const [key, value] of Object.entries(filters)) {
+          if (value !== undefined && value !== null) {
+            queryParams.append(key, value.toString());
+          }
         }
+        
+        const query = queryParams.toString() ? `?${queryParams.toString()}` : '';
+        return await apiClient.get<{data: Course[], meta: any}>(`/courses${query}`);
+      } else {
+        // Si estamos usando backend PHP
+        let endpoint = '/courses.php';
+        if (Object.keys(filters).length > 0) {
+          endpoint += '?' + new URLSearchParams(filters as Record<string, string>).toString();
+        }
+        return await apiClient.get<{data: Course[], meta: any}>(endpoint);
       }
-      
-      const query = queryParams.toString() ? `?${queryParams.toString()}` : '';
-      return await apiClient.get<{data: Course[], meta: any}>(`/courses${query}`);
-    } else {
-      // Si estamos usando backend PHP
-      let endpoint = '/courses.php';
-      if (Object.keys(filters).length > 0) {
-        endpoint += '?' + new URLSearchParams(filters as Record<string, string>).toString();
-      }
-      return await apiClient.get<{data: Course[], meta: any}>(endpoint);
+    } catch (error) {
+      console.error("Error al consultar cursos:", error);
+      throw error;
     }
   },
   
@@ -80,10 +85,32 @@ const courseService = {
    * Obtiene un curso por su ID
    */
   async getCourse(id: number): Promise<Course> {
-    if (useMock()) {
-      return await apiClient.get<Course>(`/courses/${id}`);
-    } else {
-      return await apiClient.get<Course>(`/course.php?id=${id}`);
+    console.log(`Obteniendo curso con ID ${id} en modo: ${useMock() ? "Mock" : "Backend"}`);
+    
+    if (!id || isNaN(id) || id <= 0) {
+      throw new Error("ID del curso inválido");
+    }
+    
+    try {
+      let response;
+      if (useMock()) {
+        console.log(`Consultando endpoint mock: /courses/${id}`);
+        response = await apiClient.get<Course>(`/courses/${id}`);
+      } else {
+        console.log(`Consultando endpoint backend: /course.php?id=${id}`);
+        response = await apiClient.get<Course>(`/course.php?id=${id}`);
+      }
+      
+      console.log("Respuesta recibida:", response);
+      
+      if (!response || !response.id) {
+        throw new Error("El servidor no devolvió datos válidos del curso");
+      }
+      
+      return response;
+    } catch (error) {
+      console.error(`Error al obtener curso con ID ${id}:`, error);
+      throw error;
     }
   },
   

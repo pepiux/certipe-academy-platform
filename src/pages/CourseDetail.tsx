@@ -10,18 +10,26 @@ import CourseHeader from "@/components/courses/CourseHeader";
 import CourseOverview from "@/components/courses/CourseOverview";
 import CourseContent from "@/components/courses/CourseContent";
 import CourseActions from "@/components/courses/CourseActions";
+import { toast } from 'sonner';
 
 const CourseDetail = () => {
   const { courseId } = useParams();
   const navigate = useNavigate();
-  const { course, loading, error } = useCourse(parseInt(courseId || "0", 10));
+  const parsedId = courseId ? parseInt(courseId, 10) : 0;
+  const { course, loading, error } = useCourse(parsedId);
   const [activeTab, setActiveTab] = useState("overview");
 
   useEffect(() => {
     if (error) {
-      console.error("Error fetching course:", error);
+      console.error("Error al cargar el curso:", error);
+      toast.error("No se pudo cargar el curso. Por favor, inténtelo de nuevo más tarde.");
     }
   }, [error]);
+
+  console.log("Renderizando CourseDetail para el curso ID:", parsedId);
+  console.log("Datos del curso:", course);
+  console.log("Estado de carga:", loading);
+  console.log("Error:", error);
 
   if (loading) {
     return (
@@ -48,14 +56,14 @@ const CourseDetail = () => {
   if (!course) {
     return (
       <div className="space-y-6">
-        <p>Curso no encontrado.</p>
+        <p>Curso no encontrado o ID inválido.</p>
         <Link to="/dashboard">Volver al panel de control</Link>
       </div>
     );
   }
 
   // Asegurarnos de que course.modules es un array para no tener errores
-  const modules = course.modules || [];
+  const modules = Array.isArray(course.modules) ? course.modules : [];
 
   // Valores seguros para progress y total_lessons
   const progress = course.progress || 0;
@@ -81,31 +89,37 @@ const CourseDetail = () => {
         duration={course.duration}
       />
       
-      <CourseActions
-        progress={progress}
-        lessons={totalLessons}
-        onStartCourse={() => navigate(`/dashboard/courses/${course.id}/lesson/1/video`)}
-      />
-      
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-2 mb-8">
-          <TabsTrigger value="overview">Descripción general</TabsTrigger>
-          <TabsTrigger value="content">Contenido</TabsTrigger>
-        </TabsList>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="md:col-span-2">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid grid-cols-2 mb-8">
+              <TabsTrigger value="overview">Descripción general</TabsTrigger>
+              <TabsTrigger value="content">Contenido</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="overview" className="space-y-4">
+              <CourseOverview
+                description={course.description}
+                instructor={course.instructor}
+                level={course.level}
+                duration={course.duration}
+              />
+            </TabsContent>
+            
+            <TabsContent value="content" className="space-y-4">
+              <CourseContent modules={modules} />
+            </TabsContent>
+          </Tabs>
+        </div>
         
-        <TabsContent value="overview" className="space-y-4">
-          <CourseOverview
-            description={course.description}
-            instructor={course.instructor}
-            level={course.level}
-            duration={course.duration}
+        <div>
+          <CourseActions
+            progress={progress}
+            lessons={totalLessons}
+            onStartCourse={() => navigate(`/dashboard/courses/${course.id}/lesson/1/video`)}
           />
-        </TabsContent>
-        
-        <TabsContent value="content" className="space-y-4">
-          <CourseContent modules={modules} />
-        </TabsContent>
-      </Tabs>
+        </div>
+      </div>
     </div>
   );
 };

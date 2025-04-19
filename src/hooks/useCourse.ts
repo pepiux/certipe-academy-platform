@@ -16,7 +16,7 @@ export const useCourse = (courseId: number): UseCourseResult => {
 
   useEffect(() => {
     const fetchCourse = async () => {
-      if (!courseId || isNaN(courseId)) {
+      if (!courseId || isNaN(courseId) || courseId <= 0) {
         console.error("ID del curso inválido:", courseId);
         setError(new Error("ID del curso inválido"));
         setLoading(false);
@@ -24,13 +24,23 @@ export const useCourse = (courseId: number): UseCourseResult => {
       }
 
       setLoading(true);
+      setCourse(null); // Limpiar curso anterior
+      setError(null); // Limpiar errores anteriores
+      
       try {
+        console.log("Iniciando solicitud para obtener el curso con ID:", courseId);
         const data = await courseService.getCourse(courseId);
         console.log("Datos del curso recibidos:", data);
         
+        // Verificar que recibimos datos válidos
+        if (!data || typeof data !== 'object') {
+          throw new Error("Los datos del curso recibidos no son válidos");
+        }
+        
         // Si no hay módulos, creamos una estructura por defecto
         const courseData = { ...data };
-        if (!courseData.modules || courseData.modules.length === 0) {
+        if (!courseData.modules || !Array.isArray(courseData.modules) || courseData.modules.length === 0) {
+          console.log("Creando estructura de módulos por defecto para el curso");
           courseData.modules = [
             {
               id: 1,
@@ -48,6 +58,7 @@ export const useCourse = (courseId: number): UseCourseResult => {
           ];
         }
 
+        console.log("Curso procesado con éxito:", courseData);
         setCourse(courseData);
       } catch (err) {
         console.error("Error al obtener el curso:", err);
@@ -58,9 +69,8 @@ export const useCourse = (courseId: number): UseCourseResult => {
       }
     };
 
-    if (courseId) {
-      fetchCourse();
-    }
+    console.log("useEffect se ejecuta con courseId:", courseId);
+    fetchCourse();
   }, [courseId]);
 
   return { course, loading, error };

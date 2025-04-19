@@ -35,6 +35,7 @@ const CourseCard = ({ course, onStart, onContinue }: CourseCardProps) => {
   };
   
   const handleMoreDetails = () => {
+    console.log(`Navegando al detalle del curso con ID ${course.id}`);
     navigate(`/dashboard/courses/${course.id}`);
   };
 
