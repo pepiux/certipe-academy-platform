@@ -21,7 +21,7 @@ interface QuizScore {
 interface AverageScoreWidgetProps {
   overall: number;
   quizzes: QuizScore[];
-  infoTooltip?: string; // Keep in props but not pass it to ExpandableWidget
+  infoTooltip?: string;
 }
 
 const AverageScoreWidget = ({ overall, quizzes, infoTooltip }: AverageScoreWidgetProps) => {
@@ -66,17 +66,13 @@ const AverageScoreWidget = ({ overall, quizzes, infoTooltip }: AverageScoreWidge
                 <h4 className="text-sm font-medium mb-1">Historial de intentos:</h4>
                 <ul className="space-y-1">
                   {selectedQuiz.attempts.map((attempt, index) => (
-                    <li key={index} className="grid grid-cols-12 gap-2 text-sm">
-                      <div className="col-span-8">
-                        <p className="text-xs text-muted-foreground">
-                          {format(new Date(attempt.date), 'dd/MM/yyyy', { locale: es })}
-                        </p>
-                      </div>
-                      <div className="col-span-4 flex justify-end">
-                        <span className={`${attempt.score >= 70 ? 'text-green-600' : 'text-amber-600'}`}>
-                          {attempt.score}%
-                        </span>
-                      </div>
+                    <li key={index} className="flex justify-between items-center text-sm">
+                      <span className="text-xs text-muted-foreground">
+                        {format(new Date(attempt.date), 'dd/MM/yyyy', { locale: es })}
+                      </span>
+                      <span className={`${attempt.score >= 70 ? 'text-green-600' : 'text-amber-600'} font-medium`}>
+                        {attempt.score}%
+                      </span>
                     </li>
                   ))}
                 </ul>

@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React from "react";
 import {
   ResponsiveContainer,
   LineChart,
@@ -9,19 +9,9 @@ import {
   YAxis,
   Tooltip,
   ReferenceLine,
-  Area,
-  Legend,
-  Label
 } from "recharts";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { format, isValid, parseISO } from "date-fns";
+import { format, parseISO, isValid } from "date-fns";
 import { es } from "date-fns/locale";
-
-const COURSES = [
-  { id: 1, name: "Gestión de Proyectos", minStudyHoursPerDay: 2.5 },
-  { id: 2, name: "Metodologías Ágiles", minStudyHoursPerDay: 2.0 },
-  { id: 3, name: "PRINCE2", minStudyHoursPerDay: 3.0 }
-];
 
 interface StudyHoursChartProps {
   data: Array<{ date: string; hours: number }>;
@@ -29,10 +19,10 @@ interface StudyHoursChartProps {
 }
 
 const StudyHoursChart = ({ data, className }: StudyHoursChartProps) => {
-  const [selectedCourse, setSelectedCourse] = useState("1");
-  const course = COURSES.find(c => c.id === parseInt(selectedCourse)) || COURSES[0];
+  // Valor umbral diario de horas de estudio
+  const MIN_STUDY_HOURS = 2.5;
   
-  // Transformar los datos para incluir el día de la semana abreviado
+  // Procesar datos para el gráfico
   const chartData = data.map(item => {
     let date;
     try {
@@ -55,13 +45,10 @@ const StudyHoursChart = ({ data, className }: StudyHoursChartProps) => {
 
     const fullDay = isValid(date) ? format(date, "EEE", { locale: es }).toLowerCase() : "??";
     const dayOfWeek = dayMap[fullDay] || fullDay.substring(0, 2);
-    const formattedDate = isValid(date) ? format(date, "dd/MM") : "??/??";
     
     return {
       ...item,
-      day: dayOfWeek,
-      displayDate: formattedDate,
-      threshold: course.minStudyHoursPerDay
+      day: dayOfWeek
     };
   });
 
@@ -80,52 +67,31 @@ const StudyHoursChart = ({ data, className }: StudyHoursChartProps) => {
 
   return (
     <ResponsiveContainer width="100%" height="100%" className={className}>
-      <LineChart margin={{ left: 0, right: 20, top: 8, bottom: 24 }}>
+      <LineChart 
+        data={chartData}
+        margin={{ top: 10, right: 20, left: 0, bottom: 5 }}
+      >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis 
-          dataKey="day"
-          allowDuplicatedCategory={false}
+          dataKey="day" 
+          padding={{ left: 5, right: 5 }}
         />
-        <YAxis 
-          label={{ value: 'Horas', angle: -90, position: 'insideLeft' }}
-        />
-        <Legend verticalAlign="top" height={10} />
+        <YAxis />
         <Tooltip content={<CustomTooltip />} />
         
-        <Area
-          type="monotone"
-          dataKey="threshold"
-          stroke="none"
-          fill="#f0f0f0"
-          data={chartData}
-        />
-        
-        <ReferenceLine
-          y={course.minStudyHoursPerDay}
-          stroke="#000000"
-          strokeWidth={1}
+        <ReferenceLine 
+          y={MIN_STUDY_HOURS} 
+          stroke="#000000" 
+          strokeWidth={1} 
         />
         
         <Line 
-          type="monotone"
-          dataKey="hours"
-          data={chartData}
-          stroke="#8B5CF6"
+          type="monotone" 
+          dataKey="hours" 
+          stroke="#8B5CF6" 
           strokeWidth={2}
           dot={{ r: 6, fill: "#8B5CF6" }}
-          name="Horas"
         />
-        
-        <text
-          x="50%"
-          y="96%"
-          textAnchor="middle"
-          fontSize="12"
-          fill="#666"
-          className="text-xs"
-        >
-          Días Ultima Semana
-        </text>
       </LineChart>
     </ResponsiveContainer>
   );

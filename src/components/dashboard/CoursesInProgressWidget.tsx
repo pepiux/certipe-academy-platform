@@ -13,14 +13,14 @@ interface CourseProgress {
 interface CoursesInProgressWidgetProps {
   total: number;
   courses: CourseProgress[];
-  infoTooltip?: string; // Keep in props but not pass it to ExpandableWidget
+  infoTooltip?: string;
 }
 
 const CoursesInProgressWidget = ({ total, courses, infoTooltip }: CoursesInProgressWidgetProps) => {
   return (
     <ExpandableWidget
       title="Cursos en progreso"
-      value={total.toString()}  // Convert number to string
+      value={total.toString()}
       icon={BookOpen}
       iconColor="text-amber-600"
       iconBgColor="bg-amber-100"

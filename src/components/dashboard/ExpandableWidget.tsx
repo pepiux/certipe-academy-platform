@@ -25,14 +25,14 @@ const ExpandableWidget = ({
   const [expanded, setExpanded] = useState(false);
   
   return (
-    <Card className="relative h-[146px]">
+    <Card className={`relative ${expanded ? 'min-h-[146px]' : 'h-[146px]'}`}>
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <div className="flex items-start space-x-4">
             <div>
-              <h3 className="text-lg font-semibold">{title}</h3>
-              <div className="flex items-baseline space-x-2">
-                <span className="text-2xl font-bold">{value}</span>
+              <h3 className="text-sm text-muted-foreground">{title}</h3>
+              <div className="flex items-baseline">
+                <span className="text-2xl font-bold mt-1">{value}</span>
               </div>
             </div>
           </div>

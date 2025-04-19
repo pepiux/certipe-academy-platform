@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React from "react";
 import {
   ResponsiveContainer,
   LineChart,
@@ -55,7 +55,7 @@ const ScoreProgressChart = ({ data, className }: ScoreProgressChartProps) => {
     <ResponsiveContainer width="100%" height="100%" className={className}>
       <LineChart
         data={chartData}
-        margin={{ top: 10, right: 20, left: 0, bottom: 24 }}
+        margin={{ top: 10, right: 20, left: 0, bottom: 5 }}
       >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis 
@@ -80,17 +80,6 @@ const ScoreProgressChart = ({ data, className }: ScoreProgressChartProps) => {
           strokeWidth={2}
           dot={{ r: 6, fill: "#10B981" }}
         />
-        
-        <text
-          x="50%"
-          y="96%"
-          textAnchor="middle"
-          fontSize="12"
-          fill="#666"
-          className="text-xs"
-        >
-          Días Ultima Semana
-        </text>
       </LineChart>
     </ResponsiveContainer>
   );
