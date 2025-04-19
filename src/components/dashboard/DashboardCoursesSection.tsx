@@ -1,5 +1,9 @@
-
-import React from 'react';
+import React, { useState } from 'react';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import CourseCard from "@/components/courses/CourseCard";
+import type { Course } from '@/services/courseService';
+import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -7,16 +11,18 @@ import DashboardCourses from "./DashboardCourses";
 
 interface DashboardCoursesSectionProps {
   loading: boolean;
-  error: string | null;
-  courses: any[];
+  error: Error | null;
+  courses: Course[];
   onContinueCourse: (courseId: number) => void;
 }
 
-const DashboardCoursesSection = ({ 
-  loading, 
-  error, 
-  courses, 
-  onContinueCourse 
+const heartIcon = <Heart className="h-5 w-5 text-brand-blue" />;
+
+const DashboardCoursesSection = ({
+  loading,
+  error,
+  courses,
+  onContinueCourse
 }: DashboardCoursesSectionProps) => {
   const navigate = useNavigate();
 
@@ -37,7 +43,7 @@ const DashboardCoursesSection = ({
       {loading ? (
         <div className="text-center py-8">Cargando cursos...</div>
       ) : error ? (
-        <div className="text-center py-8 text-red-500">{error}</div>
+        <div className="text-center py-8 text-red-500">{error.message}</div>
       ) : courses.length > 0 ? (
         <DashboardCourses 
           courses={courses}

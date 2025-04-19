@@ -13,7 +13,7 @@ interface CourseProgress {
 interface CoursesInProgressWidgetProps {
   total: number;
   courses: CourseProgress[];
-  infoTooltip?: string; // We'll keep this in the props but not pass it to ExpandableWidget
+  infoTooltip?: string; // Keep in props but not pass it to ExpandableWidget
 }
 
 const CoursesInProgressWidget = ({ total, courses, infoTooltip }: CoursesInProgressWidgetProps) => {
@@ -21,7 +21,6 @@ const CoursesInProgressWidget = ({ total, courses, infoTooltip }: CoursesInProgr
     <ExpandableWidget
       title="Cursos en progreso"
       value={total.toString()}  // Convert number to string
-      subtitle="Cursos activos"
       icon={BookOpen}
       iconColor="text-amber-600"
       iconBgColor="bg-amber-100"

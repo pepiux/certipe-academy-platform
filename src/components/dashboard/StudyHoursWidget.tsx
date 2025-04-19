@@ -15,7 +15,7 @@ interface StudyHoursWidgetProps {
   total: number;
   byCourse: StudyHour[];
   byQuiz: StudyHour[];
-  infoTooltip?: string; // We'll keep this in the props but not pass it to ExpandableWidget
+  infoTooltip?: string; // Keep in props but not pass it to ExpandableWidget
 }
 
 const StudyHoursWidget = ({ total, byCourse, infoTooltip }: StudyHoursWidgetProps) => {
@@ -23,7 +23,6 @@ const StudyHoursWidget = ({ total, byCourse, infoTooltip }: StudyHoursWidgetProp
     <ExpandableWidget
       title="Horas de estudio"
       value={total.toFixed(1)}
-      subtitle="Horas totales"
       icon={Clock}
       iconColor="text-blue-600"
       iconBgColor="bg-blue-100"

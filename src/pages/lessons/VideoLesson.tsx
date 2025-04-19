@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -47,7 +46,7 @@ const VideoLesson = () => {
   const [duration, setDuration] = useState(0);
   const [progress, setProgress] = useState(0);
   const [videoRef, setVideoRef] = useState<HTMLVideoElement | null>(null);
-  const [showCourseContent, setShowCourseContent] = useState(true);
+  const [showCourseContent, setShowCourseContent] = useState(false);
   const [playbackRate, setPlaybackRate] = useState(1);
   const [showCaptions, setShowCaptions] = useState(false);
   const [volume, setVolume] = useState(1);
@@ -57,7 +56,6 @@ const VideoLesson = () => {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [controlsVisible, setControlsVisible] = useState(true);
 
-  // Course and lesson data
   const courseData = {
     id: parseInt(courseId || "1"),
     title: "Fundamentos de Gestión de Proyectos",
@@ -107,7 +105,6 @@ const VideoLesson = () => {
       };
 
       const handleEnded = () => {
-        // Mark lesson as completed and navigate to next lesson
         handleLessonCompleted();
       };
 
@@ -115,7 +112,6 @@ const VideoLesson = () => {
       videoRef.addEventListener("loadedmetadata", handleLoadedMetadata);
       videoRef.addEventListener("ended", handleEnded);
 
-      // Set initial volume
       videoRef.volume = volume;
 
       return () => {
@@ -126,7 +122,6 @@ const VideoLesson = () => {
     }
   }, [videoRef]);
 
-  // Handle full screen changes
   useEffect(() => {
     const handleFullscreenChange = () => {
       const isDocFullScreen = document.fullscreenElement !== null;
@@ -138,7 +133,6 @@ const VideoLesson = () => {
     document.addEventListener('mozfullscreenchange', handleFullscreenChange);
     document.addEventListener('MSFullscreenChange', handleFullscreenChange);
 
-    // Handle Escape key for exiting full screen
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && isFullScreen) {
         exitFullScreen();
@@ -156,7 +150,6 @@ const VideoLesson = () => {
     };
   }, [isFullScreen]);
 
-  // Handle click outside volume slider
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (volumeControlRef.current && !volumeControlRef.current.contains(event.target as Node)) {
@@ -171,12 +164,9 @@ const VideoLesson = () => {
   }, [volumeControlRef]);
 
   const handleLessonCompleted = () => {
-    // In a real app, you would make an API call to mark the lesson as completed
     console.log(`Marking lesson ${lessonId} as completed`);
     
-    // Navigate to the next lesson if available
     if (lessonData.nextLessonId) {
-      // Determine the type of the next lesson
       const nextLesson = findLessonById(lessonData.nextLessonId);
       if (nextLesson) {
         window.location.href = `/dashboard/courses/${courseId}/lesson/${lessonData.nextLessonId}/${nextLesson.type}`;
@@ -298,12 +288,10 @@ const VideoLesson = () => {
     return <Volume2 className="h-5 w-5" />;
   };
 
-  // Determine if we should show compact controls
-  const isCompact = false; // You could calculate this based on screen width
+  const isCompact = false;
 
   return (
     <div className="flex h-full">
-      {/* Main Content */}
       <div className={`flex-grow transition-all ${showCourseContent ? 'max-w-[75%]' : 'max-w-full'}`}>
         <div className="container max-w-5xl mx-auto py-6">
           <div className="flex items-center mb-6">
@@ -428,33 +416,18 @@ const VideoLesson = () => {
                       </TooltipProvider>
                       
                       {showVolumeSlider && (
-                        <div className="absolute bottom-10 left-0 w-10 h-32 bg-black/90 rounded p-2 flex flex-col items-center justify-center">
-                          <Slider
-                            orientation="vertical"
-                            defaultValue={[volume]}
-                            max={1}
-                            step={0.01}
-                            className="h-24"
-                            value={[volume]}
-                            onValueChange={handleVolumeChange}
-                          />
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button 
-                                  variant="ghost" 
-                                  size="icon" 
-                                  className="text-white mt-2" 
-                                  onClick={handleMuteToggle}
-                                >
-                                  {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>{isMuted ? "Activar sonido" : "Silenciar"}</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
+                        <div className="absolute bottom-12 left-0 bg-black/90 rounded p-2 flex flex-col items-center justify-center w-12">
+                          <div className="h-24">
+                            <Slider
+                              orientation="vertical"
+                              defaultValue={[volume]}
+                              max={1}
+                              step={0.01}
+                              value={[volume]}
+                              onValueChange={handleVolumeChange}
+                              className="h-full"
+                            />
+                          </div>
                         </div>
                       )}
                     </div>
@@ -485,22 +458,9 @@ const VideoLesson = () => {
                   </div>
                   
                   <div className="flex items-center space-x-2">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button variant="ghost" size="icon" className="text-white">
-                            <Settings className="h-5 w-5" onClick={() => {}} />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Configuración</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                    
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="text-white hidden">
+                        <Button variant="ghost" size="icon" className="text-white">
                           <Settings className="h-5 w-5" />
                         </Button>
                       </DropdownMenuTrigger>
@@ -557,7 +517,6 @@ const VideoLesson = () => {
             {lessonData.nextLessonId && (
               <Button 
                 onClick={() => {
-                  // Mark current lesson as completed and navigate to next lesson
                   handleLessonCompleted();
                 }}
               >
@@ -569,7 +528,6 @@ const VideoLesson = () => {
         </div>
       </div>
 
-      {/* Course Content Sidebar - Now made toggleable */}
       {!isFullScreen && (
         <>
           {showCourseContent ? (

@@ -38,6 +38,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Separator } from "@/components/ui/separator";
 
 const AudioLesson = () => {
   const { courseId, lessonId } = useParams();
@@ -47,7 +48,7 @@ const AudioLesson = () => {
   const [duration, setDuration] = useState(0);
   const [progress, setProgress] = useState(0);
   const [audioRef, setAudioRef] = useState<HTMLAudioElement | null>(null);
-  const [showCourseContent, setShowCourseContent] = useState(true);
+  const [showCourseContent, setShowCourseContent] = useState(false);
   const [playbackRate, setPlaybackRate] = useState(1);
   const [showCaptions, setShowCaptions] = useState(false);
   const [volume, setVolume] = useState(1);
@@ -275,13 +276,14 @@ const AudioLesson = () => {
                   </div>
                 )}
                 
-                <div className="w-full mb-4">
+                {/* Progress bar similar to the requested design */}
+                <div className="w-full max-w-md relative mb-4">
                   <div 
                     className="w-full h-2 bg-gray-200 rounded-full cursor-pointer"
                     onClick={handleProgressClick}
                   >
                     <div 
-                      className="h-full bg-primary rounded-full" 
+                      className="h-full bg-brand-blue rounded-full" 
                       style={{ width: `${progress}%` }} 
                     />
                   </div>
@@ -292,12 +294,13 @@ const AudioLesson = () => {
                   </div>
                 </div>
                 
-                <div className="flex items-center space-x-4">
+                {/* Updated controls to match the design */}
+                <div className="flex items-center justify-center space-x-5 w-full max-w-md">
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Button 
-                          variant="outline" 
+                          variant="ghost" 
                           size="icon" 
                           onClick={handleRewind}
                           className="rounded-full"
@@ -316,10 +319,10 @@ const AudioLesson = () => {
                       <TooltipTrigger asChild>
                         <Button 
                           size="icon"
-                          className="h-12 w-12 rounded-full"
+                          className="h-12 w-12 rounded-full bg-brand-blue hover:bg-brand-blue/90"
                           onClick={handlePlayPause}
                         >
-                          {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
+                          {isPlaying ? <Pause className="h-6 w-6 text-white" /> : <Play className="h-6 w-6 text-white" />}
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent>
@@ -332,7 +335,7 @@ const AudioLesson = () => {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Button 
-                          variant="outline" 
+                          variant="ghost" 
                           size="icon"
                           onClick={handleFastForward}
                           className="rounded-full"
@@ -368,16 +371,18 @@ const AudioLesson = () => {
                     </TooltipProvider>
                     
                     {showVolumeSlider && (
-                      <div className="absolute bottom-12 left-0 w-10 h-32 bg-background border border-border rounded-md p-2 flex flex-col items-center justify-center">
-                        <Slider
-                          orientation="vertical"
-                          defaultValue={[volume]}
-                          max={1}
-                          step={0.01}
-                          className="h-24"
-                          value={[volume]}
-                          onValueChange={handleVolumeChange}
-                        />
+                      <div className="absolute bottom-12 left-0 bg-background border border-border rounded-md p-2 flex flex-col items-center justify-center w-10">
+                        <div className="h-24">
+                          <Slider
+                            orientation="vertical"
+                            defaultValue={[volume]}
+                            max={1}
+                            step={0.01}
+                            value={[volume]}
+                            onValueChange={handleVolumeChange}
+                            className="h-full"
+                          />
+                        </div>
                       </div>
                     )}
                   </div>
@@ -400,29 +405,12 @@ const AudioLesson = () => {
                     </Tooltip>
                   </TooltipProvider>
                   
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button 
-                          variant="outline" 
-                          size="icon"
-                          className="rounded-full"
-                        >
-                          <Settings className="h-5 w-5" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Configuración</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button 
                         variant="outline" 
                         size="icon"
-                        className="rounded-full hidden"
+                        className="rounded-full"
                       >
                         <Settings className="h-5 w-5" />
                       </Button>
@@ -475,7 +463,7 @@ const AudioLesson = () => {
         </div>
       </div>
 
-      {/* Course Content Sidebar - Now made toggleable */}
+      {/* Course Content Sidebar - Now made toggleable with default hidden on mobile */}
       <>
         {showCourseContent ? (
           <div className="w-full md:w-1/4 border-l border-border bg-background h-screen overflow-y-auto p-4 fixed right-0 top-0 bottom-0 z-10 md:relative">

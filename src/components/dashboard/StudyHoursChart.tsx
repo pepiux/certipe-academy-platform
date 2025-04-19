@@ -9,7 +9,9 @@ import {
   YAxis,
   Tooltip,
   ReferenceLine,
-  Area
+  Area,
+  Legend,
+  Label
 } from "recharts";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format, isValid, parseISO } from "date-fns";
@@ -78,7 +80,7 @@ const StudyHoursChart = ({ data, className }: StudyHoursChartProps) => {
 
   return (
     <ResponsiveContainer width="100%" height="100%" className={className}>
-      <LineChart margin={{ left: 0, right: 20, top: 8, bottom: 0 }}>
+      <LineChart margin={{ left: 0, right: 20, top: 8, bottom: 24 }}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis 
           dataKey="day"
@@ -87,6 +89,7 @@ const StudyHoursChart = ({ data, className }: StudyHoursChartProps) => {
         <YAxis 
           label={{ value: 'Horas', angle: -90, position: 'insideLeft' }}
         />
+        <Legend verticalAlign="top" height={10} />
         <Tooltip content={<CustomTooltip />} />
         
         <Area
@@ -110,7 +113,19 @@ const StudyHoursChart = ({ data, className }: StudyHoursChartProps) => {
           stroke="#8B5CF6"
           strokeWidth={2}
           dot={{ r: 6, fill: "#8B5CF6" }}
+          name="Horas"
         />
+        
+        <text
+          x="50%"
+          y="96%"
+          textAnchor="middle"
+          fontSize="12"
+          fill="#666"
+          className="text-xs"
+        >
+          Días Ultima Semana
+        </text>
       </LineChart>
     </ResponsiveContainer>
   );

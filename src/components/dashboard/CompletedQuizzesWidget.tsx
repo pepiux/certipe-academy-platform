@@ -14,7 +14,7 @@ interface CompletedQuiz {
 interface CompletedQuizzesWidgetProps {
   total: number;
   quizzes: CompletedQuiz[];
-  infoTooltip?: string; // We'll keep this in the props but not pass it to ExpandableWidget
+  infoTooltip?: string; // Keep in props but not pass it to ExpandableWidget
 }
 
 const CompletedQuizzesWidget = ({ total, quizzes, infoTooltip }: CompletedQuizzesWidgetProps) => {
@@ -22,7 +22,6 @@ const CompletedQuizzesWidget = ({ total, quizzes, infoTooltip }: CompletedQuizze
     <ExpandableWidget
       title="Cuestionarios completados"
       value={total.toString()}  // Convert number to string
-      subtitle="Cuestionarios completados"
       icon={FileQuestion}
       iconColor="text-purple-600"
       iconBgColor="bg-purple-100"

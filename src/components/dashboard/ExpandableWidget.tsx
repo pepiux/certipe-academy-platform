@@ -8,7 +8,6 @@ import { Separator } from "@/components/ui/separator";
 interface ExpandableWidgetProps { 
   title: string; 
   value: string;
-  subtitle: string;
   icon: React.ElementType;
   iconColor?: string;
   iconBgColor?: string;
@@ -18,7 +17,6 @@ interface ExpandableWidgetProps {
 const ExpandableWidget = ({ 
   title, 
   value, 
-  subtitle,
   icon: Icon,
   iconColor = "text-primary",
   iconBgColor = "bg-primary/10",
@@ -27,7 +25,7 @@ const ExpandableWidget = ({
   const [expanded, setExpanded] = useState(false);
   
   return (
-    <Card className="relative">
+    <Card className="relative h-[146px]">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <div className="flex items-start space-x-4">
@@ -35,7 +33,6 @@ const ExpandableWidget = ({
               <h3 className="text-lg font-semibold">{title}</h3>
               <div className="flex items-baseline space-x-2">
                 <span className="text-2xl font-bold">{value}</span>
-                <span className="text-sm text-muted-foreground">{subtitle}</span>
               </div>
             </div>
           </div>
@@ -47,14 +44,14 @@ const ExpandableWidget = ({
       
       {expanded && (
         <>
-          <Separator className="mx-4" />
-          <CardContent className="pb-8 pt-4">
+          <Separator className="mx-6" />
+          <CardContent className="pb-10 pt-4">
             {children}
           </CardContent>
         </>
       )}
       
-      <div className="absolute bottom-3 right-3">
+      <div className="absolute bottom-4 right-4">
         <Button 
           variant="ghost" 
           size="sm"
