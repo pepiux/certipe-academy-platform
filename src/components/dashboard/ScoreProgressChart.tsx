@@ -63,14 +63,14 @@ const ScoreProgressChart = ({ data, className }: ScoreProgressChartProps) => {
           dataKey="intento" 
           axisLine={{stroke: '#e5e7eb'}}
           tickLine={false}
-          // Eliminamos el label de Intentos
+          label={{ value: 'Intentos', position: 'insideBottom', offset: -5 }}
         />
         <YAxis 
           domain={[0, 100]} 
           ticks={[0, 25, 50, 75, 100]}
           axisLine={{stroke: '#e5e7eb'}}
           tickLine={false}
-          // Eliminamos el label de Puntaje %
+          label={{ value: 'Puntaje %', angle: -90, position: 'insideLeft' }}
         />
         <Tooltip content={<CustomTooltip />} />
         
@@ -78,8 +78,7 @@ const ScoreProgressChart = ({ data, className }: ScoreProgressChartProps) => {
           y={MIN_PASSING_SCORE} 
           stroke="#000000" 
           strokeWidth={1} 
-          // Cambiamos la línea punteada a continua
-          // strokeDasharray="3 3"
+          strokeDasharray="3 3"
         />
         
         <Line 

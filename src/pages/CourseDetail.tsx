@@ -1,37 +1,27 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useCourse } from '@/hooks/useCourse';
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, BookOpen, Clock, Award } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import CourseHeader from "@/components/courses/CourseHeader";
 import CourseOverview from "@/components/courses/CourseOverview";
 import CourseContent from "@/components/courses/CourseContent";
 import CourseActions from "@/components/courses/CourseActions";
-import { toast } from 'sonner';
-import { Badge } from "@/components/ui/badge";
 
 const CourseDetail = () => {
-  const { id } = useParams<{ id: string }>();
+  const { courseId } = useParams();
   const navigate = useNavigate();
-  
-  console.log("CourseDetail renderizándose con ID del curso:", id);
-  
-  const { course, loading, error } = useCourse(id);
+  const { course, loading, error } = useCourse(parseInt(courseId || "0", 10));
   const [activeTab, setActiveTab] = useState("overview");
 
   useEffect(() => {
     if (error) {
-      console.error("Error al cargar el curso:", error);
-      toast.error("No se pudo cargar el curso. Por favor, inténtelo de nuevo más tarde.");
+      console.error("Error fetching course:", error);
     }
   }, [error]);
-
-  console.log("Renderizando CourseDetail para el curso ID:", id);
-  console.log("Datos del curso:", course);
-  console.log("Estado de carga:", loading);
-  console.log("Error:", error);
 
   if (loading) {
     return (
@@ -58,73 +48,18 @@ const CourseDetail = () => {
   if (!course) {
     return (
       <div className="space-y-6">
-        <div className="flex items-center mb-6">
-          <Link to="/dashboard" className="flex items-center text-sm text-muted-foreground hover:text-primary">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Volver al panel de control
-          </Link>
-        </div>
-        <div className="text-center p-8 border rounded-lg bg-background shadow-sm">
-          <h2 className="text-xl font-semibold mb-4">Curso no encontrado o ID inválido.</h2>
-          <p className="text-muted-foreground mb-6">El curso que estás buscando no existe o el ID proporcionado no es válido.</p>
-          <Button variant="default" onClick={() => navigate('/dashboard')}>
-            Volver al panel de control
-          </Button>
-        </div>
+        <p>Curso no encontrado.</p>
+        <Link to="/dashboard">Volver al panel de control</Link>
       </div>
     );
   }
 
-  const modules = Array.isArray(course.modules) ? course.modules : [];
+  // Asegurarnos de que course.modules es un array para no tener errores
+  const modules = course.modules || [];
 
+  // Valores seguros para progress y total_lessons
   const progress = course.progress || 0;
   const totalLessons = course.total_lessons || course.lessons_count || 0;
-  
-  const countLessonTypes = () => {
-    const counts = { videos: 0, readings: 0, audios: 0, tests: 0 };
-    
-    modules.forEach(module => {
-      module.lessons.forEach(lesson => {
-        switch(lesson.type) {
-          case 'video':
-            counts.videos++;
-            break;
-          case 'reading':
-            counts.readings++;
-            break;
-          case 'audio':
-            counts.audios++;
-            break;
-          case 'test':
-            counts.tests++;
-            break;
-        }
-      });
-    });
-    
-    return counts;
-  };
-  
-  const lessonCounts = countLessonTypes();
-  
-  const handleLessonClick = (lessonId: number, lessonType: string) => {
-    switch(lessonType) {
-      case 'video':
-        navigate(`/dashboard/courses/${course.id}/lesson/${lessonId}/video`);
-        break;
-      case 'reading':
-        navigate(`/dashboard/courses/${course.id}/lesson/${lessonId}/reading`);
-        break;
-      case 'audio':
-        navigate(`/dashboard/courses/${course.id}/lesson/${lessonId}/audio`);
-        break;
-      case 'test':
-        navigate(`/dashboard/courses/${course.id}/lesson/${lessonId}/test`);
-        break;
-      default:
-        navigate(`/dashboard/courses/${course.id}/lesson/${lessonId}/video`);
-    }
-  };
 
   return (
     <div className="space-y-6">
@@ -146,96 +81,31 @@ const CourseDetail = () => {
         duration={course.duration}
       />
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-2">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid grid-cols-2 mb-8">
-              <TabsTrigger value="overview">Descripción general</TabsTrigger>
-              <TabsTrigger value="content">Contenido</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="overview" className="space-y-4">
-              <CourseOverview
-                description={course.description}
-                instructor={course.instructor}
-                level={course.level}
-                duration={course.duration}
-                requirements={course.requirements}
-                whatYouWillLearn={course.what_you_will_learn}
-              />
-              
-              <div className="mt-6">
-                <h3 className="text-lg font-medium mb-3">Contenido del curso</h3>
-                
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  <div className="flex flex-col items-center bg-background p-3 rounded-lg border">
-                    <BookOpen className="h-6 w-6 text-primary mb-1" />
-                    <span className="text-sm font-medium">{totalLessons} Lecciones</span>
-                  </div>
-                  <div className="flex flex-col items-center bg-background p-3 rounded-lg border">
-                    <Clock className="h-6 w-6 text-primary mb-1" />
-                    <span className="text-sm font-medium">{course.duration}</span>
-                  </div>
-                  {course.certification && (
-                    <div className="flex flex-col items-center bg-background p-3 rounded-lg border">
-                      <Award className="h-6 w-6 text-primary mb-1" />
-                      <span className="text-sm font-medium">Certificación</span>
-                    </div>
-                  )}
-                </div>
-                
-                <div className="mt-4">
-                  <h4 className="text-sm font-medium mb-2">Tipos de contenido:</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {lessonCounts.videos > 0 && (
-                      <Badge variant="outline" className="bg-blue-50 text-blue-600 hover:bg-blue-100">
-                        {lessonCounts.videos} videos
-                      </Badge>
-                    )}
-                    {lessonCounts.readings > 0 && (
-                      <Badge variant="outline" className="bg-amber-50 text-amber-600 hover:bg-amber-100">
-                        {lessonCounts.readings} lecturas
-                      </Badge>
-                    )}
-                    {lessonCounts.audios > 0 && (
-                      <Badge variant="outline" className="bg-purple-50 text-purple-600 hover:bg-purple-100">
-                        {lessonCounts.audios} audios
-                      </Badge>
-                    )}
-                    {lessonCounts.tests > 0 && (
-                      <Badge variant="outline" className="bg-green-50 text-green-600 hover:bg-green-100">
-                        {lessonCounts.tests} evaluaciones
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="content" className="space-y-4">
-              <CourseContent 
-                modules={modules} 
-                onLessonClick={handleLessonClick}
-              />
-            </TabsContent>
-          </Tabs>
-        </div>
+      <CourseActions
+        progress={progress}
+        lessons={totalLessons}
+        onStartCourse={() => navigate(`/dashboard/courses/${course.id}/lesson/1/video`)}
+      />
+      
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid grid-cols-2 mb-8">
+          <TabsTrigger value="overview">Descripción general</TabsTrigger>
+          <TabsTrigger value="content">Contenido</TabsTrigger>
+        </TabsList>
         
-        <div>
-          <CourseActions
-            progress={progress}
-            lessons={totalLessons}
-            onStartCourse={() => {
-              if (modules.length > 0 && modules[0].lessons.length > 0) {
-                const firstLesson = modules[0].lessons[0];
-                handleLessonClick(firstLesson.id, firstLesson.type);
-              } else {
-                toast.error("Este curso no tiene lecciones disponibles.");
-              }
-            }}
+        <TabsContent value="overview" className="space-y-4">
+          <CourseOverview
+            description={course.description}
+            instructor={course.instructor}
+            level={course.level}
+            duration={course.duration}
           />
-        </div>
-      </div>
+        </TabsContent>
+        
+        <TabsContent value="content" className="space-y-4">
+          <CourseContent modules={modules} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

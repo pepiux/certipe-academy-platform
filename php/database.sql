@@ -1,4 +1,3 @@
-
 -- phpMyAdmin SQL Dump
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
@@ -120,7 +119,6 @@ CREATE TABLE `quizzes` (
   `duration_minutes` int DEFAULT NULL,
   `difficulty_level` enum('Easy','Medium','Hard') DEFAULT 'Medium',
   `image` varchar(255) DEFAULT NULL,
-  `min_passing_score` INT NOT NULL DEFAULT 70,
   `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -156,7 +154,6 @@ CREATE TABLE `users` (
   `name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `role` enum('user','admin','instructor') DEFAULT 'user',
   `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -165,92 +162,8 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `password`, `role`, `created_at`, `updated_at`) VALUES
-(1, 'Demo User', 'demo@example.com', 'password', 'user', '2023-10-19 14:59:04', '2023-10-19 14:59:04');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `user_tokens`
---
-
-CREATE TABLE `user_tokens` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int NOT NULL,
-  `token` varchar(255) NOT NULL,
-  `expires_at` timestamp NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `token` (`token`),
-  KEY `user_id` (`user_id`),
-  CONSTRAINT `user_tokens_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `study_time_records`
---
-
-CREATE TABLE `study_time_records` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int NOT NULL,
-  `course_id` int DEFAULT NULL,
-  `quiz_id` int DEFAULT NULL,
-  `hours` decimal(10,2) NOT NULL,
-  `completed_date` timestamp NULL DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  KEY `course_id` (`course_id`),
-  KEY `quiz_id` (`quiz_id`),
-  CONSTRAINT `study_time_records_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `study_time_records_ibfk_2` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `study_time_records_ibfk_3` FOREIGN KEY (`quiz_id`) REFERENCES `quizzes` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `lessons`
---
-
-CREATE TABLE `lessons` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `course_id` int NOT NULL,
-  `title` varchar(255) NOT NULL,
-  `description` text,
-  `content_type` enum('video','reading','audio','test') NOT NULL DEFAULT 'video',
-  `content_url` varchar(255) DEFAULT NULL,
-  `duration_minutes` int DEFAULT NULL,
-  `order_index` int NOT NULL DEFAULT '0',
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `course_id` (`course_id`),
-  CONSTRAINT `lessons_ibfk_1` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `course_lesson_completions`
---
-
-CREATE TABLE `course_lesson_completions` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int NOT NULL,
-  `course_id` int NOT NULL,
-  `lesson_id` int NOT NULL,
-  `completed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `user_lesson` (`user_id`,`lesson_id`),
-  KEY `course_id` (`course_id`),
-  KEY `lesson_id` (`lesson_id`),
-  CONSTRAINT `course_lesson_completions_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `course_lesson_completions_ibfk_2` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `course_lesson_completions_ibfk_3` FOREIGN KEY (`lesson_id`) REFERENCES `lessons` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+INSERT INTO `users` (`id`, `name`, `email`, `password`, `created_at`, `updated_at`) VALUES
+(1, 'Demo User', 'demo@example.com', 'password', '2023-10-19 14:59:04', '2023-10-19 14:59:04');
 
 --
 -- Indexes for dumped tables
@@ -403,11 +316,13 @@ ALTER TABLE `quizzes`
 ALTER TABLE `quiz_attempts`
   ADD CONSTRAINT `quiz_attempts_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   ADD CONSTRAINT `quiz_attempts_ibfk_2` FOREIGN KEY (`quiz_id`) REFERENCES `quizzes` (`id`);
+COMMIT;
+
+ALTER TABLE quizzes
+ADD COLUMN min_passing_score INT NOT NULL DEFAULT 70;
 
 ALTER TABLE courses
 ADD COLUMN min_study_hours_per_day DECIMAL(4,2) DEFAULT 2.0;
-
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-

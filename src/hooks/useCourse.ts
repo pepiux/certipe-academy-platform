@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import courseService, { Course } from '@/services/courseService';
-import { toast } from 'sonner';
+import courseService, { Course, CourseModule } from '@/services/courseService';
 
 export interface UseCourseResult {
   course: Course | null;
@@ -9,95 +8,53 @@ export interface UseCourseResult {
   error: Error | null;
 }
 
-export const useCourse = (courseId: string | number | undefined): UseCourseResult => {
+export const useCourse = (courseId: number): UseCourseResult => {
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const fetchCourse = async () => {
-      // Si courseId es undefined o nulo, mostrar error
-      if (!courseId) {
-        console.error("ID del curso no definido:", courseId);
-        setError(new Error("ID del curso no definido"));
-        setLoading(false);
-        return;
-      }
-      
-      // Intentar convertir a número si es string
-      const parsedId = typeof courseId === 'string' ? parseInt(courseId, 10) : courseId;
-      
-      console.log("Iniciando fetchCourse con ID parseado:", parsedId);
-      
-      // Validar que el ID es válido
-      if (isNaN(parsedId) || parsedId <= 0) {
-        console.error("ID del curso inválido:", courseId, "parseado como:", parsedId);
-        setError(new Error("ID del curso inválido"));
-        setLoading(false);
-        return;
-      }
-
       setLoading(true);
-      setCourse(null); // Limpiar curso anterior
-      setError(null); // Limpiar errores anteriores
-      
       try {
-        console.log("Iniciando solicitud para obtener el curso con ID:", parsedId);
-        let courseData = await courseService.getCourse(parsedId);
-        console.log("Datos del curso recibidos:", courseData);
+        const data = await courseService.getCourse(courseId);
         
-        // Verificar que recibimos datos válidos
-        if (!courseData || typeof courseData !== 'object') {
-          throw new Error("Los datos del curso recibidos no son válidos");
-        }
-        
-        // Asegurarse de que los módulos sean un array y los tipos de lecciones sean correctos
-        if (!courseData.modules || !Array.isArray(courseData.modules) || courseData.modules.length === 0) {
-          console.log("Creando estructura de módulos por defecto para el curso");
+        // Mock data de los módulos para desarrollo (esto será reemplazado por datos reales de la API)
+        const courseData = { ...data };
+        if (!courseData.modules) {
           courseData.modules = [
             {
               id: 1,
-              title: "Introducción",
+              title: "Introducción a la Gestión de Proyectos",
               lessons: [
-                { 
-                  id: 1, 
-                  title: "¿Qué es este curso?", 
-                  duration: "15:30", 
-                  completed: courseData.progress ? courseData.progress > 0 : false, 
-                  type: "video" 
-                }
+                { id: 1, title: "¿Qué es un proyecto?", duration: "15:30", completed: true, type: "video" },
+                { id: 2, title: "Roles en la gestión de proyectos", duration: "22:45", completed: true, type: "video" },
+                { id: 3, title: "Ciclo de vida del proyecto", duration: "18:20", completed: false, type: "reading" }
               ]
-            }
+            } as CourseModule,
+            {
+              id: 2,
+              title: "Planificación de Proyectos",
+              lessons: [
+                { id: 4, title: "Definición de objetivos y alcance", duration: "25:10", completed: false, type: "audio" },
+                { id: 5, title: "Estimación de tiempos y recursos", duration: "30:15", completed: false, type: "video" },
+                { id: 6, title: "Creación de cronogramas", duration: "28:40", completed: false, type: "reading" }
+              ]
+            } as CourseModule
           ];
         }
-        
-        // Asegurarse de que todas las lecciones tienen un tipo válido
-        courseData.modules.forEach(module => {
-          if (module.lessons && Array.isArray(module.lessons)) {
-            module.lessons.forEach(lesson => {
-              if (!lesson.type || !['video', 'reading', 'audio', 'test'].includes(lesson.type)) {
-                lesson.type = 'video';
-              }
-            });
-          }
-        });
 
-        // Asegurarse de que el estado enrolled está definido
-        courseData.enrolled = courseData.enrolled !== undefined ? courseData.enrolled : false;
-        
-        console.log("Curso procesado con éxito:", courseData);
         setCourse(courseData);
       } catch (err) {
-        console.error("Error al obtener el curso:", err);
         setError(err instanceof Error ? err : new Error(String(err)));
-        toast.error("No se pudo cargar el curso. Por favor, inténtelo de nuevo más tarde.");
       } finally {
         setLoading(false);
       }
     };
 
-    console.log("useEffect se ejecuta con courseId:", courseId);
-    fetchCourse();
+    if (courseId) {
+      fetchCourse();
+    }
   }, [courseId]);
 
   return { course, loading, error };

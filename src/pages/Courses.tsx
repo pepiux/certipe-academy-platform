@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
@@ -17,7 +18,21 @@ import {
 } from "@/components/ui/select";
 import { useNavigate } from "react-router-dom";
 import CourseCard from "@/components/courses/CourseCard";
-import { Course } from "@/services/courseService";
+
+interface Course {
+  id: number;
+  title: string;
+  category: string;
+  level: string;
+  instructor: string;
+  image: string;
+  progress: number;
+  enrolled: boolean;
+  lessons: number;
+  duration: string;
+  favorite?: boolean; // Adding the favorite property as optional
+  students?: number;
+}
 
 const Courses = () => {
   const [currentTab, setCurrentTab] = useState("all");
@@ -28,186 +43,174 @@ const Courses = () => {
   const coursesPerPage = 8;
   const navigate = useNavigate();
   
-  const allCourses: Course[] = [
+  const allCourses = [
     {
       id: 1,
       title: "Fundamentos de Gestión de Proyectos",
-      description: "Aprende los conceptos fundamentales de la gestión de proyectos y prepárate para certificaciones profesionales.",
       category: "Project Management",
       level: "Principiante",
       instructor: "María García",
+      students: 245,
       image: "https://placehold.co/400x200?text=Gestión+de+Proyectos",
       progress: 0,
       enrolled: false,
-      lessons_count: 12,
+      lessons: 12,
       duration: "8 horas",
-      favorite: false,
-      modules: []
+      favorite: false
     },
     {
       id: 2,
       title: "Metodologías Ágiles y Scrum",
-      description: "Domina las metodologías ágiles para equipos de alto rendimiento y desarrollo iterativo.",
       category: "Agile",
       level: "Intermedio",
       instructor: "Carlos Rodríguez",
+      students: 189,
       image: "https://placehold.co/400x200?text=Scrum",
       progress: 65,
       enrolled: true,
-      lessons_count: 8,
+      lessons: 8,
       duration: "6 horas",
-      favorite: true,
-      modules: []
+      favorite: true
     },
     {
       id: 3,
       title: "Gestión de Riesgos en Proyectos",
-      description: "Identifica, analiza y mitiga los riesgos en tus proyectos de forma efectiva.",
       category: "Risk Management",
       level: "Avanzado",
       instructor: "Ana Martínez",
+      students: 132,
       image: "https://placehold.co/400x200?text=Gestión+de+Riesgos",
       progress: 25,
       enrolled: true,
-      lessons_count: 10,
+      lessons: 10,
       duration: "7 horas",
-      favorite: false,
-      modules: []
+      favorite: false
     },
     {
       id: 4,
       title: "Certificación PMP: Guía Completa",
-      description: "Prepárate para obtener tu certificación PMP con esta guía completa y actualizada.",
       category: "Certification",
       level: "Avanzado",
       instructor: "Javier López",
+      students: 321,
       image: "https://placehold.co/400x200?text=PMP",
       progress: 10,
       enrolled: true,
-      lessons_count: 20,
+      lessons: 20,
       duration: "15 horas",
-      favorite: true,
-      modules: []
+      favorite: true
     },
     {
       id: 5,
       title: "Introducción a PMI-ACP",
-      description: "Conoce los fundamentos de la certificación PMI-ACP y cómo aplicarla en tus proyectos ágiles.",
       category: "Agile",
       level: "Intermedio",
       instructor: "Laura Sánchez",
+      students: 176,
       image: "https://placehold.co/400x200?text=PMI-ACP",
       progress: 0,
       enrolled: false,
-      lessons_count: 14,
+      lessons: 14,
       duration: "10 horas",
-      favorite: false,
-      modules: []
+      favorite: false
     },
     {
       id: 6,
       title: "Liderazgo en Equipos de Proyecto",
-      description: "Desarrolla tus habilidades de liderazgo y gestiona equipos de proyecto de alto rendimiento.",
       category: "Leadership",
       level: "Intermedio",
       instructor: "Diego Ramírez",
+      students: 210,
       image: "https://placehold.co/400x200?text=Leadership",
       progress: 0,
       enrolled: false,
-      lessons_count: 12,
+      lessons: 12,
       duration: "9 horas",
-      favorite: false,
-      modules: []
+      favorite: false
     },
     {
       id: 7,
       title: "MS Project Avanzado",
-      description: "Domina las funciones avanzadas de MS Project y optimiza la gestión de tus proyectos.",
       category: "Tools",
       level: "Avanzado",
       instructor: "Gabriela Torres",
+      students: 150,
       image: "https://placehold.co/400x200?text=MS+Project",
       progress: 0,
       enrolled: false,
-      lessons_count: 15,
+      lessons: 15,
       duration: "12 horas",
-      favorite: false,
-      modules: []
+      favorite: false
     },
     {
       id: 8,
       title: "Comunicación Efectiva en Proyectos",
-      description: "Mejora tus habilidades de comunicación y facilita la colaboración en tus proyectos.",
       category: "Soft Skills",
       level: "Principiante",
       instructor: "Fernando Morales",
+      students: 198,
       image: "https://placehold.co/400x200?text=Comunicación",
       progress: 0,
       enrolled: false,
-      lessons_count: 8,
+      lessons: 8,
       duration: "5 horas",
-      favorite: false,
-      modules: []
+      favorite: false
     },
     {
       id: 9,
       title: "Análisis de Negocio para Proyectos",
-      description: "Aprende a realizar un análisis de negocio efectivo para la planificación de tus proyectos.",
       category: "Business Analysis",
       level: "Intermedio",
       instructor: "Carla Vega",
+      students: 165,
       image: "https://placehold.co/400x200?text=Business+Analysis",
       progress: 0,
       enrolled: false,
-      lessons_count: 10,
+      lessons: 10,
       duration: "8 horas",
-      favorite: false,
-      modules: []
+      favorite: false
     },
     {
       id: 10,
       title: "Gestión de Beneficios en Proyectos",
-      description: "Maximiza el valor de tus proyectos mediante una gestión de beneficios efectiva.",
       category: "Benefits Management",
       level: "Avanzado",
       instructor: "Ricardo Fuentes",
+      students: 142,
       image: "https://placehold.co/400x200?text=Benefits+Management",
       progress: 0,
       enrolled: false,
-      lessons_count: 12,
+      lessons: 12,
       duration: "9 horas",
-      favorite: false,
-      modules: []
+      favorite: false
     },
     {
       id: 11,
       title: "Kanban para la Gestión de Proyectos",
-      description: "Implementa Kanban en tus proyectos y mejora la eficiencia de tu equipo.",
       category: "Agile",
       level: "Principiante",
       instructor: "Sofía Mendoza",
+      students: 178,
       image: "https://placehold.co/400x200?text=Kanban",
       progress: 0,
       enrolled: false,
-      lessons_count: 6,
+      lessons: 6,
       duration: "4 horas",
-      favorite: false,
-      modules: []
+      favorite: false
     },
     {
       id: 12,
       title: "Prince2 Foundation",
-      description: "Obtén una base sólida en la metodología Prince2 con este curso introductorio.",
       category: "Methodology",
       level: "Principiante",
       instructor: "Pablo Herrera",
+      students: 220,
       image: "https://placehold.co/400x200?text=Prince2",
       progress: 0,
       enrolled: false,
-      lessons_count: 14,
+      lessons: 14,
       duration: "10 horas",
-      favorite: false,
-      modules: []
+      favorite: false
     }
   ];
   
@@ -241,9 +244,9 @@ const Courses = () => {
     
     if (searchQuery && !course.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     
-    if (selectedCategories.length > 0 && !selectedCategories.includes(course.category || '')) return false;
+    if (selectedCategories.length > 0 && !selectedCategories.includes(course.category)) return false;
     
-    if (selectedLevels.length > 0 && !selectedLevels.includes(course.level || '')) return false;
+    if (selectedLevels.length > 0 && !selectedLevels.includes(course.level)) return false;
     
     return true;
   });

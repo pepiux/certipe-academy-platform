@@ -44,7 +44,7 @@ const ExpandableWidget = ({
       
       {expanded && (
         <>
-          <div className="px-6 overflow-hidden">
+          <div className="px-6">
             <Separator />
           </div>
           <CardContent className="pb-10 pt-4">
