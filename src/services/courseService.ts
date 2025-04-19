@@ -3,7 +3,22 @@ import apiClient from './api/client';
 import { useMock } from '@/services/serviceAdapter';
 
 // Interfaces para los tipos de datos
-interface Course {
+export interface CourseModule {
+  id: number;
+  title: string;
+  lessons: Lesson[];
+}
+
+export interface Lesson {
+  id: number;
+  title: string;
+  duration: string;
+  completed?: boolean;
+  type?: 'video' | 'reading' | 'audio' | 'test';
+  description?: string;
+}
+
+export interface Course {
   id: number;
   title: string;
   description: string;
@@ -11,15 +26,17 @@ interface Course {
   lessons_count?: number;
   duration?: string;
   level?: string;
-  instructor?: {
-    id: number;
-    name: string;
-  };
-  created_at: string;
-  updated_at: string;
+  category?: string;
+  instructor?: string | { id: number; name: string };
+  modules?: CourseModule[];
+  progress?: number;
+  completed_lessons?: number;
+  total_lessons?: number;
+  created_at?: string;
+  updated_at?: string;
 }
 
-interface CourseFilters {
+export interface CourseFilters {
   search?: string;
   level?: string;
   category_id?: number;

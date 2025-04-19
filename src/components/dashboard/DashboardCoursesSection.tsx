@@ -1,8 +1,9 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CourseCard from "@/components/courses/CourseCard";
-import type { Course } from '@/services/courseService';
+import { Course } from '@/services/courseService';
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-react";

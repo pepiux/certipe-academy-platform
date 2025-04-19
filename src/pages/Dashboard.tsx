@@ -54,14 +54,14 @@ const Dashboard = () => {
       
       <DashboardCoursesSection
         loading={loading.courses}
-        error={error}
+        error={error instanceof Error ? error : new Error(error || "")}
         courses={enhancedCourses}
         onContinueCourse={handleContinueCourse}
       />
       
       <DashboardQuizzesSection
         loading={loading.quizzes}
-        error={error}
+        error={error instanceof Error ? error : new Error(error || "")}
         quizzes={quizzes}
         onStartQuiz={handleStartQuiz}
       />

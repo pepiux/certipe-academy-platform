@@ -6,6 +6,7 @@ import { ChevronLeft, ArrowLeft, Search, ArrowDown, ArrowUp, Maximize, ChevronRi
 import { Input } from "@/components/ui/input";
 import CourseContent from "@/components/courses/CourseContent";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { CourseModule, Lesson } from "@/services/courseService";
 
 const ReadingLesson = () => {
   const { courseId, lessonId } = useParams();
@@ -25,20 +26,20 @@ const ReadingLesson = () => {
         id: 1,
         title: "Introducción a la Gestión de Proyectos",
         lessons: [
-          { id: 1, title: "¿Qué es un proyecto?", duration: "15:30", completed: true, type: "video" },
-          { id: 2, title: "Roles en la gestión de proyectos", duration: "22:45", completed: true, type: "video" },
-          { id: 3, title: "Ciclo de vida del proyecto", duration: "18:20", completed: true, type: "reading" }
+          { id: 1, title: "¿Qué es un proyecto?", duration: "15:30", completed: true, type: "video" as const },
+          { id: 2, title: "Roles en la gestión de proyectos", duration: "22:45", completed: true, type: "video" as const },
+          { id: 3, title: "Ciclo de vida del proyecto", duration: "18:20", completed: true, type: "reading" as const }
         ]
-      },
+      } as CourseModule,
       {
         id: 2,
         title: "Planificación de Proyectos",
         lessons: [
-          { id: 4, title: "Definición de objetivos y alcance", duration: "25:10", completed: true, type: "audio" },
-          { id: 5, title: "Estimación de tiempos y recursos", duration: "30:15", completed: false, type: "video" },
-          { id: 6, title: "Creación de cronogramas", duration: "28:40", completed: false, type: "reading" }
+          { id: 4, title: "Definición de objetivos y alcance", duration: "25:10", completed: true, type: "audio" as const },
+          { id: 5, title: "Estimación de tiempos y recursos", duration: "30:15", completed: false, type: "video" as const },
+          { id: 6, title: "Creación de cronogramas", duration: "28:40", completed: false, type: "reading" as const }
         ]
-      }
+      } as CourseModule
     ]
   };
 
