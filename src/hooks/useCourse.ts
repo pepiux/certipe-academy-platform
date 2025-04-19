@@ -9,19 +9,28 @@ export interface UseCourseResult {
   error: Error | null;
 }
 
-export const useCourse = (courseId: number | string | undefined): UseCourseResult => {
+export const useCourse = (courseId: string | number | undefined): UseCourseResult => {
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const fetchCourse = async () => {
-      // Validar que courseId existe y convertirlo a número
-      const parsedId = courseId ? parseInt(String(courseId), 10) : 0;
+      // Si courseId es undefined o nulo, mostrar error
+      if (!courseId) {
+        console.error("ID del curso no definido:", courseId);
+        setError(new Error("ID del curso no definido"));
+        setLoading(false);
+        return;
+      }
+      
+      // Intentar convertir a número si es string
+      const parsedId = typeof courseId === 'string' ? parseInt(courseId, 10) : courseId;
       
       console.log("Iniciando fetchCourse con ID parseado:", parsedId);
       
-      if (!parsedId || isNaN(parsedId) || parsedId <= 0) {
+      // Validar que el ID es válido
+      if (isNaN(parsedId) || parsedId <= 0) {
         console.error("ID del curso inválido:", courseId, "parseado como:", parsedId);
         setError(new Error("ID del curso inválido"));
         setLoading(false);

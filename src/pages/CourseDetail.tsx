@@ -13,12 +13,13 @@ import CourseActions from "@/components/courses/CourseActions";
 import { toast } from 'sonner';
 
 const CourseDetail = () => {
-  const { courseId } = useParams();
+  // Importante: Aquí estamos usando la sintaxis correcta para extraer el parámetro
+  const params = useParams<{ courseId: string }>();
+  const courseId = params.courseId;
   const navigate = useNavigate();
   
   console.log("CourseDetail renderizándose con courseId de params:", courseId);
   
-  // Manejar el courseId directamente como string
   const { course, loading, error } = useCourse(courseId);
   const [activeTab, setActiveTab] = useState("overview");
 

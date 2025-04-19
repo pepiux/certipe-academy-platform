@@ -85,7 +85,7 @@ const courseService = {
    * Obtiene un curso por su ID
    */
   async getCourse(id: number | string): Promise<Course> {
-    // Asegurar que id es un número
+    // Convertir id a número si es string
     const courseId = typeof id === 'string' ? parseInt(id, 10) : id;
     
     console.log(`Obteniendo curso con ID ${courseId} en modo: ${useMock() ? "Mock" : "Backend"}`);

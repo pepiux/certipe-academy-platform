@@ -40,8 +40,11 @@ const CourseCard = ({ course, onStart, onContinue }: CourseCardProps) => {
       return;
     }
     
-    console.log(`Navegando al detalle del curso con ID ${course.id}`);
-    navigate(`/dashboard/courses/${course.id}`);
+    // Asegurar que el ID del curso sea un número
+    const courseId = typeof course.id === 'string' ? parseInt(course.id) : course.id;
+    
+    console.log(`Navegando al detalle del curso con ID ${courseId}`);
+    navigate(`/dashboard/courses/${courseId}`);
   };
 
   return (
