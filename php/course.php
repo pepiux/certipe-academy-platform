@@ -16,11 +16,11 @@ if (!isset($_GET['id'])) {
     json_response(['error' => 'ID del curso es requerido'], 400);
 }
 
-$course_id = intval($_GET['id']);
+$course_id = filter_var($_GET['id'], FILTER_VALIDATE_INT);
 
 // Verificar que el ID del curso es un número válido
-if ($course_id <= 0) {
-    json_response(['error' => 'ID del curso inválido'], 400);
+if ($course_id === false || $course_id <= 0) {
+    json_response(['error' => 'ID del curso inválido: ' . $_GET['id']], 400);
 }
 
 try {
@@ -48,7 +48,7 @@ try {
     // Verificar si existe el curso
     if ($result->num_rows === 0) {
         $conn->close();
-        json_response(['error' => 'Curso no encontrado'], 404);
+        json_response(['error' => 'Curso no encontrado: ' . $course_id], 404);
     }
 
     // Obtener datos del curso

@@ -15,8 +15,11 @@ import { toast } from 'sonner';
 const CourseDetail = () => {
   const { courseId } = useParams();
   const navigate = useNavigate();
-  const parsedId = courseId ? parseInt(courseId, 10) : 0;
-  const { course, loading, error } = useCourse(parsedId);
+  
+  console.log("CourseDetail renderizándose con courseId de params:", courseId);
+  
+  // Manejar el courseId directamente como string
+  const { course, loading, error } = useCourse(courseId);
   const [activeTab, setActiveTab] = useState("overview");
 
   useEffect(() => {
@@ -26,7 +29,7 @@ const CourseDetail = () => {
     }
   }, [error]);
 
-  console.log("Renderizando CourseDetail para el curso ID:", parsedId);
+  console.log("Renderizando CourseDetail para el curso ID:", courseId);
   console.log("Datos del curso:", course);
   console.log("Estado de carga:", loading);
   console.log("Error:", error);
@@ -56,8 +59,19 @@ const CourseDetail = () => {
   if (!course) {
     return (
       <div className="space-y-6">
-        <p>Curso no encontrado o ID inválido.</p>
-        <Link to="/dashboard">Volver al panel de control</Link>
+        <div className="flex items-center mb-6">
+          <Link to="/dashboard" className="flex items-center text-sm text-muted-foreground hover:text-primary">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Volver al panel de control
+          </Link>
+        </div>
+        <div className="text-center p-8 border rounded-lg bg-background shadow-sm">
+          <h2 className="text-xl font-semibold mb-4">Curso no encontrado o ID inválido.</h2>
+          <p className="text-muted-foreground mb-6">El curso que estás buscando no existe o el ID proporcionado no es válido.</p>
+          <Button variant="default" onClick={() => navigate('/dashboard')}>
+            Volver al panel de control
+          </Button>
+        </div>
       </div>
     );
   }

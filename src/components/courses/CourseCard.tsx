@@ -35,6 +35,11 @@ const CourseCard = ({ course, onStart, onContinue }: CourseCardProps) => {
   };
   
   const handleMoreDetails = () => {
+    if (!course.id) {
+      console.error("Error: ID del curso no disponible", course);
+      return;
+    }
+    
     console.log(`Navegando al detalle del curso con ID ${course.id}`);
     navigate(`/dashboard/courses/${course.id}`);
   };

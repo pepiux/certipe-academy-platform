@@ -84,21 +84,25 @@ const courseService = {
   /**
    * Obtiene un curso por su ID
    */
-  async getCourse(id: number): Promise<Course> {
-    console.log(`Obteniendo curso con ID ${id} en modo: ${useMock() ? "Mock" : "Backend"}`);
+  async getCourse(id: number | string): Promise<Course> {
+    // Asegurar que id es un número
+    const courseId = typeof id === 'string' ? parseInt(id, 10) : id;
     
-    if (!id || isNaN(id) || id <= 0) {
+    console.log(`Obteniendo curso con ID ${courseId} en modo: ${useMock() ? "Mock" : "Backend"}`);
+    
+    if (!courseId || isNaN(courseId) || courseId <= 0) {
+      console.error("ID del curso inválido:", id, "parseado como:", courseId);
       throw new Error("ID del curso inválido");
     }
     
     try {
       let response;
       if (useMock()) {
-        console.log(`Consultando endpoint mock: /courses/${id}`);
-        response = await apiClient.get<Course>(`/courses/${id}`);
+        console.log(`Consultando endpoint mock: /courses/${courseId}`);
+        response = await apiClient.get<Course>(`/courses/${courseId}`);
       } else {
-        console.log(`Consultando endpoint backend: /course.php?id=${id}`);
-        response = await apiClient.get<Course>(`/course.php?id=${id}`);
+        console.log(`Consultando endpoint backend: /course.php?id=${courseId}`);
+        response = await apiClient.get<Course>(`/course.php?id=${courseId}`);
       }
       
       console.log("Respuesta recibida:", response);
@@ -109,7 +113,7 @@ const courseService = {
       
       return response;
     } catch (error) {
-      console.error(`Error al obtener curso con ID ${id}:`, error);
+      console.error(`Error al obtener curso con ID ${courseId}:`, error);
       throw error;
     }
   },

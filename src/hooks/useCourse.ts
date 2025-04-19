@@ -9,15 +9,20 @@ export interface UseCourseResult {
   error: Error | null;
 }
 
-export const useCourse = (courseId: number): UseCourseResult => {
+export const useCourse = (courseId: number | string | undefined): UseCourseResult => {
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const fetchCourse = async () => {
-      if (!courseId || isNaN(courseId) || courseId <= 0) {
-        console.error("ID del curso inválido:", courseId);
+      // Validar que courseId existe y convertirlo a número
+      const parsedId = courseId ? parseInt(String(courseId), 10) : 0;
+      
+      console.log("Iniciando fetchCourse con ID parseado:", parsedId);
+      
+      if (!parsedId || isNaN(parsedId) || parsedId <= 0) {
+        console.error("ID del curso inválido:", courseId, "parseado como:", parsedId);
         setError(new Error("ID del curso inválido"));
         setLoading(false);
         return;
@@ -28,8 +33,8 @@ export const useCourse = (courseId: number): UseCourseResult => {
       setError(null); // Limpiar errores anteriores
       
       try {
-        console.log("Iniciando solicitud para obtener el curso con ID:", courseId);
-        const data = await courseService.getCourse(courseId);
+        console.log("Iniciando solicitud para obtener el curso con ID:", parsedId);
+        const data = await courseService.getCourse(parsedId);
         console.log("Datos del curso recibidos:", data);
         
         // Verificar que recibimos datos válidos
