@@ -43,16 +43,45 @@ export const useCourse = (courseId: string | number | undefined): UseCourseResul
       
       try {
         console.log("Iniciando solicitud para obtener el curso con ID:", parsedId);
-        const data = await courseService.getCourse(parsedId);
-        console.log("Datos del curso recibidos:", data);
+        let courseData = await courseService.getCourse(parsedId);
+        console.log("Datos del curso recibidos:", courseData);
         
         // Verificar que recibimos datos válidos
-        if (!data || typeof data !== 'object') {
+        if (!courseData || typeof courseData !== 'object') {
           throw new Error("Los datos del curso recibidos no son válidos");
         }
         
-        console.log("Curso procesado con éxito:", data);
-        setCourse(data);
+        // Asegurarse de que los módulos sean un array y los tipos de lecciones sean correctos
+        if (!courseData.modules || !Array.isArray(courseData.modules) || courseData.modules.length === 0) {
+          console.log("Creando estructura de módulos por defecto para el curso");
+          courseData.modules = [
+            {
+              id: 1,
+              title: "Introducción",
+              lessons: [
+                { 
+                  id: 1, 
+                  title: "¿Qué es este curso?", 
+                  duration: "15:30", 
+                  completed: courseData.progress ? courseData.progress > 0 : false, 
+                  type: "video" 
+                }
+              ]
+            }
+          ];
+        }
+        
+        // Asegurar que todas las lecciones tienen un tipo válido
+        courseData.modules.forEach(module => {
+          module.lessons.forEach(lesson => {
+            if (!lesson.type || !['video', 'reading', 'audio', 'test'].includes(lesson.type)) {
+              lesson.type = 'video';
+            }
+          });
+        });
+        
+        console.log("Curso procesado con éxito:", courseData);
+        setCourse(courseData);
       } catch (err) {
         console.error("Error al obtener el curso:", err);
         setError(err instanceof Error ? err : new Error(String(err)));

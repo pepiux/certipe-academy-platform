@@ -55,7 +55,7 @@ export interface CourseFilters {
 }
 
 // Datos mock para uso local
-const mockCourses = [
+const mockCourses: Course[] = [
   {
     id: 1,
     title: "Fundamentos de Gestión de Proyectos",
@@ -339,7 +339,7 @@ const courseService = {
     }
     
     try {
-      let response;
+      let response: Course;
       if (useMock()) {
         console.log(`Consultando endpoint mock: /courses/${courseId}`);
         
@@ -377,12 +377,16 @@ const courseService = {
     if (useMock()) {
       // Simulación de creación en modo mock
       const newId = Math.max(...mockCourses.map(c => c.id)) + 1;
-      const newCourse = {
+      const newCourse: Course = {
         id: newId,
-        ...courseData,
+        title: courseData.title || "Nuevo curso",
+        description: courseData.description || "Descripción del nuevo curso", 
+        image: courseData.image || "https://placehold.co/300x200?text=Nuevo+Curso",
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      } as Course;
+        updated_at: new Date().toISOString(),
+        modules: courseData.modules || [],
+        ...courseData
+      };
       
       mockCourses.push(newCourse);
       return newCourse;
@@ -402,7 +406,7 @@ const courseService = {
         throw new Error(`Curso con ID ${id} no encontrado`);
       }
       
-      const updatedCourse = {
+      const updatedCourse: Course = {
         ...mockCourses[index],
         ...courseData,
         updated_at: new Date().toISOString()

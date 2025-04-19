@@ -3,14 +3,23 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { User, BookOpen, BarChart } from "lucide-react";
 
-interface CourseOverviewProps {
+export interface CourseOverviewProps {
   description: string;
   instructor?: string | { id: number; name: string };
   level?: string;
   duration?: string;
+  requirements?: string[];
+  whatYouWillLearn?: string[];
 }
 
-const CourseOverview = ({ description, instructor = "Instructor", level = "Intermedio", duration = "0h" }: CourseOverviewProps) => {
+const CourseOverview = ({ 
+  description, 
+  instructor = "Instructor", 
+  level = "Intermedio", 
+  duration = "0h",
+  requirements,
+  whatYouWillLearn
+}: CourseOverviewProps) => {
   // Convertir el instructor a string si es un objeto
   const instructorName = typeof instructor === 'object' ? instructor.name : instructor;
   
@@ -47,6 +56,28 @@ const CourseOverview = ({ description, instructor = "Instructor", level = "Inter
               </div>
             </div>
           </div>
+          
+          {requirements && requirements.length > 0 && (
+            <div className="mt-4">
+              <h3 className="text-md font-medium mb-2">Requisitos</h3>
+              <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
+                {requirements.map((req, index) => (
+                  <li key={index}>{req}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          
+          {whatYouWillLearn && whatYouWillLearn.length > 0 && (
+            <div className="mt-4">
+              <h3 className="text-md font-medium mb-2">Lo que aprenderás</h3>
+              <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
+                {whatYouWillLearn.map((item, index) => (
+                  <li key={index}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

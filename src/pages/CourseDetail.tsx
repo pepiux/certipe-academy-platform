@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useCourse } from '@/hooks/useCourse';
@@ -81,7 +80,6 @@ const CourseDetail = () => {
   const progress = course.progress || 0;
   const totalLessons = course.total_lessons || course.lessons_count || 0;
   
-  // Función para contar los diferentes tipos de lecciones
   const countLessonTypes = () => {
     const counts = { videos: 0, readings: 0, audios: 0, tests: 0 };
     
@@ -109,9 +107,7 @@ const CourseDetail = () => {
   
   const lessonCounts = countLessonTypes();
   
-  // Función para manejar la navegación a una lección específica
   const handleLessonClick = (lessonId: number, lessonType: string) => {
-    // Navegar a la página correspondiente según el tipo de lección
     switch(lessonType) {
       case 'video':
         navigate(`/dashboard/courses/${course.id}/lesson/${lessonId}/video`);
@@ -168,7 +164,6 @@ const CourseDetail = () => {
                 whatYouWillLearn={course.what_you_will_learn}
               />
               
-              {/* Contenido adicional en la pestaña de descripción */}
               <div className="mt-6">
                 <h3 className="text-lg font-medium mb-3">Contenido del curso</h3>
                 
@@ -231,7 +226,6 @@ const CourseDetail = () => {
             progress={progress}
             lessons={totalLessons}
             onStartCourse={() => {
-              // Encontrar la primera lección del primer módulo
               if (modules.length > 0 && modules[0].lessons.length > 0) {
                 const firstLesson = modules[0].lessons[0];
                 handleLessonClick(firstLesson.id, firstLesson.type);
