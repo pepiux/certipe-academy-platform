@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import courseService from "@/services/courseService";
 import quizService from "@/services/quizService";
-import dashboardService, { type DashboardStats as DashboardStatsType } from "@/services/dashboardService";
+import dashboardService, { type DashboardStats as DashboardStatsType } from '@/services/dashboardService';
 
 interface DashboardData {
   courses: any[];
@@ -14,7 +14,7 @@ interface DashboardData {
     quizzes: boolean;
     stats: boolean;
   };
-  error: string | Error | null;
+  error: string | null;
 }
 
 export const useDashboardData = () => {
@@ -26,7 +26,7 @@ export const useDashboardData = () => {
   const [courses, setCourses] = useState<any[]>([]);
   const [quizzes, setQuizzes] = useState<any[]>([]);
   const [stats, setStats] = useState<DashboardStatsType | null>(null);
-  const [error, setError] = useState<string | Error | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,6 +40,8 @@ export const useDashboardData = () => {
         console.error("Error al cargar las estadísticas:", err);
         toast.error("Error al cargar las estadísticas del dashboard");
         setStats(null);
+        // Convertir el error a string
+        setError(typeof err === 'string' ? err : err?.message || 'Error al cargar los datos');
       } finally {
         setLoading(prev => ({ ...prev, stats: false }));
       }
@@ -67,7 +69,8 @@ export const useDashboardData = () => {
         setCourses(formattedCourses);
       } catch (err: any) {
         console.error("Error al obtener los cursos:", err);
-        setError(err instanceof Error ? err : new Error(String(err)));
+        // Convertir el error a string
+        setError(typeof err === 'string' ? err : err?.message || 'Error al cargar los cursos');
         toast.error("Error al cargar los cursos");
       } finally {
         setLoading(prev => ({ ...prev, courses: false }));
@@ -97,7 +100,8 @@ export const useDashboardData = () => {
         setQuizzes(formattedQuizzes);
       } catch (err: any) {
         console.error("Error al obtener los cuestionarios:", err);
-        setError(err instanceof Error ? err : new Error(String(err)));
+        // Convertir el error a string
+        setError(typeof err === 'string' ? err : err?.message || 'Error al cargar los cuestionarios');
         toast.error("Error al cargar los cuestionarios");
       } finally {
         setLoading(prev => ({ ...prev, quizzes: false }));

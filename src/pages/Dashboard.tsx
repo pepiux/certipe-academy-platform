@@ -41,10 +41,8 @@ const Dashboard = () => {
     navigate(`/dashboard/courses/${courseId}`);
   };
 
-  // Convertir error a string para evitar renderizar objetos Error directamente
-  const errorMessage = error ? 
-    (typeof error === 'string' ? error : error.message || 'Error desconocido') 
-    : null;
+  // Asegurarnos que error siempre sea una cadena de texto
+  const errorMessage = error || null;
 
   return (
     <div className="space-y-6">
