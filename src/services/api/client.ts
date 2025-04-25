@@ -1,4 +1,3 @@
-
 import { API_BASE_URL, defaultOptions, getAuthHeaders } from './config';
 import { toast } from 'sonner';
 import { useMock, httpClient } from '@/services/serviceAdapter';
@@ -424,6 +423,9 @@ const apiClient = {
           return quiz || { error: 'Quiz not found' };
         }
         return mockData.quizzes;
+      }
+      else if (resource === 'dashboard_stats') {
+        return mockData.dashboard_stats;
       }
       
       // Si no hay datos específicos para el endpoint
