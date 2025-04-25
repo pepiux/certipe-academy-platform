@@ -100,6 +100,26 @@ const Dashboard = () => {
       } catch (err: any) {
         console.error("Error al cargar las estadísticas:", err);
         toast.error("Error al cargar las estadísticas del dashboard");
+        // Inicializar con datos vacíos para evitar errores
+        setStats({
+          study_hours: {
+            total: 0,
+            by_course: [],
+            by_quiz: []
+          },
+          completed_quizzes: {
+            total: 0,
+            quizzes: []
+          },
+          average_scores: {
+            overall: 0,
+            by_quiz: []
+          },
+          courses_in_progress: {
+            total: 0,
+            courses: []
+          }
+        });
       } finally {
         setLoading(prev => ({ ...prev, stats: false }));
       }
@@ -188,21 +208,21 @@ const Dashboard = () => {
         ) : stats ? (
           <>
             <StudyHoursWidget 
-              total={stats.study_hours.total} 
-              byCourse={stats.study_hours.by_course}
-              byQuiz={stats.study_hours.by_quiz}
+              total={stats.study_hours?.total || 0} 
+              byCourse={stats.study_hours?.by_course || []}
+              byQuiz={stats.study_hours?.by_quiz || []}
             />
             <CompletedQuizzesWidget 
-              total={stats.completed_quizzes.total} 
-              quizzes={stats.completed_quizzes.quizzes}
+              total={stats.completed_quizzes?.total || 0} 
+              quizzes={stats.completed_quizzes?.quizzes || []}
             />
             <AverageScoreWidget 
-              overall={stats.average_scores.overall}
-              quizzes={stats.average_scores.by_quiz}
+              overall={stats.average_scores?.overall || 0}
+              quizzes={stats.average_scores?.by_quiz || []}
             />
             <CoursesInProgressWidget 
-              total={stats.courses_in_progress.total}
-              courses={stats.courses_in_progress.courses}
+              total={stats.courses_in_progress?.total || 0}
+              courses={stats.courses_in_progress?.courses || []}
             />
           </>
         ) : (
@@ -281,3 +301,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+

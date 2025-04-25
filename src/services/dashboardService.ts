@@ -56,6 +56,27 @@ interface DashboardStats {
   };
 }
 
+// Datos por defecto en caso de error
+const defaultStats: DashboardStats = {
+  study_hours: {
+    total: 0,
+    by_course: [],
+    by_quiz: []
+  },
+  completed_quizzes: {
+    total: 0,
+    quizzes: []
+  },
+  average_scores: {
+    overall: 0,
+    by_quiz: []
+  },
+  courses_in_progress: {
+    total: 0,
+    courses: []
+  }
+};
+
 // Servicio para estadísticas del dashboard
 const dashboardService = {
   /**
@@ -64,11 +85,47 @@ const dashboardService = {
   async getStats(): Promise<DashboardStats> {
     console.log("Obteniendo estadísticas del dashboard en modo: ", useMock() ? "Mock" : "Backend");
     
-    if (useMock()) {
-      return await apiClient.get<DashboardStats>('/dashboard_stats');
-    } else {
-      return await apiClient.get<DashboardStats>('/dashboard_stats.php');
+    try {
+      let response;
+      if (useMock()) {
+        response = await apiClient.get<DashboardStats>('/dashboard_stats');
+      } else {
+        response = await apiClient.get<DashboardStats>('/dashboard_stats.php');
+      }
+      
+      // Asegurarse de que todos los campos necesarios existen
+      return this.validateAndNormalizeData(response);
+    } catch (error) {
+      console.error("Error al obtener estadísticas del dashboard:", error);
+      return defaultStats;
     }
+  },
+  
+  /**
+   * Valida y normaliza los datos para asegurar que todas las propiedades existen
+   */
+  validateAndNormalizeData(data: any): DashboardStats {
+    if (!data) return defaultStats;
+    
+    return {
+      study_hours: {
+        total: data.study_hours?.total ?? 0,
+        by_course: Array.isArray(data.study_hours?.by_course) ? data.study_hours.by_course : [],
+        by_quiz: Array.isArray(data.study_hours?.by_quiz) ? data.study_hours.by_quiz : []
+      },
+      completed_quizzes: {
+        total: data.completed_quizzes?.total ?? 0,
+        quizzes: Array.isArray(data.completed_quizzes?.quizzes) ? data.completed_quizzes.quizzes : []
+      },
+      average_scores: {
+        overall: data.average_scores?.overall ?? 0,
+        by_quiz: Array.isArray(data.average_scores?.by_quiz) ? data.average_scores.by_quiz : []
+      },
+      courses_in_progress: {
+        total: data.courses_in_progress?.total ?? 0,
+        courses: Array.isArray(data.courses_in_progress?.courses) ? data.courses_in_progress.courses : []
+      }
+    };
   }
 };
 
